@@ -1,23 +1,189 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { setRouter } from '@/lib/axios'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    redirect: { name: 'dashboard' }
-  }
+    redirect: { name: 'dashboard' },
+  },
 
-  // Routes will be added during migration
-  // See MIGRATION_PLAN.md Section 6 for full route definitions
+  // Auth routes
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/pages/Auth/LoginUser.vue'),
+    meta: { guest: true, title: 'Login' },
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/pages/Auth/RegisterUser.vue'),
+    meta: { guest: true, title: 'Register' },
+  },
+  {
+    path: '/forgot-password',
+    name: 'password.request',
+    component: () => import('@/pages/Auth/ForgotPassword.vue'),
+    meta: { guest: true, title: 'Forgot Password' },
+  },
+  {
+    path: '/reset-password/:token',
+    name: 'password.reset',
+    component: () => import('@/pages/Auth/ResetPassword.vue'),
+    meta: { guest: true, title: 'Reset Password' },
+  },
+  {
+    path: '/verify-email',
+    name: 'verification.notice',
+    component: () => import('@/pages/Auth/VerifyEmail.vue'),
+    meta: { auth: true, title: 'Verify Email' },
+  },
+  {
+    path: '/confirm-password',
+    name: 'password.confirm',
+    component: () => import('@/pages/Auth/ConfirmPassword.vue'),
+    meta: { auth: true, title: 'Confirm Password' },
+  },
+
+  // Dashboard
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('@/pages/Account/ClientDashboard.vue'),
+    meta: { auth: true, title: 'Dashboard' },
+  },
+
+  // Account routes
+  {
+    path: '/profile',
+    name: 'profile.edit',
+    component: () => import('@/pages/Account/Profile/EditProfile.vue'),
+    meta: { auth: true, title: 'Edit Profile' },
+  },
+  {
+    path: '/terms/accept',
+    name: 'terms.accept',
+    component: () => import('@/pages/Account/AcceptTerms.vue'),
+    meta: { auth: true, title: 'Accept Terms' },
+  },
+  {
+    path: '/team/select',
+    name: 'team.select',
+    component: () => import('@/pages/Account/Team/SelectTeam.vue'),
+    meta: { auth: true, title: 'Select Team' },
+  },
+
+  // Story routes
+  {
+    path: '/story/new',
+    name: 'story.new',
+    component: () => import('@/pages/Story/NewStory.vue'),
+    meta: { auth: true, title: 'New Story' },
+  },
+  {
+    path: '/story/:id/continue',
+    name: 'story.continue',
+    component: () => import('@/pages/Story/ContinueStory.vue'),
+    meta: { auth: true, title: 'Continue Story' },
+  },
+  {
+    path: '/story/:id/form',
+    name: 'story.form',
+    component: () => import('@/pages/Story/StoryForm.vue'),
+    meta: { auth: true, title: 'Story Form' },
+  },
+  {
+    path: '/story/:id/complete',
+    name: 'story.complete',
+    component: () => import('@/pages/Story/CompleteStory.vue'),
+    meta: { auth: true, title: 'Story Complete' },
+  },
+
+  // Admin routes
+  {
+    path: '/admin',
+    meta: { auth: true, permission: 'users.view' },
+    children: [
+      {
+        path: '',
+        name: 'admin.dashboard',
+        component: () => import('@/pages/Admin/AdminDashboard.vue'),
+        meta: { title: 'Admin Dashboard' },
+      },
+      {
+        path: 'users',
+        name: 'admin.users.index',
+        component: () => import('@/pages/Admin/BrowseUsers.vue'),
+        meta: { title: 'Manage Users' },
+      },
+      {
+        path: 'users/create',
+        name: 'admin.users.create',
+        component: () => import('@/pages/Admin/CreateUser.vue'),
+        meta: { title: 'Create User' },
+      },
+      {
+        path: 'users/:id',
+        name: 'admin.users.show',
+        component: () => import('@/pages/Admin/ShowUser.vue'),
+        meta: { title: 'View User' },
+      },
+    ],
+  },
+
+  // 404
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('@/pages/Auth/LoginUser.vue'), // Temporary - need NotFound page
+    meta: { title: 'Page Not Found' },
+  },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 })
 
-// Navigation guards will be added during migration
-// See MIGRATION_PLAN.md Section 6 for implementation
+// Set router instance for axios error handling
+setRouter(router)
+
+// Navigation guards
+router.beforeEach(async (to, _from, next) => {
+  const authStore = useAuthStore()
+
+  // Load user from storage on first navigation if not already loaded
+  if (!authStore.user && !to.meta.guest) {
+    await authStore.loadUser()
+  }
+
+  // Guest-only routes (redirect authenticated users to dashboard)
+  if (to.meta.guest && authStore.isAuthenticated) {
+    return next({ name: 'dashboard' })
+  }
+
+  // Auth-required routes (redirect unauthenticated users to login)
+  if (to.meta.auth && !authStore.isAuthenticated) {
+    return next({ name: 'login', query: { redirect: to.fullPath } })
+  }
+
+  // Permission check
+  if (to.meta.permission && !authStore.can(to.meta.permission as string)) {
+    return next({ name: 'dashboard' })
+  }
+
+  // Update page title
+  const title = to.meta.title as string | undefined
+  if (title) {
+    document.title = `${title} - Vue Slide Demo`
+  } else {
+    document.title = 'Vue Slide Demo'
+  }
+
+  next()
+})
 
 export default router
