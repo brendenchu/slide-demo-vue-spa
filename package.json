@@ -1,0 +1,51 @@
+{
+  "name": "vue-slide-demo-spa",
+  "version": "1.0.0",
+  "description": "Vue 3 SPA with multi-step slide form system",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/",
+    "test": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "typescript",
+    "spa",
+    "slide-form",
+    "tailwindcss",
+    "pinia"
+  ],
+  "author": "Brenden Chu",
+  "license": "MIT",
+  "dependencies": {
+    "@vueuse/core": "^11.3.0",
+    "@vueuse/head": "^2.0.0",
+    "axios": "^1.13.2",
+    "localforage": "^1.10.0",
+    "pinia": "^2.3.1",
+    "vue": "^3.5.26",
+    "vue-router": "^4.6.4",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/node": "^22.19.5",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "autoprefixer": "^10.4.23",
+    "daisyui": "^4.12.24",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vue-tsc": "^2.2.12"
+  }
+}
