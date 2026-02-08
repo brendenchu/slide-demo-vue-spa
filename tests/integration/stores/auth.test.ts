@@ -164,7 +164,7 @@ describe('Auth Store Integration', () => {
       })
 
       const authStore = useAuthStore()
-      const result = await authStore.register('New User', 'new@example.com', 'password')
+      const result = await authStore.register('New User', 'new@example.com', 'password', 'password')
 
       expect(result).toEqual(mockUser)
       expect(authStore.user).toEqual(mockUser)
@@ -175,6 +175,7 @@ describe('Auth Store Integration', () => {
         name: 'New User',
         email: 'new@example.com',
         password: 'password',
+        password_confirmation: 'password',
       })
       expect(storage.set).toHaveBeenCalledWith('auth:token', mockToken)
       expect(storage.set).toHaveBeenCalledWith('auth:user', mockUser)
@@ -185,9 +186,9 @@ describe('Auth Store Integration', () => {
 
       const authStore = useAuthStore()
 
-      await expect(authStore.register('User', 'existing@example.com', 'password')).rejects.toThrow(
-        'Email already exists'
-      )
+      await expect(
+        authStore.register('User', 'existing@example.com', 'password', 'password')
+      ).rejects.toThrow('Email already exists')
 
       expect(authStore.user).toBeNull()
       expect(authStore.token).toBeNull()

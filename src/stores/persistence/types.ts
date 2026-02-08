@@ -19,6 +19,7 @@ export interface RegisterData {
   name: string
   email: string
   password: string
+  password_confirmation: string
 }
 
 export interface CreateProjectData {
@@ -50,7 +51,7 @@ export interface DataSource {
   updateUser(data: Partial<User>): Promise<User>
 
   // Project methods
-  getProjects(): Promise<Project[]>
+  getProjects(params?: { team?: string }): Promise<Project[]>
   getProject(id: string): Promise<Project | null>
   createProject(data: CreateProjectData): Promise<Project>
   updateProject(id: string, data: Partial<Project>): Promise<Project>

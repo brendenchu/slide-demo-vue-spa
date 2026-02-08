@@ -504,14 +504,25 @@ describe('Projects Store Integration', () => {
       await authStore.login('test@example.com', 'password')
     })
 
-    it('userProjects filters projects by current user', async () => {
-      const userProjects: Project[] = [
+    it('userProjects returns all projects from API response', async () => {
+      const mockProjects: Project[] = [
         {
           id: '1',
           user_id: '1',
           team_id: null,
-          title: 'User 1 Project',
+          title: 'Project 1',
           status: 'draft',
+          current_step: 'intro',
+          responses: {},
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        {
+          id: '2',
+          user_id: '1',
+          team_id: null,
+          title: 'Project 2',
+          status: 'in_progress',
           current_step: 'intro',
           responses: {},
           created_at: new Date().toISOString(),
@@ -519,25 +530,12 @@ describe('Projects Store Integration', () => {
         },
       ]
 
-      const otherUserProject: Project = {
-        id: '2',
-        user_id: '2',
-        team_id: null,
-        title: 'User 2 Project',
-        status: 'draft',
-        current_step: 'intro',
-        responses: {},
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-
-      mockDataSource.getProjects.mockResolvedValueOnce([...userProjects, otherUserProject])
+      mockDataSource.getProjects.mockResolvedValueOnce(mockProjects)
 
       const projectsStore = useProjectsStore()
       await projectsStore.fetchAll()
 
-      expect(projectsStore.userProjects).toHaveLength(1)
-      expect(projectsStore.userProjects[0].user_id).toBe('1')
+      expect(projectsStore.userProjects).toHaveLength(2)
     })
 
     it('inProgressProjects filters by in_progress status', async () => {
@@ -572,7 +570,7 @@ describe('Projects Store Integration', () => {
       await projectsStore.fetchAll()
 
       expect(projectsStore.inProgressProjects).toHaveLength(1)
-      expect(projectsStore.inProgressProjects[0].status).toBe('in_progress')
+      expect(projectsStore.inProgressProjects[0]!.status).toBe('in_progress')
     })
 
     it('completedProjects filters by completed status', async () => {
@@ -607,7 +605,7 @@ describe('Projects Store Integration', () => {
       await projectsStore.fetchAll()
 
       expect(projectsStore.completedProjects).toHaveLength(1)
-      expect(projectsStore.completedProjects[0].status).toBe('completed')
+      expect(projectsStore.completedProjects[0]!.status).toBe('completed')
     })
 
     it('draftProjects filters by draft status', async () => {
@@ -642,7 +640,7 @@ describe('Projects Store Integration', () => {
       await projectsStore.fetchAll()
 
       expect(projectsStore.draftProjects).toHaveLength(1)
-      expect(projectsStore.draftProjects[0].status).toBe('draft')
+      expect(projectsStore.draftProjects[0]!.status).toBe('draft')
     })
   })
 })

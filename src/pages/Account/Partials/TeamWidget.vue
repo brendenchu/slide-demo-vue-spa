@@ -1,22 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { storage } from '@/stores/persistence/storage'
-import type { Team } from '@/types/models'
 
 const authStore = useAuthStore()
-const team = ref<Team | null>(null)
-
-onMounted(async () => {
-  // Load team if user has a team_id
-  if (authStore.user?.team_id) {
-    const teamData = await storage.get<Team>(`team:${authStore.user.team_id}`)
-    if (teamData) {
-      team.value = teamData
-    }
-  }
-})
+const team = computed(() => authStore.user?.team ?? null)
 </script>
 
 <template>

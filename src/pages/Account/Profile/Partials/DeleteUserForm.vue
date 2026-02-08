@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { nextTick, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useForm } from '@/composables/useForm'
-import { route } from '@/utils/route'
+import { useAuthStore } from '@/stores/auth'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 import Modal from '@/components/Common/UI/ModalComponent.vue'
@@ -9,6 +10,8 @@ import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import InputField from '@/components/Form/FormField.vue'
 
+const router = useRouter()
+const authStore = useAuthStore()
 const confirmingUserDeletion = ref(false)
 const passwordInput = ref<HTMLInputElement | null>(null)
 
@@ -23,9 +26,12 @@ const confirmUserDeletion = () => {
 }
 
 const deleteUser = () => {
-  form.delete(route('profile.destroy'), {
-    preserveScroll: true,
-    onSuccess: () => closeModal(),
+  form.delete('/auth/user', {
+    onSuccess: async () => {
+      closeModal()
+      await authStore.logout()
+      await router.push({ name: 'login' })
+    },
     onError: () => passwordInput.value?.focus(),
     onFinish: () => {
       form.reset()

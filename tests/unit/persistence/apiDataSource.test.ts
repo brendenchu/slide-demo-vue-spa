@@ -153,7 +153,7 @@ describe('ApiDataSource', () => {
         }
 
         mockApi.get.mockResolvedValueOnce({
-          data: { data: mockUser },
+          data: { data: { user: mockUser } },
         })
 
         const user = await dataSource.getUser()
@@ -231,7 +231,7 @@ describe('ApiDataSource', () => {
         const projects = await dataSource.getProjects()
 
         expect(projects).toEqual(mockProjects)
-        expect(mockApi.get).toHaveBeenCalledWith('/projects')
+        expect(mockApi.get).toHaveBeenCalledWith('/projects', { params: undefined })
       })
 
       it('throws error on API failure', async () => {

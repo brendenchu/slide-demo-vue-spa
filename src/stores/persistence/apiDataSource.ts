@@ -76,8 +76,8 @@ export class ApiDataSource implements DataSource {
 
   async getUser(): Promise<User | null> {
     try {
-      const response = await this.api.get<{ data: User }>('/auth/user')
-      return response.data.data
+      const response = await this.api.get<{ data: { user: User } }>('/auth/user')
+      return response.data.data.user
     } catch (error) {
       console.error('Get user failed:', getErrorMessage(error))
       return null
@@ -102,9 +102,9 @@ export class ApiDataSource implements DataSource {
   // Project Methods
   // ============================================================================
 
-  async getProjects(): Promise<Project[]> {
+  async getProjects(params?: { team?: string }): Promise<Project[]> {
     try {
-      const response = await this.api.get<{ data: Project[] }>('/projects')
+      const response = await this.api.get<{ data: Project[] }>('/projects', { params })
       return response.data.data
     } catch (error) {
       console.error('Get projects failed:', getErrorMessage(error))

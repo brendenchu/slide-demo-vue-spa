@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { DataSourceFactory } from './persistence/dataSourceFactory'
-import { useAuthStore } from './auth'
 import type { Project } from '@/types/models'
 
 export const useProjectsStore = defineStore('projects', () => {
   // Create data source instance
   const dataSource = DataSourceFactory.create()
-  const authStore = useAuthStore()
 
   // State
   const projects = ref<Project[]>([])
@@ -15,10 +13,9 @@ export const useProjectsStore = defineStore('projects', () => {
   const isLoading = ref(false)
 
   // Getters
-  const userProjects = computed(() => {
-    if (!authStore.user) return []
-    return projects.value.filter((p) => p.user_id === authStore.user!.id)
-  })
+  // Note: API already scopes projects to the authenticated user,
+  // so no client-side user filtering is needed.
+  const userProjects = computed(() => projects.value)
 
   const inProgressProjects = computed(() => {
     return userProjects.value.filter((p) => p.status === 'in_progress')
@@ -33,10 +30,10 @@ export const useProjectsStore = defineStore('projects', () => {
   })
 
   // Actions
-  async function fetchAll() {
+  async function fetchAll(params?: { team?: string }) {
     isLoading.value = true
     try {
-      projects.value = await dataSource.getProjects()
+      projects.value = await dataSource.getProjects(params)
     } catch (error) {
       console.error('Failed to fetch projects:', error)
       throw error

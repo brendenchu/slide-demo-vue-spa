@@ -213,7 +213,7 @@ describe('LocalDataSource', () => {
         const projects = await dataSource.getProjects()
 
         expect(projects).toHaveLength(1)
-        expect(projects[0].title).toBe('Project 1')
+        expect(projects[0]!.title).toBe('Project 1')
       })
 
       it('returns empty array on error', async () => {
@@ -581,7 +581,7 @@ describe('LocalDataSource', () => {
         const teams = await dataSource.getTeams()
 
         expect(teams).toHaveLength(1)
-        expect(teams[0].name).toBe('Team 1')
+        expect(teams[0]!.name).toBe('Team 1')
       })
 
       it('returns empty array on error', async () => {

@@ -10,7 +10,8 @@ Vue 3 + TypeScript SPA with flexible data source abstraction supporting local br
 - Role-based access control
 - TypeScript with strict mode
 - Pinia state management
-- 128 tests, 96.49% coverage
+- Team ownership and transfer
+- 128 tests
 
 ## Tech Stack
 
@@ -84,6 +85,8 @@ src/
 ├── stores/              # Pinia stores
 │   ├── auth.ts          # Authentication
 │   ├── projects.ts      # Projects
+│   ├── teams.ts         # Teams & ownership
+│   ├── flash.ts         # Flash messages
 │   └── persistence/     # Data source layer
 │       ├── types.ts
 │       ├── dataSourceFactory.ts
@@ -133,9 +136,9 @@ npm run test
 ```
 
 128 tests passing:
+
 - Unit: 86 tests (localDataSource: 41, apiDataSource: 45)
 - Integration: 42 tests (auth: 20, projects: 22)
-- Coverage: 96.49%
 
 ## Data Migration
 
@@ -153,11 +156,13 @@ console.log(`Migrated ${result.projectsMigrated} projects`)
 ```
 
 Migrates:
+
 - Projects (title, description, status)
 - Project responses and form data
 - Completion status
 
 Does not migrate:
+
 - User accounts (register via API)
 - Teams (managed by admins)
 - Authentication tokens
@@ -167,12 +172,14 @@ Does not migrate:
 ### Local Mode
 
 Any credentials work. Suggested:
+
 - client@demo.com / password
 - admin@demo.com / password
 
 ### API Mode
 
 Use backend database accounts:
+
 - client@demo.com / password (Client role)
 - admin@demo.com / password (Super Admin role)
 - consultant@example.com / password (Consultant role)
@@ -185,6 +192,7 @@ npm run build
 ```
 
 Deploy `dist/` folder to:
+
 - Netlify
 - Vercel
 - AWS S3 + CloudFront
@@ -204,27 +212,32 @@ Ensure backend CORS allows SPA domain.
 ## Troubleshooting
 
 **Cannot connect to API**
+
 - Check `VITE_API_URL` in `.env`
 - Verify backend is running
 - Test API: `curl https://api.local.test/api/v1/auth/user`
 - Check CORS configuration
 
 **401 Unauthorized**
+
 - Token may be expired
 - Try logging in again
 - Clear browser cache and localStorage
 
 **Data not persisting (local mode)**
+
 - Check browser allows LocalStorage/IndexedDB
 - Verify `VITE_STORAGE_PREFIX` is set
 - Check storage quota not exceeded
 
 **Module not found**
+
 - Delete node_modules: `rm -rf node_modules && npm install`
 - Clear Vite cache: `rm -rf node_modules/.vite`
 - Restart dev server
 
 **Type errors**
+
 - Run `npm run type-check`
 - Verify dependencies: `npm install`
 - Update TypeScript: `npm install -D typescript@latest`

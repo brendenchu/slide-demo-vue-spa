@@ -51,10 +51,15 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(name: string, email: string, password: string) {
+  async function register(
+    name: string,
+    email: string,
+    password: string,
+    password_confirmation: string
+  ) {
     try {
       // Use data source for registration
-      const result = await dataSource.register({ name, email, password })
+      const result = await dataSource.register({ name, email, password, password_confirmation })
 
       // Store in state
       user.value = result.user
@@ -86,6 +91,18 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error) {
       console.error('Logout failed:', error)
       throw error
+    }
+  }
+
+  async function refreshUser() {
+    try {
+      const freshUser = await dataSource.getUser()
+      if (freshUser) {
+        user.value = freshUser
+        await storage.set('auth:user', freshUser)
+      }
+    } catch (error) {
+      console.error('Failed to refresh user:', error)
     }
   }
 
@@ -135,6 +152,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     // Actions
     loadUser,
+    refreshUser,
     login,
     register,
     logout,

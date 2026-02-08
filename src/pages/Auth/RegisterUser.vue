@@ -41,7 +41,12 @@ async function submit() {
   }
 
   try {
-    await authStore.register(form.value.name, form.value.email, form.value.password)
+    await authStore.register(
+      form.value.name,
+      form.value.email,
+      form.value.password,
+      form.value.password_confirmation
+    )
     flashStore.success('Registration successful! Welcome to Vue Slide Demo.')
 
     // Navigate to dashboard

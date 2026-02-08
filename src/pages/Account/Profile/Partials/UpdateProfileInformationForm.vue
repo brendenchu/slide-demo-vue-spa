@@ -16,10 +16,18 @@ const authStore = useAuthStore()
 const user = authStore.user!
 
 const form = useForm({
-  first_name: user.name.split(' ')[0] || '',
-  last_name: user.name.split(' ')[1] || '',
+  first_name: user.first_name ?? user.name?.split(' ')[0] ?? '',
+  last_name: user.last_name ?? user.name?.split(' ').slice(1).join(' ') ?? '',
   email: user.email,
 })
+
+const saveProfile = () => {
+  form.put('/auth/user', {
+    onSuccess: async () => {
+      await authStore.refreshUser()
+    },
+  })
+}
 </script>
 
 <template>
@@ -32,7 +40,7 @@ const form = useForm({
       </p>
     </header>
 
-    <form class="mt-4 space-y-6" @submit.prevent="form.patch(route('profile.update'))">
+    <form class="mt-4 space-y-6" @submit.prevent="saveProfile">
       <div>
         <InputLabel for="first_name" value="First Name" />
 
@@ -107,7 +115,7 @@ const form = useForm({
           leave-active-class="transition ease-in-out"
           leave-to-class="opacity-0"
         >
-          <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+          <p v-if="form.recentlySuccessful" class="text-sm text-green-600">Saved.</p>
         </Transition>
       </div>
     </form>

@@ -14,6 +14,12 @@ const loading = ref(true)
 
 const userProjects = computed(() => projectsStore.userProjects)
 
+async function loadProjects() {
+  loading.value = true
+  await projectsStore.fetchAll()
+  loading.value = false
+}
+
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -59,9 +65,7 @@ function viewForm(projectId: string) {
 }
 
 onMounted(async () => {
-  loading.value = true
-  await projectsStore.fetchAll()
-  loading.value = false
+  await loadProjects()
 })
 </script>
 
