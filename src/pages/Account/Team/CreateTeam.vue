@@ -2,6 +2,7 @@
 import { useRouter } from 'vue-router'
 import { useForm } from '@/composables/useForm'
 import { useFlashStore } from '@/stores/flash'
+import { useDemoStore } from '@/stores/demo'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
@@ -11,6 +12,7 @@ import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 
 const router = useRouter()
 const flashStore = useFlashStore()
+const demoStore = useDemoStore()
 
 const form = useForm({
   name: '',
@@ -39,6 +41,15 @@ const createTeam = () => {
                 Create a new team to collaborate with others.
               </p>
             </header>
+
+            <div
+              v-if="demoStore.isDemoMode"
+              class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg"
+            >
+              <p class="text-sm text-amber-800">
+                Team creation is limited in the demo environment.
+              </p>
+            </div>
 
             <form class="mt-6 space-y-6" @submit.prevent="createTeam">
               <div>

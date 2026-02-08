@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useTeamsStore } from '@/stores/teams'
 import { useFlashStore } from '@/stores/flash'
+import { useDemoStore } from '@/stores/demo'
 import { getApiClient } from '@/lib/axios'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
@@ -18,6 +19,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const teamsStore = useTeamsStore()
 const flashStore = useFlashStore()
+const demoStore = useDemoStore()
 const api = getApiClient()
 
 const team = ref<Team | null>(null)
@@ -156,7 +158,11 @@ onMounted(() => {
 
         <!-- Invite Form (admin only) -->
         <div v-if="!loading && isAdmin" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-          <InviteMemberForm :team-id="teamId" />
+          <InviteMemberForm
+            :team-id="teamId"
+            :demo-mode="demoStore.isDemoMode"
+            :invitation-limit="demoStore.maxInvitationsPerTeam"
+          />
         </div>
 
         <!-- Pending Invitations (admin only) -->

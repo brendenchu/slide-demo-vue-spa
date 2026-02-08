@@ -1,18 +1,34 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useForm } from '@/composables/useForm'
 import { useTeamsStore } from '@/stores/teams'
 import { useFlashStore } from '@/stores/flash'
+import { useDemoLimits } from '@/composables/useDemoLimits'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import InputField from '@/components/Form/FormField.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
+import LimitBadge from '@/components/Demo/LimitBadge.vue'
 
-const props = defineProps<{
-  teamId: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    teamId: string
+    demoMode?: boolean
+    invitationLimit?: number
+  }>(),
+  {
+    demoMode: false,
+    invitationLimit: 0,
+  }
+)
 
 const teamsStore = useTeamsStore()
 const flashStore = useFlashStore()
+const { isInvitationLimitReached } = useDemoLimits()
+
+const invitationLimitReached = computed(() =>
+  isInvitationLimitReached(teamsStore.invitations.length)
+)
 
 const form = useForm({
   email: '',
@@ -46,7 +62,14 @@ const sendInvite = async () => {
 <template>
   <section>
     <header>
-      <h2 class="text-lg font-medium text-gray-900">Invite a Member</h2>
+      <div class="flex items-center gap-2">
+        <h2 class="text-lg font-medium text-gray-900">Invite a Member</h2>
+        <LimitBadge
+          v-if="demoMode"
+          :current="teamsStore.invitations.length"
+          :max="invitationLimit"
+        />
+      </div>
       <p class="mt-1 text-sm text-gray-600">Send an invitation to join this team.</p>
     </header>
 
@@ -79,7 +102,9 @@ const sendInvite = async () => {
         </div>
 
         <div>
-          <PrimaryButton :disabled="form.processing">Send Invite</PrimaryButton>
+          <PrimaryButton :disabled="form.processing || invitationLimitReached"
+            >Send Invite</PrimaryButton
+          >
         </div>
       </div>
     </form>

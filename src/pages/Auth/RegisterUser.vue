@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useFlashStore } from '@/stores/flash'
+import { useDemoStore } from '@/stores/demo'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
@@ -12,6 +13,7 @@ import InputField from '@/components/Form/FormField.vue'
 const router = useRouter()
 const authStore = useAuthStore()
 const flashStore = useFlashStore()
+const demoStore = useDemoStore()
 
 const form = ref({
   name: '',
@@ -72,11 +74,12 @@ async function submit() {
     </div>
 
     <div
+      v-if="demoStore.isDemoMode"
       class="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800"
     >
       <p class="text-sm text-yellow-800 dark:text-yellow-300">
-        <strong>Demo Mode:</strong> This is a demo application. Your data is stored locally in your
-        browser.
+        <strong>Demo Mode:</strong> Registration is limited in the demo environment. Some features
+        may be restricted.
       </p>
     </div>
 

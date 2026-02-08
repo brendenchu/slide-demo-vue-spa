@@ -8,6 +8,7 @@ import DropdownLink from '@/components/Common/UI/Navigation/DropdownLink.vue'
 import ResponsiveNavLink from '@/components/Common/UI/Navigation/ResponsiveNavLink.vue'
 import FlashProvider from '@/components/Flash/FlashProvider.vue'
 import PageFooter from '@/components/Common/Layout/PageFooter.vue'
+import DemoBanner from '@/components/Demo/DemoBanner.vue'
 
 const router = useRouter()
 const currentRoute = useRoute()
@@ -26,6 +27,7 @@ async function logout() {
 <template>
   <FlashProvider>
     <div class="min-h-screen bg-gray-100 flex flex-col">
+      <DemoBanner />
       <nav class="bg-white border-b border-gray-100 z-40">
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

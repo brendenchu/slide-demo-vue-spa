@@ -1,15 +1,29 @@
 <script lang="ts" setup>
 import { useProjectsStore } from '@/stores/projects'
 import { useFlashStore } from '@/stores/flash'
+import { useDemoStore } from '@/stores/demo'
+import { useDemoLimits } from '@/composables/useDemoLimits'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import StoryLayout from '@/layouts/StoryLayout.vue'
 
 const projectsStore = useProjectsStore()
 const flashStore = useFlashStore()
+const demoStore = useDemoStore()
+const { isProjectLimitReached } = useDemoLimits()
 const router = useRouter()
 const loading = ref(false)
+
+const projectLimitReached = computed(() =>
+  isProjectLimitReached(projectsStore.userProjects.length)
+)
+
+onMounted(async () => {
+  if (demoStore.isDemoMode) {
+    await projectsStore.fetchAll()
+  }
+})
 
 const createForm = async () => {
   loading.value = true
@@ -55,11 +69,14 @@ const createForm = async () => {
           <p>To get started, click the button below.</p>
           <PrimaryButton
             class="lg:btn-lg xl:btn-xl btn-outline"
-            :disabled="loading"
+            :disabled="loading || projectLimitReached"
             @click="createForm"
           >
             {{ loading ? 'Creating...' : "Let's Begin" }}
           </PrimaryButton>
+          <p v-if="projectLimitReached" class="text-sm text-amber-700 mt-2">
+            Project limit reached in this demo environment.
+          </p>
         </div>
       </div>
     </section>

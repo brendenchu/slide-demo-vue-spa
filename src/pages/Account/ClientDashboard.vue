@@ -3,16 +3,22 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import { useProjectsStore } from '@/stores/projects'
+import { useDemoStore } from '@/stores/demo'
+import { useDemoLimits } from '@/composables/useDemoLimits'
 import { calculateProgress } from '@/utils/story/progress'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
+import LimitBadge from '@/components/Demo/LimitBadge.vue'
 import IntroWidget from './Partials/IntroWidget.vue'
 import TeamWidget from './Partials/TeamWidget.vue'
 
 const router = useRouter()
 const projectsStore = useProjectsStore()
+const demoStore = useDemoStore()
+const { isProjectLimitReached } = useDemoLimits()
 const loading = ref(true)
 
 const userProjects = computed(() => projectsStore.userProjects)
+const projectLimitReached = computed(() => isProjectLimitReached(userProjects.value.length))
 
 async function loadProjects() {
   loading.value = true
@@ -84,7 +90,16 @@ onMounted(async () => {
           <div class="card-body">
             <div class="flex justify-between items-center mb-4">
               <h2 class="card-title text-2xl">My Forms</h2>
-              <PrimaryButton @click="startNewForm"> Start New Form </PrimaryButton>
+              <div class="flex items-center gap-2">
+                <PrimaryButton :disabled="projectLimitReached" @click="startNewForm">
+                  Start New Form
+                </PrimaryButton>
+                <LimitBadge
+                  v-if="demoStore.isDemoMode"
+                  :current="userProjects.length"
+                  :max="demoStore.maxProjectsPerTeam"
+                />
+              </div>
             </div>
 
             <div v-if="loading" class="text-center py-12">

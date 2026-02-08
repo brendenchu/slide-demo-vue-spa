@@ -93,7 +93,7 @@ function createAxiosInstance(): AxiosInstance {
       }
       return response
     },
-    (error: AxiosError<ApiErrorResponse>) => {
+    async (error: AxiosError<ApiErrorResponse>) => {
       if (isDebug) {
         console.error('[API Response Error]', error.response?.status, error.response?.data)
       }
@@ -109,8 +109,16 @@ function createAxiosInstance(): AxiosInstance {
             break
 
           case 403:
-            // Forbidden - show error message
-            console.error('Access forbidden:', data.message)
+            // Forbidden - flash demo-related messages as warnings
+            if (
+              data.message?.startsWith('Demo limit reached') ||
+              data.message?.includes('Demo accounts')
+            ) {
+              const { useFlashStore } = await import('@/stores/flash')
+              useFlashStore().warning(data.message)
+            } else {
+              console.error('Access forbidden:', data.message)
+            }
             break
 
           case 422:

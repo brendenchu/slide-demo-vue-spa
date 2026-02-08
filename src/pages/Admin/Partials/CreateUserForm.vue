@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useForm } from '@/composables/useForm'
+import { useDemoStore } from '@/stores/demo'
 import { route } from '@/utils/route'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputField from '@/components/Form/FormField.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
+
+const demoStore = useDemoStore()
 
 const props = withDefaults(
   defineProps<{
@@ -39,6 +42,13 @@ const submit = () => {
 
 <template>
   <form @submit.prevent="submit">
+    <div
+      v-if="demoStore.isDemoMode"
+      class="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg"
+    >
+      <p class="text-sm text-amber-800">User creation is limited in the demo environment.</p>
+    </div>
+
     <div>
       <InputLabel for="first_name" value="First Name" />
 

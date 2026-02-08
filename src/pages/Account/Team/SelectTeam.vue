@@ -3,16 +3,21 @@ import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useFlashStore } from '@/stores/flash'
+import { useDemoStore } from '@/stores/demo'
+import { useDemoLimits } from '@/composables/useDemoLimits'
 import { getApiClient } from '@/lib/axios'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
+import LimitBadge from '@/components/Demo/LimitBadge.vue'
 import type { Team } from '@/types/models'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const flashStore = useFlashStore()
+const demoStore = useDemoStore()
+const { isTeamLimitReached } = useDemoLimits()
 const api = getApiClient()
 
 const teams = ref<Team[]>([])
@@ -21,6 +26,10 @@ const selecting = ref(false)
 const deleting = ref<string | null>(null)
 
 const currentTeamId = computed(() => authStore.user?.team?.id ?? null)
+const ownedNonPersonalTeamCount = computed(
+  () => teams.value.filter((t) => t.is_owner && !t.is_personal).length
+)
+const teamLimitReached = computed(() => isTeamLimitReached(ownedNonPersonalTeamCount.value))
 
 async function loadTeams() {
   loading.value = true
@@ -91,10 +100,18 @@ onMounted(() => {
           <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex-1">
             <strong>Current Team:</strong> {{ authStore.user?.team?.name ?? 'None' }}
           </div>
-          <div class="ml-4">
-            <PrimaryButton @click="router.push({ name: 'team.create' })">
+          <div class="ml-4 flex items-center gap-2">
+            <PrimaryButton
+              :disabled="teamLimitReached"
+              @click="router.push({ name: 'team.create' })"
+            >
               Create Team
             </PrimaryButton>
+            <LimitBadge
+              v-if="demoStore.isDemoMode"
+              :current="ownedNonPersonalTeamCount"
+              :max="demoStore.maxTeamsPerUser"
+            />
           </div>
         </div>
 
