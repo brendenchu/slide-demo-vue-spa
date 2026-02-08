@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useForm } from '@/composables/useForm'
-import { route } from '@/utils/route'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
@@ -17,7 +16,7 @@ const form = useForm({
 })
 
 const updatePassword = () => {
-  form.put(route('password.update'), {
+  form.put('/auth/password', {
     preserveScroll: true,
     onSuccess: () => {
       form.reset()
@@ -100,7 +99,7 @@ const updatePassword = () => {
           leave-active-class="transition ease-in-out"
           leave-to-class="opacity-0"
         >
-          <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+          <p v-if="form.recentlySuccessful" class="text-sm text-green-600">Saved.</p>
         </Transition>
       </div>
     </form>
