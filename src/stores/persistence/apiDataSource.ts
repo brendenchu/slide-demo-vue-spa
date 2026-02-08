@@ -1,4 +1,4 @@
-import type { User, Team, Project } from '@/types/models'
+import type { User, Team, Project, AppNotification } from '@/types/models'
 import type { DataSource, RegisterData, CreateProjectData, CreateTeamData } from './types'
 import { getApiClient, getErrorMessage } from '@/lib/axios'
 import type { AxiosInstance } from 'axios'
@@ -220,6 +220,40 @@ export class ApiDataSource implements DataSource {
       return response.data.data
     } catch (error) {
       console.error('Update team failed:', getErrorMessage(error))
+      throw error
+    }
+  }
+
+  // ============================================================================
+  // Notification Methods
+  // ============================================================================
+
+  async getNotifications(): Promise<{ notifications: AppNotification[]; unread_count: number }> {
+    try {
+      const response = await this.api.get<{
+        data: { notifications: AppNotification[]; unread_count: number }
+      }>('/notifications')
+      return response.data.data
+    } catch (error) {
+      console.error('Get notifications failed:', getErrorMessage(error))
+      return { notifications: [], unread_count: 0 }
+    }
+  }
+
+  async markNotificationAsRead(id: string): Promise<void> {
+    try {
+      await this.api.post(`/notifications/${id}/read`)
+    } catch (error) {
+      console.error('Mark notification as read failed:', getErrorMessage(error))
+      throw error
+    }
+  }
+
+  async markAllNotificationsAsRead(): Promise<void> {
+    try {
+      await this.api.post('/notifications/read-all')
+    } catch (error) {
+      console.error('Mark all notifications as read failed:', getErrorMessage(error))
       throw error
     }
   }

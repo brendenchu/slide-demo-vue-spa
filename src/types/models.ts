@@ -8,7 +8,6 @@ export interface User {
   last_name?: string
   team_id: string | null
   team?: Team | null
-  email_verified_at: string | null
 }
 
 export interface Team {
@@ -72,6 +71,17 @@ export interface UserSearchResult {
   id: string
   name: string
   email: string
+}
+
+export interface AppNotification {
+  id: string
+  title: string
+  content: string | null
+  type: string | null
+  link: string | null
+  read_at: string | null
+  sender?: { id: string; name: string }
+  created_at: string
 }
 
 export type ProjectStatus = 'draft' | 'in_progress' | 'completed'

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import { useTeamsStore } from '@/stores/teams'
 import { useFlashStore } from '@/stores/flash'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
@@ -8,7 +7,6 @@ import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 import type { TeamInvitation } from '@/types/models'
 
-const route = useRoute()
 const teamsStore = useTeamsStore()
 const flashStore = useFlashStore()
 
@@ -29,9 +27,7 @@ async function loadInvitations() {
 async function accept(invitation: TeamInvitation) {
   processing.value = invitation.id
   try {
-    // Get token from URL query or use the invitation id
-    const token = (route.query.token as string) || ''
-    await teamsStore.acceptInvitation(invitation.id, token)
+    await teamsStore.acceptInvitation(invitation.id)
     flashStore.success(`You have joined ${invitation.team?.name ?? 'the team'}`)
   } catch {
     flashStore.error('Failed to accept invitation. The token may be missing or invalid.')

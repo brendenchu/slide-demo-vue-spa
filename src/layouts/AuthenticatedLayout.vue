@@ -9,6 +9,7 @@ import ResponsiveNavLink from '@/components/Common/UI/Navigation/ResponsiveNavLi
 import FlashProvider from '@/components/Flash/FlashProvider.vue'
 import PageFooter from '@/components/Common/Layout/PageFooter.vue'
 import DemoBanner from '@/components/Demo/DemoBanner.vue'
+import NotificationBell from '@/components/Notification/NotificationBell.vue'
 
 const router = useRouter()
 const currentRoute = useRoute()
@@ -51,12 +52,11 @@ async function logout() {
                 >
                   Teams
                 </NavLink>
-                <NavLink href="/invitations" :active="currentRoute.name === 'invitations'">
-                  Invitations
-                </NavLink>
               </div>
             </div>
             <div class="hidden sm:flex sm:items-center sm:ml-6">
+              <!-- Notification Bell -->
+              <NotificationBell />
               <!-- Settings Dropdown -->
               <div class="ml-3 relative">
                 <Dropdown align="right" width="48">
@@ -173,12 +173,9 @@ async function logout() {
             >
               Teams
             </ResponsiveNavLink>
-            <ResponsiveNavLink
-              :to="{ name: 'invitations' }"
-              :active="currentRoute.name === 'invitations'"
-            >
-              Invitations
-            </ResponsiveNavLink>
+          </div>
+          <div class="px-4 py-2">
+            <NotificationBell />
           </div>
 
           <!-- Responsive Settings Options -->

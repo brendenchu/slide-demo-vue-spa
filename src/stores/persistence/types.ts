@@ -1,6 +1,6 @@
 // Storage layer type definitions
 
-import type { User, Team, Project } from '@/types/models'
+import type { User, Team, Project, AppNotification } from '@/types/models'
 
 export interface StorageAdapter {
   get<T>(key: string): Promise<T | null>
@@ -58,4 +58,9 @@ export interface DataSource {
   getTeam(id: string): Promise<Team | null>
   createTeam(data: CreateTeamData): Promise<Team>
   updateTeam(id: string, data: Partial<Team>): Promise<Team>
+
+  // Notification methods
+  getNotifications(): Promise<{ notifications: AppNotification[]; unread_count: number }>
+  markNotificationAsRead(id: string): Promise<void>
+  markAllNotificationsAsRead(): Promise<void>
 }

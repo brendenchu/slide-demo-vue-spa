@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useForm } from '@/composables/useForm'
-import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useDemoStore } from '@/stores/demo'
 import { useNameOptions } from '@/composables/useNameOptions'
@@ -12,7 +11,6 @@ import InputField from '@/components/Form/FormField.vue'
 import FormCombobox from '@/components/Form/FormCombobox.vue'
 
 defineProps<{
-  mustVerifyEmail?: boolean
   status?: string
 }>()
 
@@ -103,25 +101,6 @@ const saveProfile = () => {
         />
 
         <InputError class="mt-1" :message="form.errors.email" />
-      </div>
-
-      <div v-if="mustVerifyEmail && user.email_verified_at === null">
-        <p class="text-sm mt-1 text-gray-800">
-          Your email address is unverified.
-          <RouterLink
-            :to="route('verification.send')"
-            class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Click here to re-send the verification email.
-          </RouterLink>
-        </p>
-
-        <div
-          v-show="status === 'verification-link-sent'"
-          class="mt-1 font-medium text-sm text-green-600"
-        >
-          A new verification link has been sent to your email address.
-        </div>
       </div>
 
       <div class="flex items-center gap-3">

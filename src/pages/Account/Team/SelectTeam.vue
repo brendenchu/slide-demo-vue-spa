@@ -134,7 +134,7 @@ onMounted(() => {
                 <h2 class="text-lg font-medium text-gray-900">
                   {{ team.name }}
                   <span
-                    v-if="team.is_personal"
+                    v-if="team.is_personal && team.is_owner"
                     class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
                   >
                     Default
@@ -150,6 +150,12 @@ onMounted(() => {
                     class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
                   >
                     Admin
+                  </span>
+                  <span
+                    v-else
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                  >
+                    Member
                   </span>
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">Status: {{ team.status }}</p>

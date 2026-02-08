@@ -10,7 +10,6 @@ export async function seedDemoData() {
     email: 'demo@example.com',
     name: 'Demo User',
     team_id: '1',
-    email_verified_at: new Date().toISOString(),
   }
 
   await storage.set('user:1', demoUser)

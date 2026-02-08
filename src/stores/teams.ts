@@ -58,8 +58,8 @@ export const useTeamsStore = defineStore('teams', () => {
     }
   }
 
-  async function acceptInvitation(invitationId: string, token: string): Promise<void> {
-    await api.post(`/invitations/${invitationId}/accept`, { token })
+  async function acceptInvitation(invitationId: string): Promise<void> {
+    await api.post(`/invitations/${invitationId}/accept`)
     pendingInvitations.value = pendingInvitations.value.filter((i) => i.id !== invitationId)
   }
 

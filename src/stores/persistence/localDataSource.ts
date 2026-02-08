@@ -1,6 +1,6 @@
 import { storage } from './storage'
 import type { DataSource, RegisterData, CreateProjectData, CreateTeamData } from './types'
-import type { User, Team, Project } from '@/types/models'
+import type { User, Team, Project, AppNotification } from '@/types/models'
 
 /**
  * Local data source implementation using browser storage
@@ -54,7 +54,6 @@ export class LocalDataSource implements DataSource {
         email,
         name: `${data.first_name} ${data.last_name}`,
         team_id: null,
-        email_verified_at: null,
       }
 
       // Save to storage
@@ -302,5 +301,21 @@ export class LocalDataSource implements DataSource {
       console.error('Failed to update team:', error)
       throw error
     }
+  }
+
+  // ===========================
+  // Notification Methods
+  // ===========================
+
+  async getNotifications(): Promise<{ notifications: AppNotification[]; unread_count: number }> {
+    return { notifications: [], unread_count: 0 }
+  }
+
+  async markNotificationAsRead(_id: string): Promise<void> {
+    return Promise.resolve()
+  }
+
+  async markAllNotificationsAsRead(): Promise<void> {
+    return Promise.resolve()
   }
 }

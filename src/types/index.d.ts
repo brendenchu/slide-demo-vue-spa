@@ -2,7 +2,6 @@ export interface User {
   id: string
   name: string
   email: string
-  email_verified_at: string
   first_name: string
   last_name: string
   phone?: string
