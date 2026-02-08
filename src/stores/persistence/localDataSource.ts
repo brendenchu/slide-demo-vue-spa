@@ -44,21 +44,15 @@ export class LocalDataSource implements DataSource {
 
   async register(data: RegisterData): Promise<{ user: User; token: string }> {
     try {
-      // Check if email already exists
-      const allUsers = await storage.getAllByPrefix<User>('user:')
-      const emailExists = Object.values(allUsers).some((u) => u.email === data.email)
-
-      if (emailExists) {
-        throw new Error('Email already registered')
-      }
-
-      // Generate new user ID
+      // Generate new user ID and email from names
       const userId = `user-${Date.now()}`
+      const suffix = Math.random().toString(36).substring(2, 6)
+      const email = `${data.first_name.toLowerCase()}.${data.last_name.toLowerCase()}.${suffix}@example.com`
 
       const user: User = {
         id: userId,
-        email: data.email,
-        name: data.name,
+        email,
+        name: `${data.first_name} ${data.last_name}`,
         team_id: null,
         email_verified_at: null,
       }

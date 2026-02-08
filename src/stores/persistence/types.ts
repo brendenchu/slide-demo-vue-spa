@@ -16,10 +16,8 @@ export interface StorageOptions {
 
 // Data transfer objects for create operations
 export interface RegisterData {
-  name: string
-  email: string
-  password: string
-  password_confirmation: string
+  first_name: string
+  last_name: string
 }
 
 export interface CreateProjectData {

@@ -4,10 +4,12 @@ import { useForm } from '@/composables/useForm'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useDemoStore } from '@/stores/demo'
+import { useNameOptions } from '@/composables/useNameOptions'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import InputField from '@/components/Form/FormField.vue'
+import FormSelect from '@/components/Form/FormSelect.vue'
 
 defineProps<{
   mustVerifyEmail?: boolean
@@ -18,12 +20,21 @@ const authStore = useAuthStore()
 const demoStore = useDemoStore()
 const isProtected = computed(() => demoStore.isDemoMode && demoStore.isDemoAccount)
 const user = authStore.user!
+const { firstNames, lastNames, loaded } = useNameOptions()
 
 const form = useForm({
   first_name: user.first_name ?? user.name?.split(' ')[0] ?? '',
   last_name: user.last_name ?? user.name?.split(' ').slice(1).join(' ') ?? '',
   email: user.email,
 })
+
+const firstNameOptions = computed(() =>
+  firstNames.value.map((n) => ({ value: n, label: n }))
+)
+
+const lastNameOptions = computed(() =>
+  lastNames.value.map((n) => ({ value: n, label: n }))
+)
 
 const saveProfile = () => {
   form.put('/auth/user', {
@@ -48,14 +59,15 @@ const saveProfile = () => {
       <div>
         <InputLabel for="first_name" value="First Name" />
 
-        <InputField
+        <FormSelect
           id="first_name"
           v-model="form.data.first_name"
-          type="text"
+          :options="firstNameOptions"
+          placeholder="Select a first name"
           class="mt-1 block w-full"
           required
           autofocus
-          autocomplete="name"
+          :disabled="!loaded"
         />
 
         <InputError class="mt-1" :message="form.errors.first_name" />
@@ -64,13 +76,14 @@ const saveProfile = () => {
       <div>
         <InputLabel for="last_name" value="Last Name" />
 
-        <InputField
+        <FormSelect
           id="last_name"
           v-model="form.data.last_name"
-          type="text"
+          :options="lastNameOptions"
+          placeholder="Select a last name"
           class="mt-1 block w-full"
           required
-          autocomplete="name"
+          :disabled="!loaded"
         />
 
         <InputError class="mt-1" :message="form.errors.last_name" />

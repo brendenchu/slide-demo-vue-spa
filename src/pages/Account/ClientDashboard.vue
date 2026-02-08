@@ -26,12 +26,6 @@ async function loadProjects() {
   loading.value = false
 }
 
-async function loadProjects() {
-  loading.value = true
-  await projectsStore.fetchAll()
-  loading.value = false
-}
-
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',

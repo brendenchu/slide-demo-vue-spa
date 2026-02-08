@@ -1,26 +1,34 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useFlashStore } from '@/stores/flash'
 import { useDemoStore } from '@/stores/demo'
+import { useNameOptions } from '@/composables/useNameOptions'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
-import InputField from '@/components/Form/FormField.vue'
+import FormSelect from '@/components/Form/FormSelect.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const flashStore = useFlashStore()
 const demoStore = useDemoStore()
+const { firstNames, lastNames, loaded } = useNameOptions()
 
 const form = ref({
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
+  first_name: '',
+  last_name: '',
 })
+
+const firstNameOptions = computed(() =>
+  firstNames.value.map((n) => ({ value: n, label: n }))
+)
+
+const lastNameOptions = computed(() =>
+  lastNames.value.map((n) => ({ value: n, label: n }))
+)
 
 const errors = ref<Record<string, string>>({})
 const processing = ref(false)
@@ -29,36 +37,14 @@ async function submit() {
   processing.value = true
   errors.value = {}
 
-  // Client-side validation
-  if (form.value.password !== form.value.password_confirmation) {
-    errors.value.password_confirmation = 'Passwords do not match'
-    processing.value = false
-    return
-  }
-
-  if (form.value.password.length < 8) {
-    errors.value.password = 'Password must be at least 8 characters'
-    processing.value = false
-    return
-  }
-
   try {
-    await authStore.register(
-      form.value.name,
-      form.value.email,
-      form.value.password,
-      form.value.password_confirmation
-    )
+    await authStore.register(form.value.first_name, form.value.last_name)
     flashStore.success('Registration successful! Welcome to Vue Slide Demo.')
 
     // Navigate to dashboard
     router.push({ name: 'dashboard' })
   } catch (error: any) {
-    if (error.message.includes('already registered')) {
-      errors.value.email = 'This email is already registered'
-    } else {
-      errors.value.email = 'Registration failed. Please try again.'
-    }
+    errors.value.general = 'Registration failed. Please try again.'
     flashStore.error('Registration failed. Please check your information.')
   } finally {
     processing.value = false
@@ -85,61 +71,35 @@ async function submit() {
 
     <form class="space-y-4" @submit.prevent="submit">
       <div>
-        <InputLabel for="name" value="Name" />
-        <InputField
-          id="name"
-          v-model="form.name"
-          type="text"
-          autocomplete="name"
+        <InputLabel for="first_name" value="First Name" />
+        <FormSelect
+          id="first_name"
+          v-model="form.first_name"
+          :options="firstNameOptions"
+          placeholder="Select a first name"
+          class="mt-1 block w-full"
+          required
           autofocus
-          class="mt-1 block w-full"
-          required
-          placeholder="Your full name"
+          :disabled="!loaded"
         />
-        <InputError :message="errors.name" class="mt-1" />
+        <InputError :message="errors.first_name" class="mt-1" />
       </div>
 
       <div>
-        <InputLabel for="email" value="Email" />
-        <InputField
-          id="email"
-          v-model="form.email"
-          type="email"
-          autocomplete="username"
+        <InputLabel for="last_name" value="Last Name" />
+        <FormSelect
+          id="last_name"
+          v-model="form.last_name"
+          :options="lastNameOptions"
+          placeholder="Select a last name"
           class="mt-1 block w-full"
           required
-          placeholder="you@example.com"
+          :disabled="!loaded"
         />
-        <InputError :message="errors.email" class="mt-1" />
+        <InputError :message="errors.last_name" class="mt-1" />
       </div>
 
-      <div>
-        <InputLabel for="password" value="Password" />
-        <InputField
-          id="password"
-          v-model="form.password"
-          type="password"
-          autocomplete="new-password"
-          class="mt-1 block w-full"
-          required
-          placeholder="At least 8 characters"
-        />
-        <InputError :message="errors.password" class="mt-1" />
-      </div>
-
-      <div>
-        <InputLabel for="password_confirmation" value="Confirm Password" />
-        <InputField
-          id="password_confirmation"
-          v-model="form.password_confirmation"
-          type="password"
-          autocomplete="new-password"
-          class="mt-1 block w-full"
-          required
-          placeholder="Re-enter your password"
-        />
-        <InputError :message="errors.password_confirmation" class="mt-1" />
-      </div>
+      <InputError :message="errors.general" class="mt-1" />
 
       <div class="pt-2">
         <PrimaryButton
