@@ -19,7 +19,7 @@ describe('LocalDataSource', () => {
 
   beforeEach(() => {
     dataSource = new LocalDataSource()
-    vi.clearAllMocks()
+    vi.resetAllMocks()
   })
 
   describe('Authentication Methods', () => {
