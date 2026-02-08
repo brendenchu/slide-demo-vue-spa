@@ -19,7 +19,10 @@ export interface Team {
   name: string
   description?: string
   status: string
+  is_personal?: boolean
   is_admin?: boolean
+  is_owner?: boolean
+  owner_id?: string | null
   current?: boolean
   created_at?: string
   updated_at?: string

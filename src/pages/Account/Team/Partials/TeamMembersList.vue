@@ -9,12 +9,22 @@ import type { TeamMember } from '@/types/models'
 const props = defineProps<{
   teamId: string
   isAdmin: boolean
+  isOwner: boolean
+  ownerUserId: string | null
   currentUserId: string
+}>()
+
+const emit = defineEmits<{
+  'ownership-transferred': []
 }>()
 
 const teamsStore = useTeamsStore()
 const flashStore = useFlashStore()
 const processing = ref<string | null>(null)
+
+function isMemberOwner(member: TeamMember): boolean {
+  return props.ownerUserId !== null && member.id === props.ownerUserId
+}
 
 async function removeMember(member: TeamMember) {
   if (!confirm(`Remove ${member.name} from the team?`)) return
@@ -37,6 +47,20 @@ async function toggleRole(member: TeamMember) {
     flashStore.success(`${member.name} is now a ${newRole}`)
   } catch {
     flashStore.error('Failed to update role')
+  } finally {
+    processing.value = null
+  }
+}
+
+async function transferOwnership(member: TeamMember) {
+  if (!confirm(`Transfer ownership to ${member.name}? You will remain as an admin.`)) return
+  processing.value = member.id
+  try {
+    await teamsStore.transferOwnership(props.teamId, member.id)
+    flashStore.success(`Ownership transferred to ${member.name}`)
+    emit('ownership-transferred')
+  } catch {
+    flashStore.error('Failed to transfer ownership')
   } finally {
     processing.value = null
   }
@@ -65,6 +89,13 @@ async function toggleRole(member: TeamMember) {
             <td class="px-4 py-3 text-sm text-gray-500">{{ member.email }}</td>
             <td class="px-4 py-3 text-sm">
               <span
+                v-if="isMemberOwner(member)"
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+              >
+                Owner
+              </span>
+              <span
+                v-else
                 :class="member.is_admin
                   ? 'bg-indigo-100 text-indigo-800'
                   : 'bg-gray-100 text-gray-800'"
@@ -74,7 +105,17 @@ async function toggleRole(member: TeamMember) {
               </span>
             </td>
             <td v-if="isAdmin" class="px-4 py-3 text-sm text-right space-x-2">
-              <template v-if="member.id !== currentUserId">
+              <template v-if="isMemberOwner(member)">
+                <span class="text-gray-400 text-xs">Owner</span>
+              </template>
+              <template v-else-if="member.id !== currentUserId">
+                <SecondaryButton
+                  v-if="isOwner"
+                  :disabled="processing === member.id"
+                  @click="transferOwnership(member)"
+                >
+                  Transfer Ownership
+                </SecondaryButton>
                 <SecondaryButton
                   :disabled="processing === member.id"
                   @click="toggleRole(member)"

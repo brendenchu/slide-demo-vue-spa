@@ -30,10 +30,10 @@ export const useProjectsStore = defineStore('projects', () => {
   })
 
   // Actions
-  async function fetchAll() {
+  async function fetchAll(params?: { team?: string }) {
     isLoading.value = true
     try {
-      projects.value = await dataSource.getProjects()
+      projects.value = await dataSource.getProjects(params)
     } catch (error) {
       console.error('Failed to fetch projects:', error)
       throw error

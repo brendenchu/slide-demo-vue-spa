@@ -7,6 +7,7 @@ import { getApiClient } from '@/lib/axios'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
+import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 import type { Team } from '@/types/models'
 
 const router = useRouter()
@@ -17,6 +18,7 @@ const api = getApiClient()
 const teams = ref<Team[]>([])
 const loading = ref(true)
 const selecting = ref(false)
+const deleting = ref<string | null>(null)
 
 const currentTeamId = computed(() => authStore.user?.team?.id ?? null)
 
@@ -48,6 +50,27 @@ async function selectTeam(team: Team) {
     flashStore.error('Failed to select team')
   } finally {
     selecting.value = false
+  }
+}
+
+function canDelete(team: Team): boolean {
+  return !team.is_personal && team.id !== currentTeamId.value
+}
+
+async function deleteTeam(team: Team) {
+  if (!confirm(`Are you sure you want to delete "${team.name}"? All projects in this team will also be deleted.`)) {
+    return
+  }
+  deleting.value = team.id
+  try {
+    await api.delete(`/teams/${team.id}`)
+    flashStore.success(`Team "${team.name}" deleted`)
+    teams.value = teams.value.filter((t) => t.id !== team.id)
+  } catch (error: unknown) {
+    const axiosError = error as { response?: { data?: { message?: string } } }
+    flashStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
+  } finally {
+    deleting.value = null
   }
 }
 
@@ -93,7 +116,19 @@ onMounted(() => {
                 <h2 class="text-lg font-medium text-gray-900">
                   {{ team.name }}
                   <span
-                    v-if="team.is_admin"
+                    v-if="team.is_personal"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                  >
+                    Default
+                  </span>
+                  <span
+                    v-if="team.is_owner"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+                  >
+                    Owner
+                  </span>
+                  <span
+                    v-else-if="team.is_admin"
                     class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
                   >
                     Admin
@@ -115,6 +150,13 @@ onMounted(() => {
                 <SecondaryButton @click="router.push({ name: 'team.show', params: { id: team.id } })">
                   View
                 </SecondaryButton>
+                <DangerButton
+                  v-if="canDelete(team)"
+                  :disabled="deleting === team.id"
+                  @click="deleteTeam(team)"
+                >
+                  Delete
+                </DangerButton>
               </div>
             </section>
           </div>

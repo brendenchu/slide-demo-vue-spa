@@ -131,10 +131,14 @@ export class LocalDataSource implements DataSource {
   // Project Methods
   // ===========================
 
-  async getProjects(): Promise<Project[]> {
+  async getProjects(params?: { team?: string }): Promise<Project[]> {
     try {
       const projectsData = await storage.getAllByPrefix<Project>('project:')
-      return Object.values(projectsData)
+      let projects = Object.values(projectsData)
+      if (params?.team) {
+        projects = projects.filter((p) => p.team_id === params.team)
+      }
+      return projects
     } catch (error) {
       console.error('Failed to get projects:', error)
       return []

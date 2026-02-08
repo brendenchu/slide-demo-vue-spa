@@ -65,6 +65,10 @@ export const useTeamsStore = defineStore('teams', () => {
     pendingInvitations.value = pendingInvitations.value.filter((i) => i.id !== invitationId)
   }
 
+  async function transferOwnership(teamId: string, userId: string): Promise<void> {
+    await api.post(`/teams/${teamId}/transfer-ownership`, { user_id: userId })
+  }
+
   async function cancelInvitation(teamId: string, invitationId: string): Promise<void> {
     await api.delete(`/teams/${teamId}/invitations/${invitationId}`)
     invitations.value = invitations.value.filter((i) => i.id !== invitationId)
@@ -83,6 +87,7 @@ export const useTeamsStore = defineStore('teams', () => {
     inviteMember,
     removeMember,
     updateMemberRole,
+    transferOwnership,
     acceptInvitation,
     declineInvitation,
     cancelInvitation,
