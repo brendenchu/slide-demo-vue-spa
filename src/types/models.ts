@@ -22,16 +22,18 @@ export interface Team {
   is_personal?: boolean
   is_admin?: boolean
   is_owner?: boolean
-  owner_id?: string | null
   current?: boolean
   created_at?: string
   updated_at?: string
 }
 
+export type TeamMemberRole = 'owner' | 'admin' | 'member'
+
 export interface TeamMember {
   id: string
   name: string
   email: string
+  role: TeamMemberRole
   is_admin: boolean
   joined_at: string | null
 }
@@ -66,6 +68,12 @@ export interface FormResponse {
   step: string
   data: Record<string, unknown>
   saved_at: string
+}
+
+export interface UserSearchResult {
+  id: string
+  name: string
+  email: string
 }
 
 export type Role = 'client' | 'consultant' | 'admin' | 'super-admin' | 'guest'

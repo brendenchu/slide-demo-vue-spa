@@ -10,8 +10,6 @@ const props = defineProps<{
   teamId: string
   isAdmin: boolean
   isOwner: boolean
-  ownerUserId: string | null
-  currentUserId: string
 }>()
 
 const emit = defineEmits<{
@@ -21,10 +19,6 @@ const emit = defineEmits<{
 const teamsStore = useTeamsStore()
 const flashStore = useFlashStore()
 const processing = ref<string | null>(null)
-
-function isMemberOwner(member: TeamMember): boolean {
-  return props.ownerUserId !== null && member.id === props.ownerUserId
-}
 
 async function removeMember(member: TeamMember) {
   if (!window.confirm(`Remove ${member.name} from the team?`)) return
@@ -65,6 +59,12 @@ async function transferOwnership(member: TeamMember) {
     processing.value = null
   }
 }
+
+const roleStyles: Record<string, string> = {
+  owner: 'bg-amber-100 text-amber-800',
+  admin: 'bg-indigo-100 text-indigo-800',
+  member: 'bg-gray-100 text-gray-800',
+}
 </script>
 
 <template>
@@ -94,26 +94,17 @@ async function transferOwnership(member: TeamMember) {
             <td class="px-4 py-3 text-sm text-gray-500">{{ member.email }}</td>
             <td class="px-4 py-3 text-sm">
               <span
-                v-if="isMemberOwner(member)"
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+                :class="roleStyles[member.role] ?? 'bg-gray-100 text-gray-800'"
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
               >
-                Owner
-              </span>
-              <span
-                v-else
-                :class="
-                  member.is_admin ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800'
-                "
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-              >
-                {{ member.is_admin ? 'Admin' : 'Member' }}
+                {{ member.role }}
               </span>
             </td>
             <td v-if="isAdmin" class="px-4 py-3 text-sm text-right space-x-2">
-              <template v-if="isMemberOwner(member)">
+              <template v-if="member.role === 'owner'">
                 <span class="text-gray-400 text-xs">Owner</span>
               </template>
-              <template v-else-if="member.id !== currentUserId">
+              <template v-else>
                 <SecondaryButton
                   v-if="isOwner"
                   :disabled="processing === member.id"
@@ -128,7 +119,6 @@ async function transferOwnership(member: TeamMember) {
                   Remove
                 </DangerButton>
               </template>
-              <span v-else class="text-gray-400 text-xs">You</span>
             </td>
           </tr>
         </tbody>

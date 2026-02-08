@@ -28,8 +28,6 @@ const loading = ref(true)
 const teamId = computed(() => route.params.id as string)
 const isAdmin = computed(() => team.value?.is_admin ?? false)
 const isOwner = computed(() => team.value?.is_owner ?? false)
-const ownerUserId = computed(() => team.value?.owner_id ?? null)
-const currentUserId = computed(() => authStore.user?.id ?? '')
 const isCurrentTeam = computed(() => authStore.user?.team?.id === teamId.value)
 const deleting = ref(false)
 
@@ -39,14 +37,7 @@ async function loadTeam() {
     const response = await api.get<{ data: Team }>(`/teams/${teamId.value}`)
     team.value = response.data.data
 
-    // Check admin via members list
     await teamsStore.fetchMembers(teamId.value)
-
-    // Determine if current user is admin from members data
-    const currentMember = teamsStore.members.find((m) => m.id === currentUserId.value)
-    if (currentMember && team.value) {
-      team.value.is_admin = currentMember.is_admin
-    }
 
     if (isAdmin.value) {
       await teamsStore.fetchInvitations(teamId.value)
@@ -150,8 +141,6 @@ onMounted(() => {
             :team-id="teamId"
             :is-admin="isAdmin"
             :is-owner="isOwner"
-            :owner-user-id="ownerUserId"
-            :current-user-id="currentUserId"
             @ownership-transferred="loadTeam"
           />
         </div>

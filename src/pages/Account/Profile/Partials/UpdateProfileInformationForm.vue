@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useForm } from '@/composables/useForm'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useDemoStore } from '@/stores/demo'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
@@ -13,6 +15,8 @@ defineProps<{
 }>()
 
 const authStore = useAuthStore()
+const demoStore = useDemoStore()
+const isProtected = computed(() => demoStore.isDemoMode && demoStore.isDemoAccount)
 const user = authStore.user!
 
 const form = useForm({
@@ -82,6 +86,7 @@ const saveProfile = () => {
           class="mt-1 block w-full"
           required
           autocomplete="username"
+          :disabled="isProtected"
         />
 
         <InputError class="mt-1" :message="form.errors.email" />

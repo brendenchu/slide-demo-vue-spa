@@ -6,7 +6,7 @@ import { useFlashStore } from '@/stores/flash'
 import { useDemoLimits } from '@/composables/useDemoLimits'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
-import InputField from '@/components/Form/FormField.vue'
+import UserSearchInput from '@/components/Form/UserSearchInput.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import LimitBadge from '@/components/Demo/LimitBadge.vue'
 
@@ -76,14 +76,11 @@ const sendInvite = async () => {
     <form class="mt-4 space-y-4" @submit.prevent="sendInvite">
       <div class="flex gap-4 items-end">
         <div class="flex-1">
-          <InputLabel for="invite_email" value="Email Address" />
-          <InputField
-            id="invite_email"
+          <InputLabel for="invite_email" value="Find User" />
+          <UserSearchInput
             v-model="form.data.email"
-            type="email"
-            class="mt-1 block w-full"
-            placeholder="colleague@example.com"
-            required
+            :team-id="teamId"
+            :disabled="invitationLimitReached || form.processing"
           />
           <InputError class="mt-1" :message="form.errors.email" />
         </div>
