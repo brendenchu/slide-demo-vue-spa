@@ -51,10 +51,15 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(name: string, email: string, password: string) {
+  async function register(
+    name: string,
+    email: string,
+    password: string,
+    password_confirmation: string
+  ) {
     try {
       // Use data source for registration
-      const result = await dataSource.register({ name, email, password })
+      const result = await dataSource.register({ name, email, password, password_confirmation })
 
       // Store in state
       user.value = result.user

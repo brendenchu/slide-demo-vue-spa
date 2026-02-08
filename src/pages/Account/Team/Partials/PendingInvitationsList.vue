@@ -44,8 +44,10 @@ async function cancelInvitation(invitationId: string) {
         <div>
           <p class="text-sm font-medium text-gray-900">{{ invitation.email }}</p>
           <p class="text-xs text-gray-500">
-            Role: {{ invitation.role }} &middot;
-            Expires: {{ invitation.expires_at ? new Date(invitation.expires_at).toLocaleDateString() : 'Never' }}
+            Role: {{ invitation.role }} &middot; Expires:
+            {{
+              invitation.expires_at ? new Date(invitation.expires_at).toLocaleDateString() : 'Never'
+            }}
           </p>
         </div>
         <DangerButton

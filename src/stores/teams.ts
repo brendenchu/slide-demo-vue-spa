@@ -38,7 +38,10 @@ export const useTeamsStore = defineStore('teams', () => {
   }
 
   async function inviteMember(teamId: string, email: string, role: string): Promise<void> {
-    const response = await api.post<{ data: TeamInvitation }>(`/teams/${teamId}/invitations`, { email, role })
+    const response = await api.post<{ data: TeamInvitation }>(`/teams/${teamId}/invitations`, {
+      email,
+      role,
+    })
     invitations.value.unshift(response.data.data)
   }
 

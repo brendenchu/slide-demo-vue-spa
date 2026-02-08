@@ -58,7 +58,7 @@ async function loadTeam() {
 }
 
 async function deleteTeam() {
-  if (!confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
+  if (!window.confirm('Are you sure you want to delete this team? This action cannot be undone.')) {
     return
   }
   deleting.value = true
@@ -90,13 +90,21 @@ onMounted(() => {
             <div class="flex items-center justify-between">
               <div>
                 <h2 class="text-xl font-bold text-gray-900">{{ team.name }}</h2>
-                <p v-if="team.description" class="mt-1 text-sm text-gray-500">{{ team.description }}</p>
+                <p v-if="team.description" class="mt-1 text-sm text-gray-500">
+                  {{ team.description }}
+                </p>
                 <p class="mt-1 text-xs text-gray-400">
                   Status: {{ team.status }}
-                  <span v-if="isOwner" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                  <span
+                    v-if="isOwner"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+                  >
                     Owner
                   </span>
-                  <span v-else-if="isAdmin" class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                  <span
+                    v-else-if="isAdmin"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                  >
                     Admin
                   </span>
                 </p>
@@ -118,14 +126,19 @@ onMounted(() => {
         </div>
 
         <!-- Undeletable Team Warning -->
-        <div v-if="!loading && isAdmin && team?.is_personal" class="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-          <p class="text-sm text-amber-800">
-            This is your default team and cannot be deleted.
-          </p>
+        <div
+          v-if="!loading && isAdmin && team?.is_personal"
+          class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
+        >
+          <p class="text-sm text-amber-800">This is your default team and cannot be deleted.</p>
         </div>
-        <div v-else-if="!loading && isAdmin && isCurrentTeam" class="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+        <div
+          v-else-if="!loading && isAdmin && isCurrentTeam"
+          class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
+        >
           <p class="text-sm text-amber-800">
-            This is your current active team. You must switch to another team before you can delete it.
+            This is your current active team. You must switch to another team before you can delete
+            it.
           </p>
         </div>
 

@@ -26,7 +26,9 @@ const sendInvite = async () => {
     flashStore.success(`Invitation sent to ${form.data.email}`)
     form.reset()
   } catch (error: unknown) {
-    const axiosError = error as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }
+    const axiosError = error as {
+      response?: { data?: { message?: string; errors?: Record<string, string[]> } }
+    }
     if (axiosError.response?.data?.errors) {
       const errors = axiosError.response.data.errors
       for (const [key, messages] of Object.entries(errors)) {
@@ -45,9 +47,7 @@ const sendInvite = async () => {
   <section>
     <header>
       <h2 class="text-lg font-medium text-gray-900">Invite a Member</h2>
-      <p class="mt-1 text-sm text-gray-600">
-        Send an invitation to join this team.
-      </p>
+      <p class="mt-1 text-sm text-gray-600">Send an invitation to join this team.</p>
     </header>
 
     <form class="mt-4 space-y-4" @submit.prevent="sendInvite">

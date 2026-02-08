@@ -65,9 +65,7 @@ onMounted(() => {
           <section>
             <header>
               <h2 class="text-lg font-medium text-gray-900">Your Invitations</h2>
-              <p class="mt-1 text-sm text-gray-600">
-                Pending team invitations sent to you.
-              </p>
+              <p class="mt-1 text-sm text-gray-600">Pending team invitations sent to you.</p>
             </header>
 
             <div v-if="loading" class="mt-6 text-gray-600">Loading invitations...</div>
@@ -87,8 +85,8 @@ onMounted(() => {
                     {{ invitation.team?.name ?? 'Unknown Team' }}
                   </p>
                   <p class="text-xs text-gray-500">
-                    Invited by {{ invitation.invited_by?.name ?? 'Unknown' }} &middot;
-                    Role: {{ invitation.role }}
+                    Invited by {{ invitation.invited_by?.name ?? 'Unknown' }} &middot; Role:
+                    {{ invitation.role }}
                   </p>
                   <p v-if="invitation.expires_at" class="text-xs text-gray-400">
                     Expires: {{ new Date(invitation.expires_at).toLocaleDateString() }}

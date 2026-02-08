@@ -15,7 +15,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'ownership-transferred': []
+  (e: 'ownershipTransferred'): void
 }>()
 
 const teamsStore = useTeamsStore()
@@ -27,7 +27,7 @@ function isMemberOwner(member: TeamMember): boolean {
 }
 
 async function removeMember(member: TeamMember) {
-  if (!confirm(`Remove ${member.name} from the team?`)) return
+  if (!window.confirm(`Remove ${member.name} from the team?`)) return
   processing.value = member.id
   try {
     await teamsStore.removeMember(props.teamId, member.id)
@@ -53,12 +53,12 @@ async function toggleRole(member: TeamMember) {
 }
 
 async function transferOwnership(member: TeamMember) {
-  if (!confirm(`Transfer ownership to ${member.name}? You will remain as an admin.`)) return
+  if (!window.confirm(`Transfer ownership to ${member.name}? You will remain as an admin.`)) return
   processing.value = member.id
   try {
     await teamsStore.transferOwnership(props.teamId, member.id)
     flashStore.success(`Ownership transferred to ${member.name}`)
-    emit('ownership-transferred')
+    emit('ownershipTransferred')
   } catch {
     flashStore.error('Failed to transfer ownership')
   } finally {
@@ -80,7 +80,12 @@ async function transferOwnership(member: TeamMember) {
             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
             <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-            <th v-if="isAdmin" class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            <th
+              v-if="isAdmin"
+              class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase"
+            >
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
@@ -96,9 +101,9 @@ async function transferOwnership(member: TeamMember) {
               </span>
               <span
                 v-else
-                :class="member.is_admin
-                  ? 'bg-indigo-100 text-indigo-800'
-                  : 'bg-gray-100 text-gray-800'"
+                :class="
+                  member.is_admin ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800'
+                "
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
               >
                 {{ member.is_admin ? 'Admin' : 'Member' }}
@@ -116,16 +121,10 @@ async function transferOwnership(member: TeamMember) {
                 >
                   Transfer Ownership
                 </SecondaryButton>
-                <SecondaryButton
-                  :disabled="processing === member.id"
-                  @click="toggleRole(member)"
-                >
+                <SecondaryButton :disabled="processing === member.id" @click="toggleRole(member)">
                   {{ member.is_admin ? 'Demote' : 'Promote' }}
                 </SecondaryButton>
-                <DangerButton
-                  :disabled="processing === member.id"
-                  @click="removeMember(member)"
-                >
+                <DangerButton :disabled="processing === member.id" @click="removeMember(member)">
                   Remove
                 </DangerButton>
               </template>

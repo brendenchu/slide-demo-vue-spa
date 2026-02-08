@@ -44,13 +44,20 @@ async function logout() {
                 <NavLink href="/profile" :active="currentRoute.name === 'profile.edit'">
                   Profile
                 </NavLink>
-                <NavLink href="/team/select" :active="currentRoute.name?.toString().startsWith('team')">
+                <NavLink
+                  href="/team/select"
+                  :active="currentRoute.name?.toString().startsWith('team')"
+                >
                   Teams
                 </NavLink>
                 <NavLink href="/invitations" :active="currentRoute.name === 'invitations'">
                   Invitations
                 </NavLink>
-                <NavLink v-if="isAdmin" href="/admin" :active="currentRoute.name?.toString().startsWith('admin')">
+                <NavLink
+                  v-if="isAdmin"
+                  href="/admin"
+                  :active="currentRoute.name?.toString().startsWith('admin')"
+                >
                   Admin
                 </NavLink>
               </div>
@@ -154,19 +161,35 @@ async function logout() {
           class="sm:hidden"
         >
           <div class="pt-2 pb-3 space-y-1">
-            <ResponsiveNavLink :to="{ name: 'dashboard' }" :active="currentRoute.name === 'dashboard'">
+            <ResponsiveNavLink
+              :to="{ name: 'dashboard' }"
+              :active="currentRoute.name === 'dashboard'"
+            >
               Dashboard
             </ResponsiveNavLink>
-            <ResponsiveNavLink :to="{ name: 'profile.edit' }" :active="currentRoute.name === 'profile.edit'">
+            <ResponsiveNavLink
+              :to="{ name: 'profile.edit' }"
+              :active="currentRoute.name === 'profile.edit'"
+            >
               Profile
             </ResponsiveNavLink>
-            <ResponsiveNavLink :to="{ name: 'team.select' }" :active="currentRoute.name?.toString().startsWith('team')">
+            <ResponsiveNavLink
+              :to="{ name: 'team.select' }"
+              :active="currentRoute.name?.toString().startsWith('team')"
+            >
               Teams
             </ResponsiveNavLink>
-            <ResponsiveNavLink :to="{ name: 'invitations' }" :active="currentRoute.name === 'invitations'">
+            <ResponsiveNavLink
+              :to="{ name: 'invitations' }"
+              :active="currentRoute.name === 'invitations'"
+            >
               Invitations
             </ResponsiveNavLink>
-            <ResponsiveNavLink v-if="isAdmin" :to="{ name: 'admin.dashboard' }" :active="currentRoute.name?.toString().startsWith('admin')">
+            <ResponsiveNavLink
+              v-if="isAdmin"
+              :to="{ name: 'admin.dashboard' }"
+              :active="currentRoute.name?.toString().startsWith('admin')"
+            >
               Admin
             </ResponsiveNavLink>
           </div>

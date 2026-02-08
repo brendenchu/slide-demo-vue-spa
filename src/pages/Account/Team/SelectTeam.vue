@@ -58,7 +58,11 @@ function canDelete(team: Team): boolean {
 }
 
 async function deleteTeam(team: Team) {
-  if (!confirm(`Are you sure you want to delete "${team.name}"? All projects in this team will also be deleted.`)) {
+  if (
+    !window.confirm(
+      `Are you sure you want to delete "${team.name}"? All projects in this team will also be deleted.`
+    )
+  ) {
     return
   }
   deleting.value = team.id
@@ -98,10 +102,7 @@ onMounted(() => {
           <p class="text-gray-600">Loading teams...</p>
         </div>
 
-        <div
-          v-else-if="teams.length === 0"
-          class="p-4 sm:p-8 bg-white shadow sm:rounded-lg"
-        >
+        <div v-else-if="teams.length === 0" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
           <p class="text-gray-600">No teams available.</p>
         </div>
 
@@ -147,7 +148,9 @@ onMounted(() => {
                 >
                   {{ team.id === currentTeamId ? 'Selected' : 'Select' }}
                 </PrimaryButton>
-                <SecondaryButton @click="router.push({ name: 'team.show', params: { id: team.id } })">
+                <SecondaryButton
+                  @click="router.push({ name: 'team.show', params: { id: team.id } })"
+                >
                   View
                 </SecondaryButton>
                 <DangerButton

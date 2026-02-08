@@ -67,7 +67,9 @@ const createTeam = () => {
 
               <div class="flex items-center gap-3">
                 <PrimaryButton :disabled="form.processing">Create Team</PrimaryButton>
-                <SecondaryButton @click="router.push({ name: 'team.select' })">Cancel</SecondaryButton>
+                <SecondaryButton @click="router.push({ name: 'team.select' })"
+                  >Cancel</SecondaryButton
+                >
 
                 <Transition
                   enter-active-class="transition ease-in-out"
