@@ -10,7 +10,8 @@ Vue 3 + TypeScript SPA with flexible data source abstraction supporting local br
 - Role-based access control
 - TypeScript with strict mode
 - Pinia state management
-- 128 tests, 96.49% coverage
+- Team ownership and transfer
+- 128 tests
 
 ## Tech Stack
 
@@ -84,6 +85,8 @@ src/
 ├── stores/              # Pinia stores
 │   ├── auth.ts          # Authentication
 │   ├── projects.ts      # Projects
+│   ├── teams.ts         # Teams & ownership
+│   ├── flash.ts         # Flash messages
 │   └── persistence/     # Data source layer
 │       ├── types.ts
 │       ├── dataSourceFactory.ts
@@ -136,7 +139,6 @@ npm run test
 
 - Unit: 86 tests (localDataSource: 41, apiDataSource: 45)
 - Integration: 42 tests (auth: 20, projects: 22)
-- Coverage: 96.49%
 
 ## Data Migration
 
