@@ -2,6 +2,7 @@ import { storage } from './storage'
 import type { User, Team, Project } from '@/types/models'
 
 export async function seedDemoData() {
+  // eslint-disable-next-line no-console
   console.log('Seeding demo data...')
 
   // Seed demo user (matching backend seeder credentials)
@@ -64,11 +65,13 @@ export async function seedDemoData() {
 
   await storage.set('project:demo-project-2', completedProject)
 
-  console.log('✅ Demo data seeded successfully!')
+  // eslint-disable-next-line no-console
+  console.log('Demo data seeded successfully!')
 }
 
 export async function clearAllData() {
   await storage.clear()
+  // eslint-disable-next-line no-console
   console.log('All data cleared')
 }
 

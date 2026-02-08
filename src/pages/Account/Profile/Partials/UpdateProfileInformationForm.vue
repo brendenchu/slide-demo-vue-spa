@@ -26,13 +26,9 @@ const form = useForm({
   email: user.email,
 })
 
-const firstNameOptions = computed(() =>
-  firstNames.value.map((n) => ({ value: n, label: n }))
-)
+const firstNameOptions = computed(() => firstNames.value.map((n) => ({ value: n, label: n })))
 
-const lastNameOptions = computed(() =>
-  lastNames.value.map((n) => ({ value: n, label: n }))
-)
+const lastNameOptions = computed(() => lastNames.value.map((n) => ({ value: n, label: n })))
 
 const saveProfile = () => {
   form.put('/auth/user', {

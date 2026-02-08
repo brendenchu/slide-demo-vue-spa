@@ -70,6 +70,7 @@ function createAxiosInstance(): AxiosInstance {
       }
 
       if (isDebug) {
+        // eslint-disable-next-line no-console
         console.log('[API Request]', config.method?.toUpperCase(), config.url, config.data)
       }
 
@@ -89,6 +90,7 @@ function createAxiosInstance(): AxiosInstance {
   instance.interceptors.response.use(
     (response) => {
       if (isDebug) {
+        // eslint-disable-next-line no-console
         console.log('[API Response]', response.config.url, response.data)
       }
       return response

@@ -22,13 +22,9 @@ const form = ref({
   last_name: '',
 })
 
-const firstNameOptions = computed(() =>
-  firstNames.value.map((n) => ({ value: n, label: n }))
-)
+const firstNameOptions = computed(() => firstNames.value.map((n) => ({ value: n, label: n })))
 
-const lastNameOptions = computed(() =>
-  lastNames.value.map((n) => ({ value: n, label: n }))
-)
+const lastNameOptions = computed(() => lastNames.value.map((n) => ({ value: n, label: n })))
 
 const errors = ref<Record<string, string>>({})
 const processing = ref(false)
@@ -43,7 +39,7 @@ async function submit() {
 
     // Navigate to dashboard
     router.push({ name: 'dashboard' })
-  } catch (error: any) {
+  } catch (_error) {
     errors.value.general = 'Registration failed. Please try again.'
     flashStore.error('Registration failed. Please check your information.')
   } finally {

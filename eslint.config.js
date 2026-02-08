@@ -43,6 +43,10 @@ export default ts.config(
         HTMLInputElement: 'readonly',
         HTMLTextAreaElement: 'readonly',
         HTMLButtonElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        Node: 'readonly',
+        URL: 'readonly',
+        Blob: 'readonly',
         KeyboardEvent: 'readonly',
         MouseEvent: 'readonly',
         Event: 'readonly',
@@ -88,7 +92,7 @@ export default ts.config(
       'vue/define-macros-order': [
         'error',
         {
-          order: ['defineProps', 'defineEmits'],
+          order: ['defineOptions', 'defineProps', 'defineEmits'],
         },
       ],
       'vue/html-self-closing': [

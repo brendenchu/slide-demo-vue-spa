@@ -73,7 +73,9 @@ describe('Projects Store Integration', () => {
       login: vi.fn(),
     }
 
-    vi.mocked(DataSourceFactory.create).mockReturnValue(mockDataSource as any)
+    vi.mocked(DataSourceFactory.create).mockReturnValue(
+      mockDataSource as unknown as ReturnType<typeof DataSourceFactory.create>
+    )
   })
 
   describe('fetchAll', () => {

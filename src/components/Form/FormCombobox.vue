@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 
-defineOptions({ inheritAttrs: false })
-
 interface ComboboxOption {
   value: string
   label: string
   description?: string
 }
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(
   defineProps<{
@@ -28,8 +28,8 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
-  'search': [query: string]
-  'select': [option: ComboboxOption]
+  search: [query: string]
+  select: [option: ComboboxOption]
 }>()
 
 const input = ref<HTMLInputElement | null>(null)
@@ -138,10 +138,7 @@ function onKeydown(event: KeyboardEvent): void {
   switch (event.key) {
     case 'ArrowDown':
       event.preventDefault()
-      highlightedIndex.value = Math.min(
-        highlightedIndex.value + 1,
-        displayOptions.value.length - 1
-      )
+      highlightedIndex.value = Math.min(highlightedIndex.value + 1, displayOptions.value.length - 1)
       scrollToHighlighted()
       break
     case 'ArrowUp':

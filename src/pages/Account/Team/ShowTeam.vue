@@ -107,7 +107,7 @@ onMounted(() => {
                   Back to Teams
                 </SecondaryButton>
                 <DangerButton
-                  v-if="isAdmin && !isCurrentTeam && !team?.is_personal"
+                  v-if="isOwner && !isCurrentTeam && !team?.is_personal"
                   :disabled="deleting"
                   @click="deleteTeam"
                 >
@@ -120,13 +120,13 @@ onMounted(() => {
 
         <!-- Undeletable Team Warning -->
         <div
-          v-if="!loading && isAdmin && team?.is_personal"
+          v-if="!loading && isOwner && team?.is_personal"
           class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
         >
           <p class="text-sm text-amber-800">This is your default team and cannot be deleted.</p>
         </div>
         <div
-          v-else-if="!loading && isAdmin && isCurrentTeam"
+          v-else-if="!loading && isOwner && isCurrentTeam"
           class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
         >
           <p class="text-sm text-amber-800">
@@ -149,6 +149,7 @@ onMounted(() => {
         <div v-if="!loading && isAdmin" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
           <InviteMemberForm
             :team-id="teamId"
+            :is-owner="isOwner"
             :demo-mode="demoStore.isDemoMode"
             :invitation-limit="demoStore.maxInvitationsPerTeam"
           />

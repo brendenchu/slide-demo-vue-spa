@@ -147,11 +147,11 @@ export function useStoryForm<T extends Record<string, unknown>>(
     value: (...fields: (keyof T)[]) => {
       if (fields.length === 0) {
         Object.keys(initialData).forEach((key) => {
-          ;(form as any)[key] = initialData[key as keyof T]
+          ;(form as Record<string, unknown>)[key] = initialData[key as keyof T]
         })
       } else {
         fields.forEach((field) => {
-          ;(form as any)[field] = initialData[field]
+          ;(form as Record<string, unknown>)[field as string] = initialData[field]
         })
       }
     },

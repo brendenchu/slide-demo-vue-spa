@@ -15,9 +15,7 @@ const { isProjectLimitReached } = useDemoLimits()
 const router = useRouter()
 const loading = ref(false)
 
-const projectLimitReached = computed(() =>
-  isProjectLimitReached(projectsStore.userProjects.length)
-)
+const projectLimitReached = computed(() => isProjectLimitReached(projectsStore.userProjects.length))
 
 onMounted(async () => {
   if (demoStore.isDemoMode) {

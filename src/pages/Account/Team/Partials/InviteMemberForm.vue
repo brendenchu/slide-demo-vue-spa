@@ -13,10 +13,12 @@ import LimitBadge from '@/components/Demo/LimitBadge.vue'
 const props = withDefaults(
   defineProps<{
     teamId: string
+    isOwner?: boolean
     demoMode?: boolean
     invitationLimit?: number
   }>(),
   {
+    isOwner: false,
     demoMode: false,
     invitationLimit: 0,
   }
@@ -133,7 +135,7 @@ const sendInvite = async () => {
             class="select select-bordered select-lg w-full"
           >
             <option value="member">Member</option>
-            <option value="admin">Admin</option>
+            <option v-if="isOwner" value="admin">Admin</option>
           </select>
           <InputError class="mt-1" :message="form.errors.role" />
         </div>

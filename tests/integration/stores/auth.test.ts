@@ -49,7 +49,9 @@ describe('Auth Store Integration', () => {
       getUser: vi.fn(),
     }
 
-    vi.mocked(DataSourceFactory.create).mockReturnValue(mockDataSource as any)
+    vi.mocked(DataSourceFactory.create).mockReturnValue(
+      mockDataSource as unknown as ReturnType<typeof DataSourceFactory.create>
+    )
   })
 
   describe('loadUser', () => {
@@ -58,10 +60,7 @@ describe('Auth Store Integration', () => {
         id: '1',
         email: 'test@example.com',
         name: 'Test User',
-        roles: ['client'],
-        permissions: ['view-project'],
         team_id: null,
-        email_verified_at: new Date().toISOString(),
       }
       const mockToken = 'stored-token-123'
 
@@ -105,10 +104,7 @@ describe('Auth Store Integration', () => {
         id: '1',
         email: 'test@example.com',
         name: 'Test User',
-        roles: ['client'],
-        permissions: ['view-project', 'create-project'],
         team_id: null,
-        email_verified_at: new Date().toISOString(),
       }
       const mockToken = 'login-token-123'
 
@@ -149,12 +145,9 @@ describe('Auth Store Integration', () => {
     it('registers successfully and persists to storage', async () => {
       const mockUser: User = {
         id: '1',
-        email: 'new@example.com',
-        name: 'New User',
-        roles: ['client'],
-        permissions: ['view-project', 'create-project'],
+        email: 'jane.doe.abc1@example.com',
+        name: 'Jane Doe',
         team_id: null,
-        email_verified_at: null,
       }
       const mockToken = 'register-token-123'
 
@@ -164,7 +157,7 @@ describe('Auth Store Integration', () => {
       })
 
       const authStore = useAuthStore()
-      const result = await authStore.register('New User', 'new@example.com', 'password', 'password')
+      const result = await authStore.register('Jane', 'Doe')
 
       expect(result).toEqual(mockUser)
       expect(authStore.user).toEqual(mockUser)
@@ -172,23 +165,19 @@ describe('Auth Store Integration', () => {
       expect(authStore.isAuthenticated).toBe(true)
 
       expect(mockDataSource.register).toHaveBeenCalledWith({
-        name: 'New User',
-        email: 'new@example.com',
-        password: 'password',
-        password_confirmation: 'password',
+        first_name: 'Jane',
+        last_name: 'Doe',
       })
       expect(storage.set).toHaveBeenCalledWith('auth:token', mockToken)
       expect(storage.set).toHaveBeenCalledWith('auth:user', mockUser)
     })
 
     it('throws error on registration failure', async () => {
-      mockDataSource.register.mockRejectedValueOnce(new Error('Email already exists'))
+      mockDataSource.register.mockRejectedValueOnce(new Error('Registration failed'))
 
       const authStore = useAuthStore()
 
-      await expect(
-        authStore.register('User', 'existing@example.com', 'password', 'password')
-      ).rejects.toThrow('Email already exists')
+      await expect(authStore.register('Jane', 'Doe')).rejects.toThrow('Registration failed')
 
       expect(authStore.user).toBeNull()
       expect(authStore.token).toBeNull()
@@ -202,10 +191,7 @@ describe('Auth Store Integration', () => {
         id: '1',
         email: 'test@example.com',
         name: 'Test User',
-        roles: ['client'],
-        permissions: ['view-project'],
         team_id: null,
-        email_verified_at: new Date().toISOString(),
       }
 
       mockDataSource.login.mockResolvedValueOnce({
@@ -244,10 +230,7 @@ describe('Auth Store Integration', () => {
         id: '1',
         email: 'old@example.com',
         name: 'Old Name',
-        roles: ['client'],
-        permissions: ['view-project'],
         team_id: null,
-        email_verified_at: new Date().toISOString(),
       }
 
       const updatedUser: User = {
@@ -293,10 +276,7 @@ describe('Auth Store Integration', () => {
         id: '1',
         email: 'test@example.com',
         name: 'Test User',
-        roles: ['client'],
-        permissions: ['view-project'],
         team_id: null,
-        email_verified_at: new Date().toISOString(),
       }
 
       mockDataSource.login.mockResolvedValueOnce({
@@ -315,128 +295,13 @@ describe('Auth Store Integration', () => {
     })
   })
 
-  describe('can (permission check)', () => {
-    it('returns true when user has permission', async () => {
-      const mockUser: User = {
-        id: '1',
-        email: 'test@example.com',
-        name: 'Test User',
-        roles: ['client'],
-        permissions: ['view-project', 'create-project', 'update-project'],
-        team_id: null,
-        email_verified_at: new Date().toISOString(),
-      }
-
-      mockDataSource.login.mockResolvedValueOnce({
-        user: mockUser,
-        token: 'test-token',
-      })
-
-      const authStore = useAuthStore()
-      await authStore.login('test@example.com', 'password')
-
-      expect(authStore.can('view-project')).toBe(true)
-      expect(authStore.can('create-project')).toBe(true)
-      expect(authStore.can('update-project')).toBe(true)
-    })
-
-    it('returns false when user does not have permission', async () => {
-      const mockUser: User = {
-        id: '1',
-        email: 'test@example.com',
-        name: 'Test User',
-        roles: ['guest'],
-        permissions: ['view-project'],
-        team_id: null,
-        email_verified_at: new Date().toISOString(),
-      }
-
-      mockDataSource.login.mockResolvedValueOnce({
-        user: mockUser,
-        token: 'test-token',
-      })
-
-      const authStore = useAuthStore()
-      await authStore.login('test@example.com', 'password')
-
-      expect(authStore.can('view-project')).toBe(true)
-      expect(authStore.can('delete-project')).toBe(false)
-      expect(authStore.can('create-user')).toBe(false)
-    })
-
-    it('returns false when user is not authenticated', () => {
-      const authStore = useAuthStore()
-
-      expect(authStore.can('view-project')).toBe(false)
-      expect(authStore.can('create-project')).toBe(false)
-    })
-  })
-
-  describe('hasRole (role check)', () => {
-    it('returns true when user has single role', async () => {
-      const mockUser: User = {
-        id: '1',
-        email: 'admin@example.com',
-        name: 'Admin User',
-        roles: ['admin'],
-        permissions: ['view-user', 'create-user'],
-        team_id: null,
-        email_verified_at: new Date().toISOString(),
-      }
-
-      mockDataSource.login.mockResolvedValueOnce({
-        user: mockUser,
-        token: 'test-token',
-      })
-
-      const authStore = useAuthStore()
-      await authStore.login('admin@example.com', 'password')
-
-      expect(authStore.hasRole('admin')).toBe(true)
-      expect(authStore.hasRole('client')).toBe(false)
-    })
-
-    it('returns true when user has one of multiple roles', async () => {
-      const mockUser: User = {
-        id: '1',
-        email: 'consultant@example.com',
-        name: 'Consultant User',
-        roles: ['consultant'],
-        permissions: ['view-project', 'create-project'],
-        team_id: null,
-        email_verified_at: new Date().toISOString(),
-      }
-
-      mockDataSource.login.mockResolvedValueOnce({
-        user: mockUser,
-        token: 'test-token',
-      })
-
-      const authStore = useAuthStore()
-      await authStore.login('consultant@example.com', 'password')
-
-      expect(authStore.hasRole(['admin', 'consultant'])).toBe(true)
-      expect(authStore.hasRole(['admin', 'super-admin'])).toBe(false)
-    })
-
-    it('returns false when user is not authenticated', () => {
-      const authStore = useAuthStore()
-
-      expect(authStore.hasRole('admin')).toBe(false)
-      expect(authStore.hasRole(['admin', 'client'])).toBe(false)
-    })
-  })
-
   describe('isAuthenticated getter', () => {
     it('returns true when user is logged in', async () => {
       const mockUser: User = {
         id: '1',
         email: 'test@example.com',
         name: 'Test User',
-        roles: ['client'],
-        permissions: ['view-project'],
         team_id: null,
-        email_verified_at: new Date().toISOString(),
       }
 
       mockDataSource.login.mockResolvedValueOnce({
@@ -456,10 +321,7 @@ describe('Auth Store Integration', () => {
         id: '1',
         email: 'test@example.com',
         name: 'Test User',
-        roles: ['client'],
-        permissions: ['view-project'],
         team_id: null,
-        email_verified_at: new Date().toISOString(),
       }
 
       mockDataSource.login.mockResolvedValueOnce({

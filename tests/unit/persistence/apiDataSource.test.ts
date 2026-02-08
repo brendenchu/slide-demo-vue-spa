@@ -6,7 +6,7 @@ import type { User, Project, Team } from '@/types/models'
 // Mock the axios module
 vi.mock('@/lib/axios', () => ({
   getApiClient: vi.fn(),
-  getErrorMessage: vi.fn((error) => error?.message || 'Unknown error'),
+  getErrorMessage: vi.fn((error: unknown) => (error as Error)?.message || 'Unknown error'),
 }))
 
 describe('ApiDataSource', () => {
@@ -26,7 +26,7 @@ describe('ApiDataSource', () => {
       delete: vi.fn(),
     }
 
-    vi.mocked(getApiClient).mockReturnValue(mockApi as any)
+    vi.mocked(getApiClient).mockReturnValue(mockApi as ReturnType<typeof getApiClient>)
     dataSource = new ApiDataSource()
     vi.clearAllMocks()
   })
@@ -38,10 +38,7 @@ describe('ApiDataSource', () => {
           id: '1',
           email: 'test@example.com',
           name: 'Test User',
-          roles: ['client'],
-          permissions: ['view-project'],
           team_id: null,
-          email_verified_at: new Date().toISOString(),
         }
         const mockToken = 'test-token-123'
 
@@ -75,12 +72,9 @@ describe('ApiDataSource', () => {
       it('successfully registers new user', async () => {
         const mockUser: User = {
           id: '1',
-          email: 'new@example.com',
-          name: 'New User',
-          roles: ['client'],
-          permissions: ['view-project'],
+          email: 'jane.doe.abc1@example.com',
+          name: 'Jane Doe',
           team_id: null,
-          email_verified_at: null,
         }
         const mockToken = 'new-token-123'
 
@@ -94,19 +88,15 @@ describe('ApiDataSource', () => {
         })
 
         const result = await dataSource.register({
-          email: 'new@example.com',
-          name: 'New User',
-          password: 'password',
-          password_confirmation: 'password',
+          first_name: 'Jane',
+          last_name: 'Doe',
         })
 
         expect(result.user).toEqual(mockUser)
         expect(result.token).toBe(mockToken)
         expect(mockApi.post).toHaveBeenCalledWith('/auth/register', {
-          email: 'new@example.com',
-          name: 'New User',
-          password: 'password',
-          password_confirmation: 'password',
+          first_name: 'Jane',
+          last_name: 'Doe',
         })
       })
 
@@ -115,10 +105,8 @@ describe('ApiDataSource', () => {
 
         await expect(
           dataSource.register({
-            email: 'existing@example.com',
-            name: 'User',
-            password: 'password',
-            password_confirmation: 'password',
+            first_name: 'Jane',
+            last_name: 'Doe',
           })
         ).rejects.toThrow()
       })
@@ -146,10 +134,7 @@ describe('ApiDataSource', () => {
           id: '1',
           email: 'test@example.com',
           name: 'Test User',
-          roles: ['client'],
-          permissions: ['view-project'],
           team_id: null,
-          email_verified_at: new Date().toISOString(),
         }
 
         mockApi.get.mockResolvedValueOnce({
@@ -177,10 +162,7 @@ describe('ApiDataSource', () => {
           id: '1',
           email: 'updated@example.com',
           name: 'Updated Name',
-          roles: ['client'],
-          permissions: ['view-project'],
           team_id: null,
-          email_verified_at: new Date().toISOString(),
         }
 
         mockApi.put.mockResolvedValueOnce({
@@ -425,167 +407,6 @@ describe('ApiDataSource', () => {
         mockApi.post.mockRejectedValueOnce(new Error('Unauthorized'))
 
         await expect(dataSource.completeProject('1')).rejects.toThrow()
-      })
-    })
-  })
-
-  describe('User Management Methods (Admin)', () => {
-    describe('getUsers', () => {
-      it('returns all users', async () => {
-        const mockUsers: User[] = [
-          {
-            id: '1',
-            email: 'user1@example.com',
-            name: 'User 1',
-            roles: ['client'],
-            permissions: ['view-project'],
-            team_id: null,
-            email_verified_at: null,
-          },
-        ]
-
-        mockApi.get.mockResolvedValueOnce({
-          data: { data: mockUsers },
-        })
-
-        const users = await dataSource.getUsers()
-
-        expect(users).toEqual(mockUsers)
-        expect(mockApi.get).toHaveBeenCalledWith('/admin/users')
-      })
-
-      it('throws error on API failure', async () => {
-        mockApi.get.mockRejectedValueOnce(new Error('Forbidden'))
-
-        await expect(dataSource.getUsers()).rejects.toThrow()
-      })
-    })
-
-    describe('getUserById', () => {
-      it('returns user when exists', async () => {
-        const mockUser: User = {
-          id: '1',
-          email: 'test@example.com',
-          name: 'Test User',
-          roles: ['client'],
-          permissions: ['view-project'],
-          team_id: null,
-          email_verified_at: null,
-        }
-
-        mockApi.get.mockResolvedValueOnce({
-          data: { data: mockUser },
-        })
-
-        const user = await dataSource.getUserById('1')
-
-        expect(user).toEqual(mockUser)
-        expect(mockApi.get).toHaveBeenCalledWith('/admin/users/1')
-      })
-
-      it('returns null when user not found (404)', async () => {
-        mockApi.get.mockRejectedValueOnce({
-          response: { status: 404 },
-        })
-
-        const user = await dataSource.getUserById('999')
-
-        expect(user).toBeNull()
-      })
-
-      it('throws error on other API failures', async () => {
-        mockApi.get.mockRejectedValueOnce({
-          response: { status: 403 },
-        })
-
-        await expect(dataSource.getUserById('1')).rejects.toThrow()
-      })
-    })
-
-    describe('createUser', () => {
-      it('successfully creates user', async () => {
-        const mockUser: User = {
-          id: '1',
-          email: 'new@example.com',
-          name: 'New User',
-          roles: ['client'],
-          permissions: ['view-project'],
-          team_id: null,
-          email_verified_at: null,
-        }
-
-        mockApi.post.mockResolvedValueOnce({
-          data: { data: mockUser },
-        })
-
-        const user = await dataSource.createUser({
-          email: 'new@example.com',
-          name: 'New User',
-          password: 'password',
-        })
-
-        expect(user).toEqual(mockUser)
-        expect(mockApi.post).toHaveBeenCalledWith('/admin/users', {
-          email: 'new@example.com',
-          name: 'New User',
-          password: 'password',
-        })
-      })
-
-      it('throws error on API failure', async () => {
-        mockApi.post.mockRejectedValueOnce(new Error('Email already exists'))
-
-        await expect(
-          dataSource.createUser({
-            email: 'existing@example.com',
-            name: 'User',
-            password: 'password',
-          })
-        ).rejects.toThrow()
-      })
-    })
-
-    describe('updateUserById', () => {
-      it('successfully updates user', async () => {
-        const updatedUser: User = {
-          id: '1',
-          email: 'updated@example.com',
-          name: 'Updated Name',
-          roles: ['client'],
-          permissions: ['view-project'],
-          team_id: null,
-          email_verified_at: null,
-        }
-
-        mockApi.put.mockResolvedValueOnce({
-          data: { data: updatedUser },
-        })
-
-        const user = await dataSource.updateUserById('1', { name: 'Updated Name' })
-
-        expect(user).toEqual(updatedUser)
-        expect(mockApi.put).toHaveBeenCalledWith('/admin/users/1', { name: 'Updated Name' })
-      })
-
-      it('throws error on API failure', async () => {
-        mockApi.put.mockRejectedValueOnce(new Error('Unauthorized'))
-
-        await expect(dataSource.updateUserById('1', { name: 'Test' })).rejects.toThrow()
-      })
-    })
-
-    describe('deleteUser', () => {
-      it('successfully deletes user', async () => {
-        mockApi.delete.mockResolvedValueOnce({ data: { success: true } })
-
-        await expect(dataSource.deleteUser('1')).resolves.toBeUndefined()
-        expect(mockApi.delete).toHaveBeenCalledWith('/admin/users/1')
-      })
-
-      it('throws error on API failure', async () => {
-        mockApi.delete.mockRejectedValueOnce(new Error('Forbidden'))
-
-        await expect(dataSource.deleteUser('1')).rejects.toThrow()
       })
     })
   })
