@@ -76,8 +76,8 @@ export class ApiDataSource implements DataSource {
 
   async getUser(): Promise<User | null> {
     try {
-      const response = await this.api.get<{ data: User }>('/auth/user')
-      return response.data.data
+      const response = await this.api.get<{ data: { user: User } }>('/auth/user')
+      return response.data.data.user
     } catch (error) {
       console.error('Get user failed:', getErrorMessage(error))
       return null

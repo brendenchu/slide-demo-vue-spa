@@ -16,8 +16,8 @@ const authStore = useAuthStore()
 const user = authStore.user!
 
 const form = useForm({
-  first_name: user.name.split(' ')[0] || '',
-  last_name: user.name.split(' ')[1] || '',
+  first_name: user.first_name ?? user.name?.split(' ')[0] ?? '',
+  last_name: user.last_name ?? user.name?.split(' ').slice(1).join(' ') ?? '',
   email: user.email,
 })
 </script>

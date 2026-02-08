@@ -4,10 +4,12 @@ export interface User {
   id: string
   email: string
   name: string
+  first_name?: string
+  last_name?: string
   roles: Role[]
   permissions: string[]
   team_id: string | null
-  team?: Team
+  team?: Team | null
   email_verified_at: string | null
 }
 

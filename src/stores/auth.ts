@@ -89,6 +89,18 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function refreshUser() {
+    try {
+      const freshUser = await dataSource.getUser()
+      if (freshUser) {
+        user.value = freshUser
+        await storage.set('auth:user', freshUser)
+      }
+    } catch (error) {
+      console.error('Failed to refresh user:', error)
+    }
+  }
+
   async function updateProfile(data: Partial<User>) {
     if (!user.value) return
 
@@ -135,6 +147,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     // Actions
     loadUser,
+    refreshUser,
     login,
     register,
     logout,
