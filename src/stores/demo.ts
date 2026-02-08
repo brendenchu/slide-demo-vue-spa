@@ -10,13 +10,7 @@ export interface DemoLimits {
   max_invitations_per_team: number
 }
 
-const DEMO_EMAILS = [
-  'admin@demo.com',
-  'admin@example.com',
-  'consultant@example.com',
-  'client@demo.com',
-  'guest@demo.com',
-]
+const DEMO_EMAIL = 'demo@example.com'
 
 export const useDemoStore = defineStore('demo', () => {
   const enabled = ref(false)
@@ -36,7 +30,7 @@ export const useDemoStore = defineStore('demo', () => {
     if (!email) {
       return false
     }
-    return DEMO_EMAILS.includes(email)
+    return email === DEMO_EMAIL
   })
 
   async function fetchStatus(): Promise<void> {
