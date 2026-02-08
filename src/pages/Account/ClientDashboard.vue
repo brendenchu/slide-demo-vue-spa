@@ -3,8 +3,6 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import { useProjectsStore } from '@/stores/projects'
-import { useTeamsStore } from '@/stores/teams'
-import { useAuthStore } from '@/stores/auth'
 import { calculateProgress } from '@/utils/story/progress'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import IntroWidget from './Partials/IntroWidget.vue'
@@ -12,24 +10,14 @@ import TeamWidget from './Partials/TeamWidget.vue'
 
 const router = useRouter()
 const projectsStore = useProjectsStore()
-const teamsStore = useTeamsStore()
-const authStore = useAuthStore()
 const loading = ref(true)
 
-const activeFilter = ref<string | null>(null)
-const teams = computed(() => teamsStore.teams)
 const userProjects = computed(() => projectsStore.userProjects)
 
 async function loadProjects() {
   loading.value = true
-  const params = activeFilter.value ? { team: activeFilter.value } : undefined
-  await projectsStore.fetchAll(params)
+  await projectsStore.fetchAll()
   loading.value = false
-}
-
-function toggleFilter(teamId: string) {
-  activeFilter.value = activeFilter.value === teamId ? null : teamId
-  loadProjects()
 }
 
 const formatDate = (dateString: string) => {
@@ -77,8 +65,6 @@ function viewForm(projectId: string) {
 }
 
 onMounted(async () => {
-  await teamsStore.fetchTeams()
-  activeFilter.value = authStore.user?.team?.id ?? null
   await loadProjects()
 })
 </script>
@@ -99,20 +85,6 @@ onMounted(async () => {
             <div class="flex justify-between items-center mb-4">
               <h2 class="card-title text-2xl">My Forms</h2>
               <PrimaryButton @click="startNewForm"> Start New Form </PrimaryButton>
-            </div>
-
-            <!-- Team Filter -->
-            <div v-if="teams.length > 0" class="flex flex-wrap gap-2 mb-4">
-              <span class="text-sm text-base-content/60 self-center mr-1">Filter by team:</span>
-              <button
-                v-for="team in teams"
-                :key="team.id"
-                class="btn btn-sm"
-                :class="activeFilter === team.id ? 'btn-primary' : 'btn-outline'"
-                @click="toggleFilter(team.id)"
-              >
-                {{ team.name }}
-              </button>
             </div>
 
             <div v-if="loading" class="text-center py-12">
