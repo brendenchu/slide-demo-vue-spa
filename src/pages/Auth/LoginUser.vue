@@ -55,11 +55,9 @@ async function submit() {
       class="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
     >
       <p class="text-sm text-blue-800 dark:text-blue-300 font-medium">Demo Credentials:</p>
-      <ul class="mt-2 text-sm text-blue-700 dark:text-blue-400 space-y-1">
-        <li>• <strong>Client:</strong> client@demo.com / password</li>
-        <li>• <strong>Admin:</strong> admin@demo.com / password</li>
-        <li>• <strong>Consultant:</strong> consultant@demo.com / password</li>
-      </ul>
+      <p class="mt-2 text-sm text-blue-700 dark:text-blue-400">
+        <strong>Email:</strong> demo@example.com / <strong>Password:</strong> password
+      </p>
     </div>
 
     <form class="space-y-4" @submit.prevent="submit">

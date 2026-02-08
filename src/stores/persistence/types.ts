@@ -27,14 +27,6 @@ export interface CreateProjectData {
   description?: string
 }
 
-export interface CreateUserData {
-  name: string
-  email: string
-  password: string
-  role?: string
-  team_id?: string | null
-}
-
 export interface CreateTeamData {
   name: string
   description?: string
@@ -62,13 +54,6 @@ export interface DataSource {
     responses: Record<string, unknown>
   ): Promise<Project>
   completeProject(projectId: string): Promise<Project>
-
-  // User management methods (admin)
-  getUsers(): Promise<User[]>
-  getUserById(id: string): Promise<User | null>
-  createUser(data: CreateUserData): Promise<User>
-  updateUserById(id: string, data: Partial<User>): Promise<User>
-  deleteUser(id: string): Promise<void>
 
   // Team methods
   getTeams(): Promise<Team[]>

@@ -15,8 +15,6 @@ export interface User {
   locale?: string
   currency?: string
   team: Team
-  roles: string[]
-  permissions: string[]
 }
 
 export interface Team {

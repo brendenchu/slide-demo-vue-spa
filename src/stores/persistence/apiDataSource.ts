@@ -1,11 +1,5 @@
 import type { User, Team, Project } from '@/types/models'
-import type {
-  DataSource,
-  RegisterData,
-  CreateProjectData,
-  CreateUserData,
-  CreateTeamData,
-} from './types'
+import type { DataSource, RegisterData, CreateProjectData, CreateTeamData } from './types'
 import { getApiClient, getErrorMessage } from '@/lib/axios'
 import type { AxiosInstance } from 'axios'
 
@@ -178,63 +172,6 @@ export class ApiDataSource implements DataSource {
       return response.data.data
     } catch (error) {
       console.error('Complete project failed:', getErrorMessage(error))
-      throw error
-    }
-  }
-
-  // ============================================================================
-  // User Management Methods (Admin)
-  // ============================================================================
-
-  async getUsers(): Promise<User[]> {
-    try {
-      const response = await this.api.get<{ data: User[] }>('/admin/users')
-      return response.data.data
-    } catch (error) {
-      console.error('Get users failed:', getErrorMessage(error))
-      throw error
-    }
-  }
-
-  async getUserById(id: string): Promise<User | null> {
-    try {
-      const response = await this.api.get<{ data: User }>(`/admin/users/${id}`)
-      return response.data.data
-    } catch (error) {
-      // Return null for 404, throw for other errors
-      if (this.isNotFoundError(error)) {
-        return null
-      }
-      console.error('Get user by ID failed:', getErrorMessage(error))
-      throw error
-    }
-  }
-
-  async createUser(data: CreateUserData): Promise<User> {
-    try {
-      const response = await this.api.post<{ data: User }>('/admin/users', data)
-      return response.data.data
-    } catch (error) {
-      console.error('Create user failed:', getErrorMessage(error))
-      throw error
-    }
-  }
-
-  async updateUserById(id: string, data: Partial<User>): Promise<User> {
-    try {
-      const response = await this.api.put<{ data: User }>(`/admin/users/${id}`, data)
-      return response.data.data
-    } catch (error) {
-      console.error('Update user by ID failed:', getErrorMessage(error))
-      throw error
-    }
-  }
-
-  async deleteUser(id: string): Promise<void> {
-    try {
-      await this.api.delete(`/admin/users/${id}`)
-    } catch (error) {
-      console.error('Delete user failed:', getErrorMessage(error))
       throw error
     }
   }

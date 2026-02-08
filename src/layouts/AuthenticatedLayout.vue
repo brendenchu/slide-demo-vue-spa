@@ -16,7 +16,6 @@ const authStore = useAuthStore()
 const showingNavigationDropdown = ref(false)
 
 const user = computed(() => authStore.user)
-const isAdmin = computed(() => authStore.can('users.view'))
 
 async function logout() {
   await authStore.logout()
@@ -54,13 +53,6 @@ async function logout() {
                 </NavLink>
                 <NavLink href="/invitations" :active="currentRoute.name === 'invitations'">
                   Invitations
-                </NavLink>
-                <NavLink
-                  v-if="isAdmin"
-                  href="/admin"
-                  :active="currentRoute.name?.toString().startsWith('admin')"
-                >
-                  Admin
                 </NavLink>
               </div>
             </div>
@@ -186,13 +178,6 @@ async function logout() {
               :active="currentRoute.name === 'invitations'"
             >
               Invitations
-            </ResponsiveNavLink>
-            <ResponsiveNavLink
-              v-if="isAdmin"
-              :to="{ name: 'admin.dashboard' }"
-              :active="currentRoute.name?.toString().startsWith('admin')"
-            >
-              Admin
             </ResponsiveNavLink>
           </div>
 

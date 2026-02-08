@@ -4,61 +4,16 @@ import type { User, Team, Project } from '@/types/models'
 export async function seedDemoData() {
   console.log('Seeding demo data...')
 
-  // Seed demo users (matching backend seeder credentials)
-  // These users are created by the backend database seeder
-  const clientUser: User = {
+  // Seed demo user (matching backend seeder credentials)
+  const demoUser: User = {
     id: '1',
-    email: 'client@demo.com',
-    name: 'Client User',
-    roles: ['client'],
-    permissions: ['view-project', 'create-project', 'update-project'],
+    email: 'demo@example.com',
+    name: 'Demo User',
     team_id: '1',
     email_verified_at: new Date().toISOString(),
   }
 
-  const adminUser: User = {
-    id: '2',
-    email: 'admin@demo.com',
-    name: 'Super Admin',
-    roles: ['super-admin'],
-    permissions: [
-      'view-user',
-      'create-user',
-      'update-user',
-      'delete-user',
-      'view-project',
-      'create-project',
-      'update-project',
-      'delete-project',
-    ],
-    team_id: null,
-    email_verified_at: new Date().toISOString(),
-  }
-
-  const consultantUser: User = {
-    id: '3',
-    email: 'consultant@example.com',
-    name: 'Consultant User',
-    roles: ['consultant'],
-    permissions: ['view-project', 'create-project', 'update-project'],
-    team_id: '1',
-    email_verified_at: new Date().toISOString(),
-  }
-
-  const guestUser: User = {
-    id: '4',
-    email: 'guest@demo.com',
-    name: 'Guest User',
-    roles: ['guest'],
-    permissions: ['view-project'],
-    team_id: null,
-    email_verified_at: new Date().toISOString(),
-  }
-
-  await storage.set('user:1', clientUser)
-  await storage.set('user:2', adminUser)
-  await storage.set('user:3', consultantUser)
-  await storage.set('user:4', guestUser)
+  await storage.set('user:1', demoUser)
 
   // Seed demo team
   const team: Team = {

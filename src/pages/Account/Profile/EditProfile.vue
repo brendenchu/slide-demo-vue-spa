@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useAuthStore } from '@/stores/auth'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import DeleteUserForm from './Partials/DeleteUserForm.vue'
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue'
@@ -10,9 +8,6 @@ defineProps<{
   mustVerifyEmail?: boolean
   status?: string
 }>()
-
-const authStore = useAuthStore()
-const isClient = computed(() => authStore.hasRole('client'))
 </script>
 
 <template>
@@ -31,7 +26,7 @@ const isClient = computed(() => authStore.hasRole('client'))
           <UpdatePasswordForm class="max-w-xl" />
         </div>
 
-        <div v-show="isClient" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
           <DeleteUserForm class="max-w-xl" />
         </div>
       </div>

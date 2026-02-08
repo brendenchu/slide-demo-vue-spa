@@ -6,8 +6,6 @@ export interface User {
   name: string
   first_name?: string
   last_name?: string
-  roles: Role[]
-  permissions: string[]
   team_id: string | null
   team?: Team | null
   email_verified_at: string | null
@@ -76,6 +74,5 @@ export interface UserSearchResult {
   email: string
 }
 
-export type Role = 'client' | 'consultant' | 'admin' | 'super-admin' | 'guest'
 export type ProjectStatus = 'draft' | 'in_progress' | 'completed'
 export type ProjectStep = 'intro' | 'section_a' | 'section_b' | 'section_c' | 'complete'

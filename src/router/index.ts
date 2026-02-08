@@ -120,38 +120,6 @@ const routes: RouteRecordRaw[] = [
     meta: { auth: true, title: 'Story Complete' },
   },
 
-  // Admin routes
-  {
-    path: '/admin',
-    meta: { auth: true, permission: 'users.view' },
-    children: [
-      {
-        path: '',
-        name: 'admin.dashboard',
-        component: () => import('@/pages/Admin/AdminDashboard.vue'),
-        meta: { title: 'Admin Dashboard' },
-      },
-      {
-        path: 'users',
-        name: 'admin.users.index',
-        component: () => import('@/pages/Admin/BrowseUsers.vue'),
-        meta: { title: 'Manage Users' },
-      },
-      {
-        path: 'users/create',
-        name: 'admin.users.create',
-        component: () => import('@/pages/Admin/CreateUser.vue'),
-        meta: { title: 'Create User' },
-      },
-      {
-        path: 'users/:id',
-        name: 'admin.users.show',
-        component: () => import('@/pages/Admin/ShowUser.vue'),
-        meta: { title: 'View User' },
-      },
-    ],
-  },
-
   // 404
   {
     path: '/:pathMatch(.*)*',
@@ -186,11 +154,6 @@ router.beforeEach(async (to, _from, next) => {
   // Auth-required routes (redirect unauthenticated users to login)
   if (to.meta.auth && !authStore.isAuthenticated) {
     return next({ name: 'login', query: { redirect: to.fullPath } })
-  }
-
-  // Permission check
-  if (to.meta.permission && !authStore.can(to.meta.permission as string)) {
-    return next({ name: 'dashboard' })
   }
 
   // Update page title
