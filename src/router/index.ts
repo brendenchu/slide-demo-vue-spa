@@ -75,6 +75,24 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/Account/Team/SelectTeam.vue'),
     meta: { auth: true, title: 'Select Team' },
   },
+  {
+    path: '/team/create',
+    name: 'team.create',
+    component: () => import('@/pages/Account/Team/CreateTeam.vue'),
+    meta: { auth: true, title: 'Create Team' },
+  },
+  {
+    path: '/team/:id',
+    name: 'team.show',
+    component: () => import('@/pages/Account/Team/ShowTeam.vue'),
+    meta: { auth: true, title: 'Team Details' },
+  },
+  {
+    path: '/invitations',
+    name: 'invitations',
+    component: () => import('@/pages/Account/Team/Invitations.vue'),
+    meta: { auth: true, title: 'Invitations' },
+  },
 
   // Story routes
   {

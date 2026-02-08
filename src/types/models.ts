@@ -15,10 +15,33 @@ export interface User {
 
 export interface Team {
   id: string
+  slug?: string
   name: string
-  status: 'active' | 'inactive'
+  description?: string
+  status: string
+  is_admin?: boolean
+  current?: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface TeamMember {
+  id: string
+  name: string
+  email: string
+  is_admin: boolean
+  joined_at: string | null
+}
+
+export interface TeamInvitation {
+  id: string
+  email: string
+  role: 'admin' | 'member'
+  status: 'pending' | 'accepted' | 'declined' | 'cancelled'
+  team?: Team
+  invited_by?: { id: string; name: string }
+  expires_at: string | null
   created_at: string
-  updated_at: string
 }
 
 export interface Project {

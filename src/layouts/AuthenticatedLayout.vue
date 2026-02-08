@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import NavLink from '@/components/Common/UI/Navigation/NavLink.vue'
 import Dropdown from '@/components/Common/UI/Navigation/DropdownMenu.vue'
 import DropdownLink from '@/components/Common/UI/Navigation/DropdownLink.vue'
 import ResponsiveNavLink from '@/components/Common/UI/Navigation/ResponsiveNavLink.vue'
@@ -9,10 +10,12 @@ import FlashProvider from '@/components/Flash/FlashProvider.vue'
 import PageFooter from '@/components/Common/Layout/PageFooter.vue'
 
 const router = useRouter()
+const currentRoute = useRoute()
 const authStore = useAuthStore()
 const showingNavigationDropdown = ref(false)
 
 const user = computed(() => authStore.user)
+const isAdmin = computed(() => authStore.can('users.view'))
 
 async function logout() {
   await authStore.logout()
@@ -31,6 +34,25 @@ async function logout() {
               <!-- Logo -->
               <div class="shrink-0 flex items-center">
                 <h1 class="text-2xl font-bold text-gray-900">Slide Form Demo</h1>
+              </div>
+
+              <!-- Navigation Links -->
+              <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                <NavLink href="/dashboard" :active="currentRoute.name === 'dashboard'">
+                  Dashboard
+                </NavLink>
+                <NavLink href="/profile" :active="currentRoute.name === 'profile.edit'">
+                  Profile
+                </NavLink>
+                <NavLink href="/team/select" :active="currentRoute.name?.toString().startsWith('team')">
+                  Teams
+                </NavLink>
+                <NavLink href="/invitations" :active="currentRoute.name === 'invitations'">
+                  Invitations
+                </NavLink>
+                <NavLink v-if="isAdmin" href="/admin" :active="currentRoute.name?.toString().startsWith('admin')">
+                  Admin
+                </NavLink>
               </div>
             </div>
             <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -131,6 +153,24 @@ async function logout() {
           :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
           class="sm:hidden"
         >
+          <div class="pt-2 pb-3 space-y-1">
+            <ResponsiveNavLink :to="{ name: 'dashboard' }" :active="currentRoute.name === 'dashboard'">
+              Dashboard
+            </ResponsiveNavLink>
+            <ResponsiveNavLink :to="{ name: 'profile.edit' }" :active="currentRoute.name === 'profile.edit'">
+              Profile
+            </ResponsiveNavLink>
+            <ResponsiveNavLink :to="{ name: 'team.select' }" :active="currentRoute.name?.toString().startsWith('team')">
+              Teams
+            </ResponsiveNavLink>
+            <ResponsiveNavLink :to="{ name: 'invitations' }" :active="currentRoute.name === 'invitations'">
+              Invitations
+            </ResponsiveNavLink>
+            <ResponsiveNavLink v-if="isAdmin" :to="{ name: 'admin.dashboard' }" :active="currentRoute.name?.toString().startsWith('admin')">
+              Admin
+            </ResponsiveNavLink>
+          </div>
+
           <!-- Responsive Settings Options -->
           <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
