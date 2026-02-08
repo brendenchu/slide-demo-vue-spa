@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useForm } from '@/composables/useForm'
 import { useTeamsStore } from '@/stores/teams'
 import { useFlashStore } from '@/stores/flash'
 import { useDemoLimits } from '@/composables/useDemoLimits'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
-import UserSearchInput from '@/components/Form/UserSearchInput.vue'
+import FormCombobox from '@/components/Form/FormCombobox.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import LimitBadge from '@/components/Demo/LimitBadge.vue'
 
@@ -35,12 +35,46 @@ const form = useForm({
   role: 'member',
 })
 
+// Async user search state
+const userSearchResults = ref<{ value: string; label: string; description: string }[]>([])
+const userSearchLoading = ref(false)
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+
+function onUserSearch(q: string): void {
+  if (searchTimer) clearTimeout(searchTimer)
+
+  if (q.length < 2) {
+    userSearchResults.value = []
+    userSearchLoading.value = false
+    return
+  }
+
+  userSearchLoading.value = true
+  searchTimer = setTimeout(async () => {
+    try {
+      const users = await teamsStore.searchUsers(q, props.teamId)
+      userSearchResults.value = users.map((u) => ({
+        value: u.email,
+        label: u.name,
+        description: u.email,
+      }))
+    } finally {
+      userSearchLoading.value = false
+    }
+  }, 300)
+}
+
+onBeforeUnmount(() => {
+  if (searchTimer) clearTimeout(searchTimer)
+})
+
 const sendInvite = async () => {
   form.clearErrors()
   try {
     await teamsStore.inviteMember(props.teamId, form.data.email, form.data.role)
     flashStore.success(`Invitation sent to ${form.data.email}`)
     form.reset()
+    userSearchResults.value = []
   } catch (error: unknown) {
     const axiosError = error as {
       response?: { data?: { message?: string; errors?: Record<string, string[]> } }
@@ -77,10 +111,16 @@ const sendInvite = async () => {
       <div class="flex gap-4 items-end">
         <div class="flex-1">
           <InputLabel for="invite_email" value="Find User" />
-          <UserSearchInput
+          <FormCombobox
+            id="invite_email"
             v-model="form.data.email"
-            :team-id="teamId"
+            :options="userSearchResults"
+            :loading="userSearchLoading"
+            :filter-locally="false"
             :disabled="invitationLimitReached || form.processing"
+            placeholder="Search by name or email..."
+            no-results-text="No registered users found"
+            @search="onUserSearch"
           />
           <InputError class="mt-1" :message="form.errors.email" />
         </div>

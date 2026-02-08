@@ -1,77 +1,115 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
-import { useTeamsStore } from '@/stores/teams'
-import type { UserSearchResult } from '@/types/models'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 
 defineOptions({ inheritAttrs: false })
 
+interface ComboboxOption {
+  value: string
+  label: string
+  description?: string
+}
+
 const props = withDefaults(
   defineProps<{
-    teamId: string
     modelValue: string
-    disabled?: boolean
+    options: ComboboxOption[]
+    placeholder?: string
+    loading?: boolean
+    filterLocally?: boolean
+    noResultsText?: string
   }>(),
   {
-    disabled: false,
+    placeholder: '',
+    loading: false,
+    filterLocally: true,
+    noResultsText: 'No matches found',
   }
 )
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
-  'user-selected': [user: UserSearchResult]
+  'search': [query: string]
+  'select': [option: ComboboxOption]
 }>()
-
-const teamsStore = useTeamsStore()
 
 const input = ref<HTMLInputElement | null>(null)
 const wrapper = ref<HTMLDivElement | null>(null)
 const query = ref('')
-const results = ref<UserSearchResult[]>([])
+const selectedLabel = ref('')
 const isOpen = ref(false)
-const isLoading = ref(false)
 const highlightedIndex = ref(-1)
 
-let debounceTimer: ReturnType<typeof setTimeout> | null = null
-
-function onInput(event: Event): void {
-  const value = (event.target as HTMLInputElement).value
-  query.value = value
-  emit('update:modelValue', '')
-  highlightedIndex.value = 0
-
-  if (debounceTimer) {
-    clearTimeout(debounceTimer)
-  }
-
-  if (value.length < 2) {
-    results.value = []
-    isOpen.value = false
-    return
-  }
-
-  debounceTimer = setTimeout(async () => {
-    isLoading.value = true
-    isOpen.value = true
-    try {
-      results.value = await teamsStore.searchUsers(value, props.teamId)
-      highlightedIndex.value = results.value.length > 0 ? 0 : -1
-    } finally {
-      isLoading.value = false
-    }
-  }, 300)
+// Initialize from modelValue if options are available
+const initialMatch = props.options.find((o) => o.value === props.modelValue)
+if (initialMatch) {
+  query.value = initialMatch.label
+  selectedLabel.value = initialMatch.label
 }
 
-function selectUser(user: UserSearchResult): void {
-  query.value = `${user.name} (${user.email})`
-  emit('update:modelValue', user.email)
-  emit('user-selected', user)
+const displayOptions = computed(() => {
+  if (!props.filterLocally) return props.options
+  if (!query.value) return props.options
+  const q = query.value.toLowerCase()
+  return props.options.filter((o) => o.label.toLowerCase().includes(q))
+})
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (!val) {
+      query.value = ''
+      selectedLabel.value = ''
+      return
+    }
+    if (props.filterLocally) {
+      const match = props.options.find((o) => o.value === val)
+      if (match) {
+        query.value = match.label
+        selectedLabel.value = match.label
+      }
+    }
+  }
+)
+
+// For async mode, update highlight when options change
+watch(
+  () => props.options,
+  (opts) => {
+    if (!props.filterLocally && isOpen.value) {
+      highlightedIndex.value = opts.length > 0 ? 0 : -1
+    }
+  }
+)
+
+function selectOption(option: ComboboxOption): void {
+  query.value = option.label
+  selectedLabel.value = option.label
+  emit('update:modelValue', option.value)
+  emit('select', option)
   isOpen.value = false
-  results.value = []
   highlightedIndex.value = -1
 }
 
+function onInput(event: Event): void {
+  const val = (event.target as HTMLInputElement).value
+  query.value = val
+  isOpen.value = true
+  highlightedIndex.value = 0
+
+  if (props.filterLocally) {
+    const match = props.options.find((o) => o.label.toLowerCase() === val.toLowerCase())
+    emit('update:modelValue', match ? match.value : '')
+  } else {
+    emit('update:modelValue', '')
+    emit('search', val)
+  }
+}
+
 function onFocus(): void {
-  if (query.value.length >= 2 && results.value.length > 0) {
+  if (props.filterLocally) {
+    isOpen.value = true
+    highlightedIndex.value = -1
+  } else if (displayOptions.value.length > 0) {
     isOpen.value = true
     highlightedIndex.value = -1
   }
@@ -80,13 +118,16 @@ function onFocus(): void {
 function onClickOutside(event: MouseEvent): void {
   if (wrapper.value && !wrapper.value.contains(event.target as Node)) {
     isOpen.value = false
+    if (props.modelValue && selectedLabel.value) {
+      query.value = selectedLabel.value
+    }
   }
 }
 
 function onKeydown(event: KeyboardEvent): void {
   if (!isOpen.value) {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-      if (results.value.length > 0) {
+      if (displayOptions.value.length > 0) {
         isOpen.value = true
         event.preventDefault()
       }
@@ -97,7 +138,10 @@ function onKeydown(event: KeyboardEvent): void {
   switch (event.key) {
     case 'ArrowDown':
       event.preventDefault()
-      highlightedIndex.value = Math.min(highlightedIndex.value + 1, results.value.length - 1)
+      highlightedIndex.value = Math.min(
+        highlightedIndex.value + 1,
+        displayOptions.value.length - 1
+      )
       scrollToHighlighted()
       break
     case 'ArrowUp':
@@ -107,9 +151,9 @@ function onKeydown(event: KeyboardEvent): void {
       break
     case 'Enter': {
       event.preventDefault()
-      const selected = results.value[highlightedIndex.value]
+      const selected = displayOptions.value[highlightedIndex.value]
       if (highlightedIndex.value >= 0 && selected) {
-        selectUser(selected)
+        selectOption(selected)
       }
       break
     }
@@ -125,25 +169,15 @@ function scrollToHighlighted(): void {
   item?.scrollIntoView({ block: 'nearest' })
 }
 
-watch(
-  () => props.modelValue,
-  (val) => {
-    if (!val) {
-      query.value = ''
-      results.value = []
-    }
-  }
-)
-
 onMounted(() => {
   document.addEventListener('click', onClickOutside)
+  if (input.value?.hasAttribute('autofocus')) {
+    input.value?.focus()
+  }
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', onClickOutside)
-  if (debounceTimer) {
-    clearTimeout(debounceTimer)
-  }
 })
 
 defineExpose({ focus: () => input.value?.focus() })
@@ -156,9 +190,8 @@ defineExpose({ focus: () => input.value?.focus() })
       v-bind="$attrs"
       type="text"
       class="input input-bordered input-lg w-full"
-      placeholder="Search by name or email..."
       :value="query"
-      :disabled="disabled"
+      :placeholder="placeholder"
       autocomplete="off"
       role="combobox"
       aria-autocomplete="list"
@@ -168,8 +201,9 @@ defineExpose({ focus: () => input.value?.focus() })
       @keydown="onKeydown"
     />
 
+    <!-- Loading spinner (async mode) -->
     <div
-      v-if="isOpen && isLoading"
+      v-if="isOpen && loading"
       class="absolute z-50 mt-1 w-full rounded-lg border border-base-300 bg-base-100 px-4 py-3 text-sm text-base-content/60 shadow-lg flex items-center gap-2"
     >
       <svg
@@ -188,34 +222,37 @@ defineExpose({ focus: () => input.value?.focus() })
       Searching...
     </div>
 
+    <!-- Options list -->
     <ul
-      v-show="isOpen && !isLoading && results.length > 0"
+      v-show="isOpen && !loading && displayOptions.length > 0"
       role="listbox"
       class="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-base-300 bg-base-100 shadow-lg"
     >
       <li
-        v-for="(user, index) in results"
-        :key="user.id"
+        v-for="(option, index) in displayOptions"
+        :key="option.value"
         role="option"
-        :aria-selected="user.email === modelValue"
+        :aria-selected="option.value === modelValue"
         class="cursor-pointer px-4 py-2 text-sm"
         :class="{
           'bg-primary text-primary-content': index === highlightedIndex,
+          'bg-base-200 font-medium': option.value === modelValue && index !== highlightedIndex,
           'hover:bg-base-200': index !== highlightedIndex,
         }"
-        @mousedown.prevent="selectUser(user)"
+        @mousedown.prevent="selectOption(option)"
         @mouseenter="highlightedIndex = index"
       >
-        <span class="font-medium">{{ user.name }}</span>
-        <span class="ml-1 opacity-70">({{ user.email }})</span>
+        <span>{{ option.label }}</span>
+        <span v-if="option.description" class="ml-1 opacity-70">({{ option.description }})</span>
       </li>
     </ul>
 
+    <!-- No results -->
     <div
-      v-show="isOpen && !isLoading && query.length >= 2 && results.length === 0"
+      v-show="isOpen && !loading && query && displayOptions.length === 0"
       class="absolute z-50 mt-1 w-full rounded-lg border border-base-300 bg-base-100 px-4 py-3 text-sm text-base-content/60 shadow-lg"
     >
-      No registered users found
+      {{ noResultsText }}
     </div>
   </div>
 </template>

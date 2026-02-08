@@ -9,7 +9,7 @@ import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import InputField from '@/components/Form/FormField.vue'
-import FormSelect from '@/components/Form/FormSelect.vue'
+import FormCombobox from '@/components/Form/FormCombobox.vue'
 
 defineProps<{
   mustVerifyEmail?: boolean
@@ -59,7 +59,7 @@ const saveProfile = () => {
       <div>
         <InputLabel for="first_name" value="First Name" />
 
-        <FormSelect
+        <FormCombobox
           id="first_name"
           v-model="form.data.first_name"
           :options="firstNameOptions"
@@ -76,7 +76,7 @@ const saveProfile = () => {
       <div>
         <InputLabel for="last_name" value="Last Name" />
 
-        <FormSelect
+        <FormCombobox
           id="last_name"
           v-model="form.data.last_name"
           :options="lastNameOptions"

@@ -9,7 +9,7 @@ import GuestLayout from '@/layouts/GuestLayout.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
-import FormSelect from '@/components/Form/FormSelect.vue'
+import FormCombobox from '@/components/Form/FormCombobox.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -72,7 +72,7 @@ async function submit() {
     <form class="space-y-4" @submit.prevent="submit">
       <div>
         <InputLabel for="first_name" value="First Name" />
-        <FormSelect
+        <FormCombobox
           id="first_name"
           v-model="form.first_name"
           :options="firstNameOptions"
@@ -87,7 +87,7 @@ async function submit() {
 
       <div>
         <InputLabel for="last_name" value="Last Name" />
-        <FormSelect
+        <FormCombobox
           id="last_name"
           v-model="form.last_name"
           :options="lastNameOptions"
