@@ -42,10 +42,10 @@ export const useDemoStore = defineStore('demo', () => {
   async function fetchStatus(): Promise<void> {
     try {
       const api = getApiClient()
-      const response = await api.get<{ data: { enabled: boolean; limits: DemoLimits } }>(
+      const response = await api.get<{ data: { demo_mode: boolean; limits: DemoLimits | null } }>(
         '/demo/status'
       )
-      enabled.value = response.data.data.enabled
+      enabled.value = response.data.data.demo_mode
       limits.value = response.data.data.limits
     } catch {
       enabled.value = false
