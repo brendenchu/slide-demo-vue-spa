@@ -24,9 +24,8 @@ const steps = {
   complete: 'Complete',
 }
 
-let atCurrentStep = false
-
 const stepClasses = computed(() => {
+  let atCurrentStep = false
   let temp: Record<string, string> = {}
   Object.keys(steps).forEach((key: string) => {
     if (!atCurrentStep) {
