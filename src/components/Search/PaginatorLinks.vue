@@ -15,15 +15,15 @@ defineProps<{
         <div
           v-if="link.url === null"
           :key="`pagination-no-link-${key}`"
-          class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded"
+          class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-base-content/40 border border-base-300 rounded"
         >
           {{ link.label }}
         </div>
         <RouterLink
           v-else
           :key="`pagination-link-${key}`"
-          class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border rounded hover:bg-white focus:border-indigo-500 focus:text-indigo-500"
-          :class="{ 'bg-white': link.active }"
+          class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-base-300 rounded hover:bg-base-300 focus:border-primary focus:text-primary"
+          :class="{ 'bg-base-300': link.active }"
           :to="link.url"
         >
           {{ link.label }}

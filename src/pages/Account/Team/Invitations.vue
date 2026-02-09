@@ -57,34 +57,34 @@ onMounted(() => {
   <AuthenticatedLayout>
     <div class="p-12 lg:px-0">
       <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div class="p-4 sm:p-8 theme-card">
           <section>
             <header>
-              <h2 class="text-lg font-medium text-gray-900">Your Invitations</h2>
-              <p class="mt-1 text-sm text-gray-600">Pending team invitations sent to you.</p>
+              <h2 class="text-lg font-medium text-base-content">Your Invitations</h2>
+              <p class="mt-1 text-sm text-base-content/60">Pending team invitations sent to you.</p>
             </header>
 
-            <div v-if="loading" class="mt-6 text-gray-600">Loading invitations...</div>
+            <div v-if="loading" class="mt-6 text-base-content/60">Loading invitations...</div>
 
             <div v-else-if="teamsStore.pendingInvitations.length === 0" class="mt-6">
-              <p class="text-sm text-gray-500">No pending invitations.</p>
+              <p class="text-sm text-base-content/50">No pending invitations.</p>
             </div>
 
             <div v-else class="mt-6 space-y-4">
               <div
                 v-for="invitation in teamsStore.pendingInvitations"
                 :key="invitation.id"
-                class="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                class="flex items-center justify-between p-4 border border-base-300 rounded-lg"
               >
                 <div>
-                  <p class="text-sm font-medium text-gray-900">
+                  <p class="text-sm font-medium text-base-content">
                     {{ invitation.team?.name ?? 'Unknown Team' }}
                   </p>
-                  <p class="text-xs text-gray-500">
+                  <p class="text-xs text-base-content/50">
                     Invited by {{ invitation.invited_by?.name ?? 'Unknown' }} &middot; Role:
                     {{ invitation.role }}
                   </p>
-                  <p v-if="invitation.expires_at" class="text-xs text-gray-400">
+                  <p v-if="invitation.expires_at" class="text-xs text-base-content/40">
                     Expires: {{ new Date(invitation.expires_at).toLocaleDateString() }}
                   </p>
                 </div>

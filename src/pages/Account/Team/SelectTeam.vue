@@ -97,7 +97,7 @@ onMounted(() => {
     <div class="p-12 lg:px-0">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-4">
         <div class="flex items-center justify-between">
-          <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex-1">
+          <div class="p-4 sm:p-8 theme-card flex-1">
             <strong>Current Team:</strong> {{ authStore.user?.team?.name ?? 'None' }}
           </div>
           <div class="ml-4 flex items-center gap-2">
@@ -115,50 +115,50 @@ onMounted(() => {
           </div>
         </div>
 
-        <div v-if="loading" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-          <p class="text-gray-600">Loading teams...</p>
+        <div v-if="loading" class="p-4 sm:p-8 theme-card">
+          <p class="text-base-content/60">Loading teams...</p>
         </div>
 
-        <div v-else-if="teams.length === 0" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-          <p class="text-gray-600">No teams available.</p>
+        <div v-else-if="teams.length === 0" class="p-4 sm:p-8 theme-card">
+          <p class="text-base-content/60">No teams available.</p>
         </div>
 
         <div v-else class="grid lg:grid-cols-3 gap-4">
           <div
             v-for="team in teams"
             :key="team.id"
-            class="p-4 sm:p-8 bg-white shadow sm:rounded-lg"
+            class="p-4 sm:p-8 theme-card"
           >
             <section class="relative min-h-[160px]">
               <header>
-                <h2 class="text-lg font-medium text-gray-900">
+                <h2 class="text-lg font-medium text-base-content">
                   {{ team.name }}
                   <span
                     v-if="team.is_personal && team.is_owner"
-                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-base-300 text-base-content"
                   >
                     Default
                   </span>
                   <span
                     v-if="team.is_owner"
-                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-warning/20 text-warning"
                   >
                     Owner
                   </span>
                   <span
                     v-else-if="team.is_admin"
-                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary"
                   >
                     Admin
                   </span>
                   <span
                     v-else
-                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success/20 text-success"
                   >
                     Member
                   </span>
                 </h2>
-                <p class="mt-1 text-sm text-gray-500">Status: {{ team.status }}</p>
+                <p class="mt-1 text-sm text-base-content/50">Status: {{ team.status }}</p>
               </header>
               <div class="flex space-x-2 absolute bottom-0">
                 <PrimaryButton

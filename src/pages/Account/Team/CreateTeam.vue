@@ -33,20 +33,20 @@ const createTeam = () => {
   <AuthenticatedLayout>
     <div class="p-12 lg:px-0">
       <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div class="p-4 sm:p-8 theme-card">
           <section>
             <header>
-              <h2 class="text-lg font-medium text-gray-900">Create a New Team</h2>
-              <p class="mt-1 text-sm text-gray-600">
+              <h2 class="text-lg font-medium text-base-content">Create a New Team</h2>
+              <p class="mt-1 text-sm text-base-content/60">
                 Create a new team to collaborate with others.
               </p>
             </header>
 
             <div
               v-if="demoStore.isDemoMode"
-              class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg"
+              class="mt-4 p-3 bg-warning/10 border border-warning/30 rounded-lg"
             >
-              <p class="text-sm text-amber-800">
+              <p class="text-sm text-warning">
                 Team creation is limited in the demo environment.
               </p>
             </div>
@@ -88,7 +88,7 @@ const createTeam = () => {
                   leave-active-class="transition ease-in-out"
                   leave-to-class="opacity-0"
                 >
-                  <p v-if="form.recentlySuccessful" class="text-sm text-green-600">Created.</p>
+                  <p v-if="form.recentlySuccessful" class="text-sm text-success">Created.</p>
                 </Transition>
               </div>
             </form>

@@ -7,13 +7,13 @@ const user = computed(() => authStore.user)
 </script>
 
 <template>
-  <section class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+  <section class="p-4 sm:p-8 theme-card">
     <header>
-      <h2 class="text-lg font-medium text-gray-900">
+      <h2 class="text-lg font-medium text-base-content">
         Welcome to your dashboard, {{ user?.name }}.
       </h2>
 
-      <p class="mt-1 text-sm text-gray-600">
+      <p class="mt-1 text-sm text-base-content/60">
         This provides a quick overview of your account and the projects you have created.
       </p>
     </header>

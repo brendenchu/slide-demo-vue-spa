@@ -8,22 +8,22 @@ const props = defineProps<{
 </script>
 
 <template>
-  <section class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+  <section class="p-4 sm:p-8 theme-card">
     <header>
-      <h2 class="text-lg font-medium text-gray-900">Projects</h2>
-      <p class="mt-1 text-sm text-gray-600">A list of projects you have created.</p>
+      <h2 class="text-lg font-medium text-base-content">Projects</h2>
+      <p class="mt-1 text-sm text-base-content/60">A list of projects you have created.</p>
     </header>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-1">
-      <div v-for="project in props.projects" :key="project.id" class="text-gray-900">
+      <div v-for="project in props.projects" :key="project.id" class="text-base-content">
         <div
-          class="border rounded border-gray-500 p-2 text-gray-900 hover:bg-gray-200 hover:text-white flex gap-3 justify-between"
+          class="border rounded border-base-300 p-2 text-base-content hover:bg-base-300 flex gap-3 justify-between"
         >
           <div>
             <p>
-              <span class="text-sm text-gray-600">ID: {{ project.id }}</span>
+              <span class="text-sm text-base-content/60">ID: {{ project.id }}</span>
             </p>
             <p>
-              <span class="text-sm text-gray-600">Status: {{ project.status }}</span>
+              <span class="text-sm text-base-content/60">Status: {{ project.status }}</span>
             </p>
             <p></p>
           </div>
@@ -32,7 +32,7 @@ const props = defineProps<{
               <RouterLink
                 v-if="project.status === 'draft'"
                 :to="route('story.continue', { id: project.id })"
-                class="text-sm bg-green-400 hover:bg-green-600 text-white px-2 py-1 rounded shadow"
+                class="text-sm bg-success/80 hover:bg-success text-success-content px-2 py-1 rounded shadow"
               >
                 Edit
               </RouterLink>

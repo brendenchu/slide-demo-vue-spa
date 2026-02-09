@@ -3,6 +3,7 @@ export interface StepConfig {
   slug: string
   name: string
   fields: string[]
+  fieldsPerPage: number
 }
 
 export const STEP_CONFIGS: Record<string, StepConfig> = {
@@ -11,6 +12,7 @@ export const STEP_CONFIGS: Record<string, StepConfig> = {
     slug: 'intro',
     name: 'Introduction',
     fields: ['intro_1', 'intro_2', 'intro_3'],
+    fieldsPerPage: 3,
   },
   'section-a': {
     id: 'section-a',
@@ -24,6 +26,7 @@ export const STEP_CONFIGS: Record<string, StepConfig> = {
       'section_a_5',
       'section_a_6',
     ],
+    fieldsPerPage: 3,
   },
   'section-b': {
     id: 'section-b',
@@ -40,6 +43,7 @@ export const STEP_CONFIGS: Record<string, StepConfig> = {
       'section_b_8',
       'section_b_9',
     ],
+    fieldsPerPage: 3,
   },
   'section-c': {
     id: 'section-c',
@@ -56,12 +60,14 @@ export const STEP_CONFIGS: Record<string, StepConfig> = {
       'section_c_8',
       'section_c_9',
     ],
+    fieldsPerPage: 1,
   },
   complete: {
     id: 'complete',
     slug: 'complete',
     name: 'Complete',
     fields: [],
+    fieldsPerPage: 0,
   },
 }
 
@@ -72,15 +78,6 @@ export function getStepConfig(stepId: string): StepConfig {
     return STEP_CONFIGS['intro']!
   }
   return config
-}
-
-export function getAllSteps(): Record<string, string> {
-  return {
-    intro: 'Introduction',
-    'section-a': 'Section A',
-    'section-b': 'Section B',
-    'section-c': 'Section C',
-  }
 }
 
 export function getStepOrder(): string[] {

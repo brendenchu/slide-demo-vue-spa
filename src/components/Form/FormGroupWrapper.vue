@@ -28,7 +28,7 @@ withDefaults(
   }
 
   & > input {
-    @apply bg-yellow-200 md:absolute;
+    @apply bg-warning/30 md:absolute;
   }
 }
 </style>

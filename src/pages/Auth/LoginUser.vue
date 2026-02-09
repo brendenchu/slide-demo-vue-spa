@@ -45,17 +45,17 @@ async function submit() {
 <template>
   <GuestLayout>
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome Back</h1>
-      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+      <h1 class="text-2xl font-bold text-base-content">Welcome Back</h1>
+      <p class="mt-2 text-sm text-base-content/60">
         Sign in to your account to continue
       </p>
     </div>
 
     <div
-      class="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
+      class="mb-4 p-4 bg-info/10 rounded-lg border border-info/30"
     >
-      <p class="text-sm text-blue-800 dark:text-blue-300 font-medium">Demo Credentials:</p>
-      <p class="mt-2 text-sm text-blue-700 dark:text-blue-400">
+      <p class="text-sm text-info font-medium">Demo Credentials:</p>
+      <p class="mt-2 text-sm text-info/80">
         <strong>Email:</strong> demo@example.com / <strong>Password:</strong> password
       </p>
     </div>
@@ -95,9 +95,9 @@ async function submit() {
           <input
             v-model="form.remember"
             type="checkbox"
-            class="rounded border-gray-300 text-primary focus:ring-primary"
+            class="rounded border-base-300 text-primary focus:ring-primary"
           />
-          <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Remember me</span>
+          <span class="ml-2 text-sm text-base-content/60">Remember me</span>
         </label>
       </div>
 
@@ -112,7 +112,7 @@ async function submit() {
         </PrimaryButton>
       </div>
 
-      <div class="text-center text-sm text-gray-600 dark:text-gray-400">
+      <div class="text-center text-sm text-base-content/60">
         Don't have an account?
         <router-link
           :to="{ name: 'register' }"

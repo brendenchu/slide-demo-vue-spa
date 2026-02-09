@@ -32,7 +32,7 @@ const fieldClasses = computed(() => {
 <template>
   <fieldset class="max-w-4xl mx-auto space-y-2 p-4 pb-12 md:pb-24">
     <legend v-if="legend" class="sr-only">{{ legend }}</legend>
-    <h3 v-if="query" class="text-base font-medium text-gray-900">{{ query }}</h3>
+    <h3 v-if="query" class="text-base font-medium text-base-content">{{ query }}</h3>
     <div :class="fieldClasses">
       <slot />
     </div>

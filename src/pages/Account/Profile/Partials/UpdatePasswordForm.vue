@@ -42,15 +42,15 @@ const updatePassword = () => {
 <template>
   <section>
     <header>
-      <h2 class="text-lg font-medium text-gray-900">Update Password</h2>
+      <h2 class="text-lg font-medium text-base-content">Update Password</h2>
 
-      <p class="mt-1 text-sm text-gray-600">
+      <p class="mt-1 text-sm text-base-content/60">
         Ensure your account is using a long, random password to stay secure.
       </p>
     </header>
 
-    <div v-if="isProtected" class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-      <p class="text-sm text-amber-800">Demo account passwords cannot be changed.</p>
+    <div v-if="isProtected" class="mt-4 p-3 bg-warning/10 border border-warning/30 rounded-lg">
+      <p class="text-sm text-warning">Demo account passwords cannot be changed.</p>
     </div>
 
     <form class="mt-4 space-y-6" @submit.prevent="updatePassword">
@@ -110,7 +110,7 @@ const updatePassword = () => {
           leave-active-class="transition ease-in-out"
           leave-to-class="opacity-0"
         >
-          <p v-if="form.recentlySuccessful" class="text-sm text-green-600">Saved.</p>
+          <p v-if="form.recentlySuccessful" class="text-sm text-success">Saved.</p>
         </Transition>
       </div>
     </form>

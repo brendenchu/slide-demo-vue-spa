@@ -14,56 +14,177 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-        display: ['Inter var', ...defaultTheme.fontFamily.sans],
+        sans: ['var(--font-sans, Rajdhani)', ...defaultTheme.fontFamily.sans],
+        display: ['var(--font-display, Orbitron)', ...defaultTheme.fontFamily.sans],
+      },
+      boxShadow: {
+        'glow-cyan': '0 0 20px rgba(0, 240, 255, 0.45), 0 0 40px rgba(0, 240, 255, 0.2), 0 0 60px rgba(0, 240, 255, 0.1)',
+        'glow-pink': '0 0 20px rgba(255, 45, 149, 0.45), 0 0 40px rgba(255, 45, 149, 0.2), 0 0 60px rgba(255, 45, 149, 0.1)',
+        'glow-purple': '0 0 20px rgba(176, 38, 255, 0.45), 0 0 40px rgba(176, 38, 255, 0.2), 0 0 60px rgba(176, 38, 255, 0.1)',
+      },
+      colors: {
+        'cyber-cyan': '#00f0ff',
+        'cyber-pink': '#ff2d95',
+        'cyber-purple': '#b026ff',
       },
     },
   },
 
-  // daisyUI config (optional - here are the default values)
+  // daisyUI config
   daisyui: {
     themes: [
       {
-        demo: {
-          // your theme name
-          primary: '#4c51bf', // primary color
-          'primary-focus': '#434190', // primary color (darker version)
-          'primary-content': '#ffffff', // text color for primary color
-          secondary: '#f000b8', // secondary color
-          'secondary-focus': '#bd0091', // secondary color (darker version)
-          'secondary-content': '#ffffff', // text color for secondary color
-          accent: '#37cdbe', // accent color
-          'accent-focus': '#2aa79b', // accent color (darker version)
-          'accent-content': '#ffffff', // text color for accent color
-          neutral: '#3d4451', // neutral color
-          'neutral-focus': '#2a2e37', // neutral color (darker version)
-          'neutral-content': '#ffffff', // text color for neutral color
-          'base-100': '#ffffff', // base color
-          'base-200': '#f9fafb', // base color
-          'base-300': '#d1d5db', // base color
-          'base-content': '#1f2937', // text color for base color
-          info: '#2094f3', // info color
-          'info-focus': '#0573f2', // info color (darker version)
-          'info-content': '#ffffff', // text color for info color
-          success: '#009485', // success color
-          'success-focus': '#007a6b', // success color (darker version)
-          'success-content': '#ffffff', // text color for success color
-          warning: '#ff9900', // warning color
-          'warning-focus': '#f28500', // warning color (darker version)
-          'warning-content': '#ffffff', // text color for warning color
-          error: '#ff5724', // error color
-          'error-focus': '#f13a04', // error color (darker version)
-          'error-content': '#ffffff', // text color for error color
+        cyberpunk: {
+          primary: '#00f0ff',
+          'primary-content': '#0d0b1a',
+          secondary: '#ff2d95',
+          'secondary-content': '#ffffff',
+          accent: '#b026ff',
+          'accent-content': '#ffffff',
+          neutral: '#1a1625',
+          'neutral-content': '#e8e6f0',
+          'base-100': '#0d0b1a',
+          'base-200': '#151228',
+          'base-300': '#1e1a38',
+          'base-content': '#e8e6f0',
+          info: '#00b4d8',
+          'info-content': '#0d0b1a',
+          success: '#39ff14',
+          'success-content': '#0d0b1a',
+          warning: '#ffe600',
+          'warning-content': '#0d0b1a',
+          error: '#ff3860',
+          'error-content': '#ffffff',
         },
       },
-    ], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
-    darkTheme: 'dark', // name of one of the included themes for dark mode
-    base: true, // applies background color and foreground color for root element by default
-    styled: true, // include daisyUI colors and design decisions for all components
-    utils: true, // adds responsive and modifier utility classes
-    prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
-    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
-    themeRoot: ':root', // The element that receives theme color CSS variables
+      {
+        corporate: {
+          primary: '#2563eb',
+          'primary-content': '#ffffff',
+          secondary: '#7c3aed',
+          'secondary-content': '#ffffff',
+          accent: '#0891b2',
+          'accent-content': '#ffffff',
+          neutral: '#334155',
+          'neutral-content': '#f8fafc',
+          'base-100': '#ffffff',
+          'base-200': '#f8fafc',
+          'base-300': '#e2e8f0',
+          'base-content': '#1e293b',
+          info: '#2563eb',
+          'info-content': '#ffffff',
+          success: '#16a34a',
+          'success-content': '#ffffff',
+          warning: '#d97706',
+          'warning-content': '#ffffff',
+          error: '#dc2626',
+          'error-content': '#ffffff',
+        },
+      },
+      {
+        vaporwave: {
+          primary: '#ff71ce',
+          'primary-content': '#1a1a2e',
+          secondary: '#01cdfe',
+          'secondary-content': '#1a1a2e',
+          accent: '#b967ff',
+          'accent-content': '#1a1a2e',
+          neutral: '#232147',
+          'neutral-content': '#e8d5f5',
+          'base-100': '#1a1a2e',
+          'base-200': '#232147',
+          'base-300': '#2d2b55',
+          'base-content': '#e8d5f5',
+          info: '#01cdfe',
+          'info-content': '#1a1a2e',
+          success: '#05ffa1',
+          'success-content': '#1a1a2e',
+          warning: '#fffb96',
+          'warning-content': '#1a1a2e',
+          error: '#ff6b6b',
+          'error-content': '#1a1a2e',
+        },
+      },
+      {
+        terminal: {
+          primary: '#00ff41',
+          'primary-content': '#0a0a0a',
+          secondary: '#00cc33',
+          'secondary-content': '#0a0a0a',
+          accent: '#33ff77',
+          'accent-content': '#0a0a0a',
+          neutral: '#0f0f0f',
+          'neutral-content': '#00ff41',
+          'base-100': '#0a0a0a',
+          'base-200': '#0f0f0f',
+          'base-300': '#1a1a1a',
+          'base-content': '#00ff41',
+          info: '#00cc33',
+          'info-content': '#0a0a0a',
+          success: '#00ff41',
+          'success-content': '#0a0a0a',
+          warning: '#ffb000',
+          'warning-content': '#0a0a0a',
+          error: '#ff3333',
+          'error-content': '#0a0a0a',
+        },
+      },
+      {
+        brutalist: {
+          primary: '#000000',
+          'primary-content': '#ffffff',
+          secondary: '#ff0000',
+          'secondary-content': '#ffffff',
+          accent: '#ccff00',
+          'accent-content': '#000000',
+          neutral: '#333333',
+          'neutral-content': '#ffffff',
+          'base-100': '#ffffff',
+          'base-200': '#f0f0f0',
+          'base-300': '#000000',
+          'base-content': '#000000',
+          info: '#0000ff',
+          'info-content': '#ffffff',
+          success: '#008000',
+          'success-content': '#ffffff',
+          warning: '#ff8c00',
+          'warning-content': '#000000',
+          error: '#ff0000',
+          'error-content': '#ffffff',
+        },
+      },
+      {
+        unicorn: {
+          primary: '#ff69b4',
+          'primary-content': '#ffffff',
+          secondary: '#a855f7',
+          'secondary-content': '#ffffff',
+          accent: '#fbbf24',
+          'accent-content': '#4a1942',
+          neutral: '#f0d6e8',
+          'neutral-content': '#4a1942',
+          'base-100': '#fff5f9',
+          'base-200': '#ffe8f0',
+          'base-300': '#ffc0d9',
+          'base-content': '#4a1942',
+          info: '#60a5fa',
+          'info-content': '#ffffff',
+          success: '#34d399',
+          'success-content': '#ffffff',
+          warning: '#fbbf24',
+          'warning-content': '#4a1942',
+          error: '#f43f5e',
+          'error-content': '#ffffff',
+        },
+      },
+    ],
+    darkTheme: 'cyberpunk',
+    base: true,
+    styled: true,
+    utils: true,
+    prefix: '',
+    logs: true,
+    themeRoot: ':root',
   },
   plugins: [typography, forms, animate, daisyui],
 } satisfies Config

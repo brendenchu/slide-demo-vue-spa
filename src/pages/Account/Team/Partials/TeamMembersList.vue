@@ -61,40 +61,40 @@ async function transferOwnership(member: TeamMember) {
 }
 
 const roleStyles: Record<string, string> = {
-  owner: 'bg-amber-100 text-amber-800',
-  admin: 'bg-indigo-100 text-indigo-800',
-  member: 'bg-gray-100 text-gray-800',
+  owner: 'bg-warning/20 text-warning',
+  admin: 'bg-primary/20 text-primary',
+  member: 'bg-base-300 text-base-content',
 }
 </script>
 
 <template>
   <section>
     <header>
-      <h2 class="text-lg font-medium text-gray-900">Team Members</h2>
+      <h2 class="text-lg font-medium text-base-content">Team Members</h2>
     </header>
 
     <div class="mt-4">
-      <table class="min-w-full divide-y divide-gray-200">
+      <table class="min-w-full divide-y divide-base-300">
         <thead>
           <tr>
-            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">Name</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">Email</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">Role</th>
             <th
               v-if="isAdmin"
-              class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase"
+              class="px-4 py-2 text-right text-xs font-medium text-base-content/50 uppercase"
             >
               Actions
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200">
+        <tbody class="divide-y divide-base-300">
           <tr v-for="member in teamsStore.members" :key="member.id">
-            <td class="px-4 py-3 text-sm text-gray-900">{{ member.name }}</td>
-            <td class="px-4 py-3 text-sm text-gray-500">{{ member.email }}</td>
+            <td class="px-4 py-3 text-sm text-base-content">{{ member.name }}</td>
+            <td class="px-4 py-3 text-sm text-base-content/50">{{ member.email }}</td>
             <td class="px-4 py-3 text-sm">
               <span
-                :class="roleStyles[member.role] ?? 'bg-gray-100 text-gray-800'"
+                :class="roleStyles[member.role] ?? 'bg-base-300 text-base-content'"
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
               >
                 {{ member.role }}
@@ -102,7 +102,7 @@ const roleStyles: Record<string, string> = {
             </td>
             <td v-if="isAdmin" class="px-4 py-3 text-sm text-right space-x-2">
               <template v-if="member.role === 'owner'">
-                <span class="text-gray-400 text-xs">Owner</span>
+                <span class="text-base-content/40 text-xs">Owner</span>
               </template>
               <template v-else>
                 <SecondaryButton
@@ -124,7 +124,7 @@ const roleStyles: Record<string, string> = {
         </tbody>
       </table>
 
-      <p v-if="teamsStore.members.length === 0" class="mt-4 text-sm text-gray-500">
+      <p v-if="teamsStore.members.length === 0" class="mt-4 text-sm text-base-content/50">
         No members found.
       </p>
     </div>

@@ -99,14 +99,14 @@ const sendInvite = async () => {
   <section>
     <header>
       <div class="flex items-center gap-2">
-        <h2 class="text-lg font-medium text-gray-900">Invite a Member</h2>
+        <h2 class="text-lg font-medium text-base-content">Invite a Member</h2>
         <LimitBadge
           v-if="demoMode"
           :current="teamsStore.invitations.length"
           :max="invitationLimit"
         />
       </div>
-      <p class="mt-1 text-sm text-gray-600">Send an invitation to join this team.</p>
+      <p class="mt-1 text-sm text-base-content/60">Send an invitation to join this team.</p>
     </header>
 
     <form class="mt-4 space-y-4" @submit.prevent="sendInvite">
@@ -132,7 +132,7 @@ const sendInvite = async () => {
           <select
             id="invite_role"
             v-model="form.data.role"
-            class="select select-bordered select-lg w-full"
+            class="select select-bordered select-md w-full"
           >
             <option value="member">Member</option>
             <option v-if="isOwner" value="admin">Admin</option>

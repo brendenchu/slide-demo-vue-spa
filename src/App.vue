@@ -1,10 +1,12 @@
 <template>
+  <ParticlesBackground />
   <RouterView />
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import ParticlesBackground from '@/components/Common/UI/ParticlesBackground.vue'
 import { useProjectsStore } from '@/stores/projects'
 import { seedDemoData, checkIfSeeded } from '@/stores/persistence/seed'
 

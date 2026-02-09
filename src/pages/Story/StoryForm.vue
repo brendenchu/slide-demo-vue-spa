@@ -87,13 +87,18 @@ onMounted(() => {
   loadProject()
 })
 
-// Watch for route changes and reload project
-// This handles navigation between sections (intro -> section-a, etc.)
+// Watch for step changes — use cached store data to avoid loading flash.
+// The store's currentProject was just updated by saveResponses() before
+// the router push that triggered this watch, so it's already fresh.
 watch(
   () => route.query.step,
   (newStep, oldStep) => {
     if (newStep !== oldStep) {
-      loadProject()
+      if (projectsStore.currentProject) {
+        project.value = projectsStore.currentProject
+      } else {
+        loadProject()
+      }
     }
   }
 )
@@ -117,46 +122,64 @@ watch(
       </div>
     </template>
     <ProgressBar :step="step" class="lg:hidden" />
-    <IntroForm
-      v-if="step.id === 'intro'"
-      :direction="direction"
-      :page="page"
-      :project="project"
-      :step="step"
-      :story="story as IntroFormFields"
-      :token="token"
-    />
-    <SectionAForm
-      v-if="step.id === 'section-a'"
-      :direction="direction"
-      :page="page"
-      :project="project"
-      :step="step"
-      :story="story as SectionAFormFields"
-      :token="token"
-    />
-    <SectionBForm
-      v-if="step.id === 'section-b'"
-      :direction="direction"
-      :page="page"
-      :project="project"
-      :step="step"
-      :story="story as SectionBFormFields"
-      :token="token"
-    />
-    <SectionCForm
-      v-if="step.id === 'section-c'"
-      :direction="direction"
-      :page="page"
-      :project="project"
-      :step="step"
-      :story="story as SectionCFormFields"
-      :token="token"
-    />
+    <Transition name="step-fade" mode="out-in">
+      <IntroForm
+        v-if="step.id === 'intro'"
+        key="intro"
+        :direction="direction"
+        :page="page"
+        :project="project"
+        :step="step"
+        :story="story as IntroFormFields"
+        :token="token"
+      />
+      <SectionAForm
+        v-else-if="step.id === 'section-a'"
+        key="section-a"
+        :direction="direction"
+        :page="page"
+        :project="project"
+        :step="step"
+        :story="story as SectionAFormFields"
+        :token="token"
+      />
+      <SectionBForm
+        v-else-if="step.id === 'section-b'"
+        key="section-b"
+        :direction="direction"
+        :page="page"
+        :project="project"
+        :step="step"
+        :story="story as SectionBFormFields"
+        :token="token"
+      />
+      <SectionCForm
+        v-else-if="step.id === 'section-c'"
+        key="section-c"
+        :direction="direction"
+        :page="page"
+        :project="project"
+        :step="step"
+        :story="story as SectionCFormFields"
+        :token="token"
+      />
+    </Transition>
   </StoryLayout>
   <div v-else class="flex items-center justify-center min-h-screen">
     <div class="text-center">
-      <p class="text-lg text-red-600">Project not found</p>
+      <p class="text-lg text-error">Project not found</p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.step-fade-enter-active,
+.step-fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.step-fade-enter-from,
+.step-fade-leave-to {
+  opacity: 0;
+}
+</style>
