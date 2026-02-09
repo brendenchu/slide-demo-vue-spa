@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 
 const getStylesForType = (type: string): string => {
   switch (type) {
@@ -31,16 +31,16 @@ const getStylesForType = (type: string): string => {
       move-class="transition-all duration-300 ease-in-out"
     >
       <div
-        v-for="flash in flashStore.messages"
-        :key="flash.id"
+        v-for="toast in toastStore.messages"
+        :key="toast.id"
         class="pointer-events-auto flex items-center gap-2 whitespace-nowrap rounded-lg border p-3 shadow-lg"
-        :class="getStylesForType(flash.type)"
+        :class="getStylesForType(toast.type)"
       >
-        <span class="text-sm">{{ flash.message }}</span>
+        <span class="text-sm">{{ toast.message }}</span>
         <button
           type="button"
           class="shrink-0 rounded-md opacity-70 hover:opacity-100 focus:outline-none"
-          @click="flashStore.remove(flash.id)"
+          @click="toastStore.remove(toast.id)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

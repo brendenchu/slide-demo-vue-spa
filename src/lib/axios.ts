@@ -116,8 +116,8 @@ function createAxiosInstance(): AxiosInstance {
               data.message?.startsWith('Demo limit reached') ||
               data.message?.includes('Demo accounts')
             ) {
-              const { useFlashStore } = await import('@/stores/flash')
-              useFlashStore().warning(data.message)
+              const { useToastStore } = await import('@/stores/toast')
+              useToastStore().warning(data.message)
             } else {
               console.error('Access forbidden:', data.message)
             }

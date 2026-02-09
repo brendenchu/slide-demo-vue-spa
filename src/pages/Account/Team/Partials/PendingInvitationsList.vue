@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTeamsStore } from '@/stores/teams'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 
 const props = defineProps<{
@@ -9,16 +9,16 @@ const props = defineProps<{
 }>()
 
 const teamsStore = useTeamsStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const cancelling = ref<string | null>(null)
 
 async function cancelInvitation(invitationId: string) {
   cancelling.value = invitationId
   try {
     await teamsStore.cancelInvitation(props.teamId, invitationId)
-    flashStore.success('Invitation cancelled')
+    toastStore.success('Invitation cancelled')
   } catch {
-    flashStore.error('Failed to cancel invitation')
+    toastStore.error('Failed to cancel invitation')
   } finally {
     cancelling.value = null
   }

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import FlashProvider from '@/components/Flash/FlashProvider.vue'
+import ToastProvider from '@/components/Toast/ToastProvider.vue'
 import PageFooter from '@/components/Common/Layout/PageFooter.vue'
 import PageHeader from '@/components/Common/Layout/PageHeader.vue'
 
@@ -9,7 +9,7 @@ defineProps<{
 }>()
 </script>
 <template>
-  <FlashProvider>
+  <ToastProvider>
     <div class="min-h-screen bg-base-200 flex flex-col">
       <!-- Page Header -->
       <PageHeader :title="title">
@@ -35,5 +35,5 @@ defineProps<{
         <slot name="bottom" />
       </PageFooter>
     </div>
-  </FlashProvider>
+  </ToastProvider>
 </template>

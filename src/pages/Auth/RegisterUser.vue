@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import { useDemoStore } from '@/stores/demo'
 import { useNameOptions } from '@/composables/useNameOptions'
 import GuestLayout from '@/layouts/GuestLayout.vue'
@@ -13,7 +13,7 @@ import FormCombobox from '@/components/Form/FormCombobox.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const demoStore = useDemoStore()
 const { firstNames, lastNames, loaded } = useNameOptions()
 
@@ -35,13 +35,13 @@ async function submit() {
 
   try {
     await authStore.register(form.value.first_name, form.value.last_name)
-    flashStore.success('Registration successful! Welcome to Vue Slide Demo.')
+    toastStore.success('Registration successful! Welcome to Vue Slide Demo.')
 
     // Navigate to dashboard
     router.push({ name: 'dashboard' })
   } catch (_error) {
     errors.value.general = 'Registration failed. Please try again.'
-    flashStore.error('Registration failed. Please check your information.')
+    toastStore.error('Registration failed. Please check your information.')
   } finally {
     processing.value = false
   }

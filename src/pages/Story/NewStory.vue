@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useProjectsStore } from '@/stores/projects'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import { useDemoStore } from '@/stores/demo'
 import { useDemoLimits } from '@/composables/useDemoLimits'
 import { useRouter } from 'vue-router'
@@ -9,7 +9,7 @@ import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import StoryLayout from '@/layouts/StoryLayout.vue'
 
 const projectsStore = useProjectsStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const demoStore = useDemoStore()
 const { isProjectLimitReached } = useDemoLimits()
 const router = useRouter()
@@ -47,7 +47,7 @@ const createForm = async () => {
     })
   } catch (error) {
     const err = error as Error
-    flashStore.error(err.message || 'Failed to create story')
+    toastStore.error(err.message || 'Failed to create story')
   } finally {
     loading.value = false
   }

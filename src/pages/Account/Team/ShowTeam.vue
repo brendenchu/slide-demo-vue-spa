@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useTeamsStore } from '@/stores/teams'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import { useDemoStore } from '@/stores/demo'
 import { getApiClient } from '@/lib/axios'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
@@ -18,7 +18,7 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const teamsStore = useTeamsStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const demoStore = useDemoStore()
 const api = getApiClient()
 
@@ -43,7 +43,7 @@ async function loadTeam() {
       await teamsStore.fetchInvitations(teamId.value)
     }
   } catch {
-    flashStore.error('Failed to load team')
+    toastStore.error('Failed to load team')
     router.push({ name: 'team.select' })
   } finally {
     loading.value = false
@@ -57,11 +57,11 @@ async function deleteTeam() {
   deleting.value = true
   try {
     await api.delete(`/teams/${teamId.value}`)
-    flashStore.success('Team deleted successfully')
+    toastStore.success('Team deleted successfully')
     router.push({ name: 'team.select' })
   } catch (error: unknown) {
     const axiosError = error as { response?: { data?: { message?: string } } }
-    flashStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
+    toastStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
   } finally {
     deleting.value = false
   }

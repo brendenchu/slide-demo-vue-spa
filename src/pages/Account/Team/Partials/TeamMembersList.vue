@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTeamsStore } from '@/stores/teams'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 import type { TeamMember } from '@/types/models'
@@ -17,7 +17,7 @@ const emit = defineEmits<{
 }>()
 
 const teamsStore = useTeamsStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const processing = ref<string | null>(null)
 
 async function removeMember(member: TeamMember) {
@@ -25,9 +25,9 @@ async function removeMember(member: TeamMember) {
   processing.value = member.id
   try {
     await teamsStore.removeMember(props.teamId, member.id)
-    flashStore.success(`${member.name} has been removed from the team`)
+    toastStore.success(`${member.name} has been removed from the team`)
   } catch {
-    flashStore.error('Failed to remove member')
+    toastStore.error('Failed to remove member')
   } finally {
     processing.value = null
   }
@@ -38,9 +38,9 @@ async function toggleRole(member: TeamMember) {
   processing.value = member.id
   try {
     await teamsStore.updateMemberRole(props.teamId, member.id, newRole)
-    flashStore.success(`${member.name} is now a ${newRole}`)
+    toastStore.success(`${member.name} is now a ${newRole}`)
   } catch {
-    flashStore.error('Failed to update role')
+    toastStore.error('Failed to update role')
   } finally {
     processing.value = null
   }
@@ -51,10 +51,10 @@ async function transferOwnership(member: TeamMember) {
   processing.value = member.id
   try {
     await teamsStore.transferOwnership(props.teamId, member.id)
-    flashStore.success(`Ownership transferred to ${member.name}`)
+    toastStore.success(`Ownership transferred to ${member.name}`)
     emit('ownershipTransferred')
   } catch {
-    flashStore.error('Failed to transfer ownership')
+    toastStore.error('Failed to transfer ownership')
   } finally {
     processing.value = null
   }

@@ -2,7 +2,7 @@
 import { ref, computed, onBeforeUnmount } from 'vue'
 import { useForm } from '@/composables/useForm'
 import { useTeamsStore } from '@/stores/teams'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import { useDemoLimits } from '@/composables/useDemoLimits'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
@@ -25,7 +25,7 @@ const props = withDefaults(
 )
 
 const teamsStore = useTeamsStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const { isInvitationLimitReached } = useDemoLimits()
 
 const invitationLimitReached = computed(() =>
@@ -74,7 +74,7 @@ const sendInvite = async () => {
   form.clearErrors()
   try {
     await teamsStore.inviteMember(props.teamId, form.data.email, form.data.role)
-    flashStore.success(`Invitation sent to ${form.data.email}`)
+    toastStore.success(`Invitation sent to ${form.data.email}`)
     form.reset()
     userSearchResults.value = []
   } catch (error: unknown) {
@@ -87,9 +87,9 @@ const sendInvite = async () => {
         form.setError(key, Array.isArray(messages) ? (messages[0] ?? '') : String(messages))
       }
     } else if (axiosError.response?.data?.message) {
-      flashStore.error(axiosError.response.data.message)
+      toastStore.error(axiosError.response.data.message)
     } else {
-      flashStore.error('Failed to send invitation')
+      toastStore.error('Failed to send invitation')
     }
   }
 }

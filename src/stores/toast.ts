@@ -1,19 +1,19 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export type FlashType = 'success' | 'error' | 'warning' | 'info'
+export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
-export interface FlashMessage {
+export interface ToastMessage {
   id: string
-  type: FlashType
+  type: ToastType
   message: string
   timeout?: number
 }
 
-export const useFlashStore = defineStore('flash', () => {
-  const messages = ref<FlashMessage[]>([])
+export const useToastStore = defineStore('toast', () => {
+  const messages = ref<ToastMessage[]>([])
 
-  function add(type: FlashType, message: string, timeout = 5000) {
+  function add(type: ToastType, message: string, timeout = 5000) {
     const id = Math.random().toString(36).substring(7)
     messages.value.push({ id, type, message, timeout })
 

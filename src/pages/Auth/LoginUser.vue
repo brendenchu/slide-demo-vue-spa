@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
@@ -11,7 +11,7 @@ import InputField from '@/components/Form/FormField.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 
 const form = ref({
   email: '',
@@ -28,13 +28,13 @@ async function submit() {
 
   try {
     await authStore.login(form.value.email, form.value.password)
-    flashStore.success('Welcome back!')
+    toastStore.success('Welcome back!')
 
     // Navigate to dashboard
     router.push({ name: 'dashboard' })
   } catch (_error) {
     errors.value.email = 'Invalid credentials. Please try again.'
-    flashStore.error('Login failed. Please check your credentials.')
+    toastStore.error('Login failed. Please check your credentials.')
   } finally {
     processing.value = false
     form.value.password = '' // Clear password field

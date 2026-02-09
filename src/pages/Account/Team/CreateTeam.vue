@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useForm } from '@/composables/useForm'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import { useDemoStore } from '@/stores/demo'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import InputError from '@/components/Form/FormError.vue'
@@ -11,7 +11,7 @@ import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 
 const router = useRouter()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const demoStore = useDemoStore()
 
 const form = useForm({
@@ -22,7 +22,7 @@ const form = useForm({
 const createTeam = () => {
   form.post('/teams', {
     onSuccess: () => {
-      flashStore.success('Team created successfully')
+      toastStore.success('Team created successfully')
       router.push({ name: 'team.select' })
     },
   })

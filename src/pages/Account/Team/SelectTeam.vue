@@ -2,7 +2,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import { useDemoStore } from '@/stores/demo'
 import { useDemoLimits } from '@/composables/useDemoLimits'
 import { getApiClient } from '@/lib/axios'
@@ -15,7 +15,7 @@ import type { Team } from '@/types/models'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const demoStore = useDemoStore()
 const { isTeamLimitReached } = useDemoLimits()
 const api = getApiClient()
@@ -38,7 +38,7 @@ async function loadTeams() {
     teams.value = response.data.data
   } catch (error) {
     console.error('Failed to load teams:', error)
-    flashStore.error('Failed to load teams')
+    toastStore.error('Failed to load teams')
   } finally {
     loading.value = false
   }
@@ -49,14 +49,14 @@ async function selectTeam(team: Team) {
   try {
     await api.post('/teams/current', { team: team.slug })
     await authStore.refreshUser()
-    flashStore.success(`Switched to team: ${team.name}`)
+    toastStore.success(`Switched to team: ${team.name}`)
 
     setTimeout(() => {
       router.push({ name: 'dashboard' })
     }, 1000)
   } catch (error) {
     console.error('Failed to select team:', error)
-    flashStore.error('Failed to select team')
+    toastStore.error('Failed to select team')
   } finally {
     selecting.value = false
   }
@@ -77,11 +77,11 @@ async function deleteTeam(team: Team) {
   deleting.value = team.id
   try {
     await api.delete(`/teams/${team.id}`)
-    flashStore.success(`Team "${team.name}" deleted`)
+    toastStore.success(`Team "${team.name}" deleted`)
     teams.value = teams.value.filter((t) => t.id !== team.id)
   } catch (error: unknown) {
     const axiosError = error as { response?: { data?: { message?: string } } }
-    flashStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
+    toastStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
   } finally {
     deleting.value = null
   }

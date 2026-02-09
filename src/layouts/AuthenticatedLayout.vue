@@ -6,7 +6,7 @@ import NavLink from '@/components/Common/UI/Navigation/NavLink.vue'
 import Dropdown from '@/components/Common/UI/Navigation/DropdownMenu.vue'
 import DropdownLink from '@/components/Common/UI/Navigation/DropdownLink.vue'
 import ResponsiveNavLink from '@/components/Common/UI/Navigation/ResponsiveNavLink.vue'
-import FlashProvider from '@/components/Flash/FlashProvider.vue'
+import ToastProvider from '@/components/Toast/ToastProvider.vue'
 import PageFooter from '@/components/Common/Layout/PageFooter.vue'
 import DemoBanner from '@/components/Demo/DemoBanner.vue'
 import NotificationBell from '@/components/Notification/NotificationBell.vue'
@@ -25,7 +25,7 @@ async function logout() {
 </script>
 
 <template>
-  <FlashProvider>
+  <ToastProvider>
     <div class="min-h-screen bg-gray-100 flex flex-col">
       <DemoBanner />
       <nav class="bg-white border-b border-gray-100 z-40">
@@ -214,5 +214,5 @@ async function logout() {
       <!-- Page Footer -->
       <PageFooter />
     </div>
-  </FlashProvider>
+  </ToastProvider>
 </template>
