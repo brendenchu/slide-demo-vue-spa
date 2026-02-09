@@ -33,7 +33,7 @@ const createTeam = () => {
   <AuthenticatedLayout>
     <div class="p-12 lg:px-0">
       <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-        <div class="p-4 sm:p-8 cyber-card">
+        <div class="p-4 sm:p-8 theme-card">
           <section>
             <header>
               <h2 class="text-lg font-medium text-base-content">Create a New Team</h2>

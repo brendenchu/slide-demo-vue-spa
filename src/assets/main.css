@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   Theme-agnostic base styles
+   ============================================ */
+
 @layer base {
   h1,
   h2,
@@ -19,37 +23,17 @@
       @apply text-sm mt-1 block;
     }
   }
-
-  .btn-primary:hover {
-    @apply shadow-glow-cyan;
-  }
-
-  .btn-secondary:hover {
-    @apply shadow-glow-pink;
-  }
-
-  .btn-error:hover {
-    box-shadow: 0 0 15px rgba(255, 56, 96, 0.35), 0 0 30px rgba(255, 56, 96, 0.15);
-  }
-
-  .input:focus,
-  .select:focus,
-  textarea:focus {
-    @apply border-primary shadow-glow-cyan;
-  }
 }
 
 @layer components {
-  .cyber-card {
+  /* Shared card base — themed per data-theme */
+  .theme-card {
     @apply bg-base-200/80 backdrop-blur-sm border border-base-300 rounded-lg shadow-lg;
-    box-shadow: inset 0 1px 0 rgba(0, 240, 255, 0.05), 0 4px 6px rgba(0, 0, 0, 0.3);
   }
 
-  .cyber-grid {
-    background-image:
-      linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
+  /* Shared grid background base — themed per data-theme */
+  .theme-grid {
+    /* Intentionally empty base — scoped styles below add theme-specific backgrounds */
   }
 }
 
@@ -70,6 +54,173 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-cyber-cyan via-cyber-purple to-cyber-pink;
   }
 }
+
+/* ============================================
+   Cyberpunk theme — maximalist
+   ============================================ */
+
+[data-theme="cyberpunk"] {
+  --font-sans: 'Rajdhani';
+  --font-display: 'Orbitron';
+}
+
+/* Scanline overlay */
+[data-theme="cyberpunk"] body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 240, 255, 0.015) 0px,
+    rgba(0, 240, 255, 0.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* Animated neon card borders */
+[data-theme="cyberpunk"] .theme-card {
+  box-shadow: inset 0 1px 0 rgba(0, 240, 255, 0.08), 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-color: rgba(0, 240, 255, 0.15);
+  animation: neon-border-pulse 4s ease-in-out infinite;
+}
+
+@keyframes neon-border-pulse {
+  0%, 100% {
+    border-color: rgba(0, 240, 255, 0.15);
+    box-shadow: inset 0 1px 0 rgba(0, 240, 255, 0.08), 0 4px 6px rgba(0, 0, 0, 0.3), 0 0 8px rgba(0, 240, 255, 0.05);
+  }
+  50% {
+    border-color: rgba(255, 45, 149, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 45, 149, 0.08), 0 4px 6px rgba(0, 0, 0, 0.3), 0 0 12px rgba(255, 45, 149, 0.08);
+  }
+}
+
+/* Cyan grid lines */
+[data-theme="cyberpunk"] .theme-grid {
+  background-image:
+    linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Animated neon text */
+[data-theme="cyberpunk"] .neon-text {
+  animation: neon-text-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes neon-text-glow {
+  from {
+    text-shadow:
+      0 0 4px rgba(0, 240, 255, 0.4),
+      0 0 10px rgba(0, 240, 255, 0.2);
+  }
+  to {
+    text-shadow:
+      0 0 8px rgba(0, 240, 255, 0.6),
+      0 0 20px rgba(0, 240, 255, 0.3),
+      0 0 30px rgba(0, 240, 255, 0.15);
+  }
+}
+
+/* Button persistent glow */
+[data-theme="cyberpunk"] .btn-primary {
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+[data-theme="cyberpunk"] .btn-primary:hover {
+  @apply shadow-glow-cyan;
+}
+
+[data-theme="cyberpunk"] .btn-secondary {
+  box-shadow: 0 0 8px rgba(255, 45, 149, 0.2);
+}
+
+[data-theme="cyberpunk"] .btn-secondary:hover {
+  @apply shadow-glow-pink;
+}
+
+[data-theme="cyberpunk"] .btn-error:hover {
+  box-shadow: 0 0 20px rgba(255, 56, 96, 0.45), 0 0 40px rgba(255, 56, 96, 0.2);
+}
+
+/* Input focus glow */
+[data-theme="cyberpunk"] .input:focus,
+[data-theme="cyberpunk"] .select:focus,
+[data-theme="cyberpunk"] textarea:focus {
+  @apply border-primary shadow-glow-cyan;
+}
+
+/* ============================================
+   Corporate theme — clean & professional
+   ============================================ */
+
+[data-theme="corporate"] {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Inter', system-ui, sans-serif;
+}
+
+/* Clean card with subtle shadow */
+[data-theme="corporate"] .theme-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  border-color: oklch(var(--b3));
+}
+
+/* No grid lines */
+[data-theme="corporate"] .theme-grid {
+  background-image: none;
+}
+
+/* Clean button hover */
+[data-theme="corporate"] .btn-primary:hover {
+  filter: brightness(0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="corporate"] .btn-secondary:hover {
+  filter: brightness(0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="corporate"] .btn-error:hover {
+  filter: brightness(0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* Standard blue ring on focus */
+[data-theme="corporate"] .input:focus,
+[data-theme="corporate"] .select:focus,
+[data-theme="corporate"] textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Disable glow utilities in corporate */
+[data-theme="corporate"] .glow-cyan,
+[data-theme="corporate"] .glow-pink,
+[data-theme="corporate"] .glow-purple {
+  box-shadow: none;
+}
+
+/* Disable gradient text in corporate — use primary color instead */
+[data-theme="corporate"] .gradient-cyber-text {
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  -webkit-text-fill-color: unset;
+  color: #2563eb;
+}
+
+/* No scanlines in corporate */
+[data-theme="corporate"] body::after {
+  display: none;
+}
+
+/* ============================================
+   Global layout utilities (theme-agnostic)
+   ============================================ */
 
 .stretched {
   @apply flex flex-col grow;

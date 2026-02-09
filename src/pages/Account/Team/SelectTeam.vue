@@ -97,7 +97,7 @@ onMounted(() => {
     <div class="p-12 lg:px-0">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-col gap-4">
         <div class="flex items-center justify-between">
-          <div class="p-4 sm:p-8 cyber-card flex-1">
+          <div class="p-4 sm:p-8 theme-card flex-1">
             <strong>Current Team:</strong> {{ authStore.user?.team?.name ?? 'None' }}
           </div>
           <div class="ml-4 flex items-center gap-2">
@@ -115,11 +115,11 @@ onMounted(() => {
           </div>
         </div>
 
-        <div v-if="loading" class="p-4 sm:p-8 cyber-card">
+        <div v-if="loading" class="p-4 sm:p-8 theme-card">
           <p class="text-base-content/60">Loading teams...</p>
         </div>
 
-        <div v-else-if="teams.length === 0" class="p-4 sm:p-8 cyber-card">
+        <div v-else-if="teams.length === 0" class="p-4 sm:p-8 theme-card">
           <p class="text-base-content/60">No teams available.</p>
         </div>
 
@@ -127,7 +127,7 @@ onMounted(() => {
           <div
             v-for="team in teams"
             :key="team.id"
-            class="p-4 sm:p-8 cyber-card"
+            class="p-4 sm:p-8 theme-card"
           >
             <section class="relative min-h-[160px]">
               <header>

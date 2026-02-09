@@ -10,6 +10,7 @@ import ToastProvider from '@/components/Toast/ToastProvider.vue'
 import PageFooter from '@/components/Common/Layout/PageFooter.vue'
 import DemoBanner from '@/components/Demo/DemoBanner.vue'
 import NotificationBell from '@/components/Notification/NotificationBell.vue'
+import ThemeSwitcher from '@/components/Common/UI/ThemeSwitcher.vue'
 
 const router = useRouter()
 const currentRoute = useRoute()
@@ -26,7 +27,7 @@ async function logout() {
 
 <template>
   <ToastProvider>
-    <div class="min-h-screen bg-base-100 cyber-grid flex flex-col">
+    <div class="min-h-screen bg-base-100 theme-grid flex flex-col">
       <DemoBanner />
       <nav class="bg-base-200/90 backdrop-blur-md border-b border-base-300 z-40">
         <!-- Primary Navigation Menu -->
@@ -54,11 +55,13 @@ async function logout() {
                 </NavLink>
               </div>
             </div>
-            <div class="hidden sm:flex sm:items-center sm:ml-6">
+            <div class="hidden sm:flex sm:items-center sm:ml-6 gap-3">
+              <!-- Theme Switcher -->
+              <ThemeSwitcher />
               <!-- Notification Bell -->
               <NotificationBell />
               <!-- Settings Dropdown -->
-              <div class="ml-3 relative">
+              <div class="relative">
                 <Dropdown align="right" width="48">
                   <template #trigger>
                     <span class="inline-flex rounded-md">
@@ -174,7 +177,8 @@ async function logout() {
               Teams
             </ResponsiveNavLink>
           </div>
-          <div class="px-4 py-2">
+          <div class="px-4 py-2 flex items-center gap-4">
+            <ThemeSwitcher />
             <NotificationBell />
           </div>
 

@@ -8,7 +8,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <section class="p-4 sm:p-8 cyber-card">
+  <section class="p-4 sm:p-8 theme-card">
     <header>
       <h2 class="text-lg font-medium text-base-content">Projects</h2>
       <p class="mt-1 text-sm text-base-content/60">A list of projects you have created.</p>

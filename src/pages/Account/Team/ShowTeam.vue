@@ -77,7 +77,7 @@ onMounted(() => {
     <div class="p-12 lg:px-0">
       <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <!-- Team Info -->
-        <div class="p-4 sm:p-8 cyber-card">
+        <div class="p-4 sm:p-8 theme-card">
           <div v-if="loading" class="text-base-content/60">Loading team...</div>
           <div v-else-if="team">
             <div class="flex items-center justify-between">
@@ -136,7 +136,7 @@ onMounted(() => {
         </div>
 
         <!-- Members List -->
-        <div v-if="!loading" class="p-4 sm:p-8 cyber-card">
+        <div v-if="!loading" class="p-4 sm:p-8 theme-card">
           <TeamMembersList
             :team-id="teamId"
             :is-admin="isAdmin"
@@ -146,7 +146,7 @@ onMounted(() => {
         </div>
 
         <!-- Invite Form (admin only) -->
-        <div v-if="!loading && isAdmin" class="p-4 sm:p-8 cyber-card">
+        <div v-if="!loading && isAdmin" class="p-4 sm:p-8 theme-card">
           <InviteMemberForm
             :team-id="teamId"
             :is-owner="isOwner"
@@ -156,7 +156,7 @@ onMounted(() => {
         </div>
 
         <!-- Pending Invitations (admin only) -->
-        <div v-if="!loading && isAdmin" class="p-4 sm:p-8 cyber-card">
+        <div v-if="!loading && isAdmin" class="p-4 sm:p-8 theme-card">
           <PendingInvitationsList :team-id="teamId" />
         </div>
       </div>
