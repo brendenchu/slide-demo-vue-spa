@@ -1,5 +1,5 @@
 import type { Project } from '@/types/models'
-import { getStepOrder } from './steps'
+import { STEP_CONFIGS, getStepOrder } from './steps'
 
 export interface LastPosition {
   step: string
@@ -32,38 +32,26 @@ export function findLastPosition(project: Project): LastPosition {
 }
 
 /**
+ * Chunk a step's fields into page groups based on fieldsPerPage from STEP_CONFIGS
+ */
+function getPageFields(step: string): Record<number, string[]> {
+  const config = STEP_CONFIGS[step]
+  if (!config || config.fieldsPerPage <= 0) return {}
+
+  const pages: Record<number, string[]> = {}
+  for (let i = 0; i < config.fields.length; i += config.fieldsPerPage) {
+    const pageNum = Math.floor(i / config.fieldsPerPage) + 1
+    pages[pageNum] = config.fields.slice(i, i + config.fieldsPerPage)
+  }
+  return pages
+}
+
+/**
  * Find the last page in a step that has saved data
  */
 function findLastPageInStep(step: string, stepData: Record<string, unknown>): number {
-  // Define field groups by page for each step
-  const pageFields: Record<string, Record<number, string[]>> = {
-    intro: {
-      1: ['intro_1', 'intro_2', 'intro_3'],
-    },
-    'section-a': {
-      1: ['section_a_1', 'section_a_2', 'section_a_3'],
-      2: ['section_a_4', 'section_a_5', 'section_a_6'],
-    },
-    'section-b': {
-      1: ['section_b_1', 'section_b_2', 'section_b_3'],
-      2: ['section_b_4', 'section_b_5', 'section_b_6'],
-      3: ['section_b_7', 'section_b_8', 'section_b_9'],
-    },
-    'section-c': {
-      1: ['section_c_1'],
-      2: ['section_c_2'],
-      3: ['section_c_3'],
-      4: ['section_c_4'],
-      5: ['section_c_5'],
-      6: ['section_c_6'],
-      7: ['section_c_7'],
-      8: ['section_c_8'],
-      9: ['section_c_9'],
-    },
-  }
-
-  const stepPages = pageFields[step]
-  if (!stepPages) return 1
+  const stepPages = getPageFields(step)
+  if (!Object.keys(stepPages).length) return 1
 
   // Find the highest page number with any filled field
   let lastPage = 1
@@ -96,19 +84,11 @@ export function calculateProgress(project: Project): number {
   const stepOrder = getStepOrder()
   const responses = project.responses || {}
 
-  // Define total fields per step
-  const stepFieldCounts: Record<string, number> = {
-    intro: 3,
-    'section-a': 6,
-    'section-b': 9,
-    'section-c': 9,
-  }
-
   let totalFields = 0
   let filledFields = 0
 
   for (const step of stepOrder) {
-    const fieldCount = stepFieldCounts[step] || 0
+    const fieldCount = STEP_CONFIGS[step]?.fields.length || 0
     totalFields += fieldCount
 
     const stepData = responses[step] as Record<string, unknown> | undefined

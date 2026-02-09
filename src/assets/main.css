@@ -106,25 +106,6 @@
   background-size: 40px 40px;
 }
 
-/* Animated neon text */
-[data-theme="cyberpunk"] .neon-text {
-  animation: neon-text-glow 2s ease-in-out infinite alternate;
-}
-
-@keyframes neon-text-glow {
-  from {
-    text-shadow:
-      0 0 4px rgba(0, 240, 255, 0.4),
-      0 0 10px rgba(0, 240, 255, 0.2);
-  }
-  to {
-    text-shadow:
-      0 0 8px rgba(0, 240, 255, 0.6),
-      0 0 20px rgba(0, 240, 255, 0.3),
-      0 0 30px rgba(0, 240, 255, 0.15);
-  }
-}
-
 /* Button persistent glow */
 [data-theme="cyberpunk"] .btn-primary {
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
