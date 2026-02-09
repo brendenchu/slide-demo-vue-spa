@@ -77,26 +77,26 @@ onMounted(() => {
     <div class="p-12 lg:px-0">
       <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <!-- Team Info -->
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-          <div v-if="loading" class="text-gray-600">Loading team...</div>
+        <div class="p-4 sm:p-8 cyber-card">
+          <div v-if="loading" class="text-base-content/60">Loading team...</div>
           <div v-else-if="team">
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-xl font-bold text-gray-900">{{ team.name }}</h2>
-                <p v-if="team.description" class="mt-1 text-sm text-gray-500">
+                <h2 class="text-xl font-bold text-base-content">{{ team.name }}</h2>
+                <p v-if="team.description" class="mt-1 text-sm text-base-content/50">
                   {{ team.description }}
                 </p>
-                <p class="mt-1 text-xs text-gray-400">
+                <p class="mt-1 text-xs text-base-content/40">
                   Status: {{ team.status }}
                   <span
                     v-if="isOwner"
-                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-warning/20 text-warning"
                   >
                     Owner
                   </span>
                   <span
                     v-else-if="isAdmin"
-                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary"
                   >
                     Admin
                   </span>
@@ -121,22 +121,22 @@ onMounted(() => {
         <!-- Undeletable Team Warning -->
         <div
           v-if="!loading && isOwner && team?.is_personal"
-          class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
+          class="p-4 bg-warning/10 border border-warning/30 rounded-lg"
         >
-          <p class="text-sm text-amber-800">This is your default team and cannot be deleted.</p>
+          <p class="text-sm text-warning">This is your default team and cannot be deleted.</p>
         </div>
         <div
           v-else-if="!loading && isOwner && isCurrentTeam"
-          class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
+          class="p-4 bg-warning/10 border border-warning/30 rounded-lg"
         >
-          <p class="text-sm text-amber-800">
+          <p class="text-sm text-warning">
             This is your current active team. You must switch to another team before you can delete
             it.
           </p>
         </div>
 
         <!-- Members List -->
-        <div v-if="!loading" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div v-if="!loading" class="p-4 sm:p-8 cyber-card">
           <TeamMembersList
             :team-id="teamId"
             :is-admin="isAdmin"
@@ -146,7 +146,7 @@ onMounted(() => {
         </div>
 
         <!-- Invite Form (admin only) -->
-        <div v-if="!loading && isAdmin" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div v-if="!loading && isAdmin" class="p-4 sm:p-8 cyber-card">
           <InviteMemberForm
             :team-id="teamId"
             :is-owner="isOwner"
@@ -156,7 +156,7 @@ onMounted(() => {
         </div>
 
         <!-- Pending Invitations (admin only) -->
-        <div v-if="!loading && isAdmin" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+        <div v-if="!loading && isAdmin" class="p-4 sm:p-8 cyber-card">
           <PendingInvitationsList :team-id="teamId" />
         </div>
       </div>

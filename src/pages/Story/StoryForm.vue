@@ -156,7 +156,7 @@ watch(
   </StoryLayout>
   <div v-else class="flex items-center justify-center min-h-screen">
     <div class="text-center">
-      <p class="text-lg text-red-600">Project not found</p>
+      <p class="text-lg text-error">Project not found</p>
     </div>
   </div>
 </template>

@@ -19,12 +19,56 @@
       @apply text-sm mt-1 block;
     }
   }
+
+  .btn-primary:hover {
+    @apply shadow-glow-cyan;
+  }
+
+  .btn-secondary:hover {
+    @apply shadow-glow-pink;
+  }
+
+  .btn-error:hover {
+    box-shadow: 0 0 15px rgba(255, 56, 96, 0.35), 0 0 30px rgba(255, 56, 96, 0.15);
+  }
+
+  .input:focus,
+  .select:focus,
+  textarea:focus {
+    @apply border-primary shadow-glow-cyan;
+  }
 }
 
 @layer components {
+  .cyber-card {
+    @apply bg-base-200/80 backdrop-blur-sm border border-base-300 rounded-lg shadow-lg;
+    box-shadow: inset 0 1px 0 rgba(0, 240, 255, 0.05), 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .cyber-grid {
+    background-image:
+      linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
 }
 
 @layer utilities {
+  .glow-cyan {
+    @apply shadow-glow-cyan;
+  }
+
+  .glow-pink {
+    @apply shadow-glow-pink;
+  }
+
+  .glow-purple {
+    @apply shadow-glow-purple;
+  }
+
+  .gradient-cyber-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyber-cyan via-cyber-purple to-cyber-pink;
+  }
 }
 
 .stretched {

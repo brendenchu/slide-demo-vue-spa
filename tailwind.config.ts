@@ -14,56 +14,57 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-        display: ['Inter var', ...defaultTheme.fontFamily.sans],
+        sans: ['Rajdhani', ...defaultTheme.fontFamily.sans],
+        display: ['Orbitron', ...defaultTheme.fontFamily.sans],
+      },
+      boxShadow: {
+        'glow-cyan': '0 0 15px rgba(0, 240, 255, 0.35), 0 0 30px rgba(0, 240, 255, 0.15)',
+        'glow-pink': '0 0 15px rgba(255, 45, 149, 0.35), 0 0 30px rgba(255, 45, 149, 0.15)',
+        'glow-purple': '0 0 15px rgba(176, 38, 255, 0.35), 0 0 30px rgba(176, 38, 255, 0.15)',
+      },
+      colors: {
+        'cyber-cyan': '#00f0ff',
+        'cyber-pink': '#ff2d95',
+        'cyber-purple': '#b026ff',
       },
     },
   },
 
-  // daisyUI config (optional - here are the default values)
+  // daisyUI config
   daisyui: {
     themes: [
       {
-        demo: {
-          // your theme name
-          primary: '#4c51bf', // primary color
-          'primary-focus': '#434190', // primary color (darker version)
-          'primary-content': '#ffffff', // text color for primary color
-          secondary: '#f000b8', // secondary color
-          'secondary-focus': '#bd0091', // secondary color (darker version)
-          'secondary-content': '#ffffff', // text color for secondary color
-          accent: '#37cdbe', // accent color
-          'accent-focus': '#2aa79b', // accent color (darker version)
-          'accent-content': '#ffffff', // text color for accent color
-          neutral: '#3d4451', // neutral color
-          'neutral-focus': '#2a2e37', // neutral color (darker version)
-          'neutral-content': '#ffffff', // text color for neutral color
-          'base-100': '#ffffff', // base color
-          'base-200': '#f9fafb', // base color
-          'base-300': '#d1d5db', // base color
-          'base-content': '#1f2937', // text color for base color
-          info: '#2094f3', // info color
-          'info-focus': '#0573f2', // info color (darker version)
-          'info-content': '#ffffff', // text color for info color
-          success: '#009485', // success color
-          'success-focus': '#007a6b', // success color (darker version)
-          'success-content': '#ffffff', // text color for success color
-          warning: '#ff9900', // warning color
-          'warning-focus': '#f28500', // warning color (darker version)
-          'warning-content': '#ffffff', // text color for warning color
-          error: '#ff5724', // error color
-          'error-focus': '#f13a04', // error color (darker version)
-          'error-content': '#ffffff', // text color for error color
+        cyberpunk: {
+          primary: '#00f0ff',
+          'primary-content': '#0d0b1a',
+          secondary: '#ff2d95',
+          'secondary-content': '#ffffff',
+          accent: '#b026ff',
+          'accent-content': '#ffffff',
+          neutral: '#1a1625',
+          'neutral-content': '#e8e6f0',
+          'base-100': '#0d0b1a',
+          'base-200': '#151228',
+          'base-300': '#1e1a38',
+          'base-content': '#e8e6f0',
+          info: '#00b4d8',
+          'info-content': '#0d0b1a',
+          success: '#39ff14',
+          'success-content': '#0d0b1a',
+          warning: '#ffe600',
+          'warning-content': '#0d0b1a',
+          error: '#ff3860',
+          'error-content': '#ffffff',
         },
       },
-    ], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
-    darkTheme: 'dark', // name of one of the included themes for dark mode
-    base: true, // applies background color and foreground color for root element by default
-    styled: true, // include daisyUI colors and design decisions for all components
-    utils: true, // adds responsive and modifier utility classes
-    prefix: '', // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
-    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
-    themeRoot: ':root', // The element that receives theme color CSS variables
+    ],
+    darkTheme: 'cyberpunk',
+    base: true,
+    styled: true,
+    utils: true,
+    prefix: '',
+    logs: true,
+    themeRoot: ':root',
   },
   plugins: [typography, forms, animate, daisyui],
 } satisfies Config

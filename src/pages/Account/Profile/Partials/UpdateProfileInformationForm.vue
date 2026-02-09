@@ -42,9 +42,9 @@ const saveProfile = () => {
 <template>
   <section>
     <header>
-      <h2 class="text-lg font-medium text-gray-900">Profile Information</h2>
+      <h2 class="text-lg font-medium text-base-content">Profile Information</h2>
 
-      <p class="mt-1 text-sm text-gray-600">
+      <p class="mt-1 text-sm text-base-content/60">
         Update your account's profile information and email address.
       </p>
     </header>
@@ -108,7 +108,7 @@ const saveProfile = () => {
           leave-active-class="transition ease-in-out"
           leave-to-class="opacity-0"
         >
-          <p v-if="form.recentlySuccessful" class="text-sm text-green-600">Saved.</p>
+          <p v-if="form.recentlySuccessful" class="text-sm text-success">Saved.</p>
         </Transition>
       </div>
     </form>

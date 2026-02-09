@@ -51,15 +51,15 @@ async function submit() {
 <template>
   <GuestLayout>
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Create Account</h1>
-      <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Sign up to start creating stories</p>
+      <h1 class="text-2xl font-bold text-base-content">Create Account</h1>
+      <p class="mt-2 text-sm text-base-content/60">Sign up to start creating stories</p>
     </div>
 
     <div
       v-if="demoStore.isDemoMode"
-      class="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800"
+      class="mb-4 p-4 bg-warning/10 rounded-lg border border-warning/30"
     >
-      <p class="text-sm text-yellow-800 dark:text-yellow-300">
+      <p class="text-sm text-warning">
         <strong>Demo Mode:</strong> Registration is limited in the demo environment. Some features
         may be restricted.
       </p>
@@ -108,7 +108,7 @@ async function submit() {
         </PrimaryButton>
       </div>
 
-      <div class="text-center text-sm text-gray-600 dark:text-gray-400">
+      <div class="text-center text-sm text-base-content/60">
         Already have an account?
         <router-link
           :to="{ name: 'login' }"

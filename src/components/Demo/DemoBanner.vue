@@ -20,12 +20,12 @@ function dismiss() {
 <template>
   <div
     v-if="demoStore.isDemoMode && !dismissed"
-    class="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-between"
+    class="bg-warning/15 border-b border-warning/40 px-4 py-2 text-sm text-warning/90 flex items-center justify-between"
   >
     <span>This is a demo environment with limited resources.</span>
     <button
       type="button"
-      class="ml-4 text-amber-600 hover:text-amber-800 font-medium"
+      class="ml-4 text-base-content/60 hover:text-warning font-medium transition"
       @click="dismiss"
     >
       Dismiss

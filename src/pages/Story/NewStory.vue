@@ -72,7 +72,7 @@ const createForm = async () => {
           >
             {{ loading ? 'Creating...' : "Let's Begin" }}
           </PrimaryButton>
-          <p v-if="projectLimitReached" class="text-sm text-amber-700 mt-2">
+          <p v-if="projectLimitReached" class="text-sm text-warning mt-2">
             Project limit reached in this demo environment.
           </p>
         </div>

@@ -8,29 +8,29 @@ const team = computed(() => authStore.user?.team ?? null)
 </script>
 
 <template>
-  <section v-if="team" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+  <section v-if="team" class="p-4 sm:p-8 cyber-card">
     <header>
-      <h2 class="text-lg font-medium text-gray-900">{{ team.name }}</h2>
-      <p class="mt-1 text-sm text-gray-600">This is the current team you are working in.</p>
+      <h2 class="text-lg font-medium text-base-content">{{ team.name }}</h2>
+      <p class="mt-1 text-sm text-base-content/60">This is the current team you are working in.</p>
     </header>
-    <p class="mt-1 text-sm text-gray-500">
+    <p class="mt-1 text-sm text-base-content/50">
       <RouterLink
         :to="{ name: 'team.select' }"
-        class="font-medium text-indigo-600 hover:text-indigo-500"
+        class="font-medium text-primary hover:text-primary/80"
       >
         Change Team
       </RouterLink>
     </p>
   </section>
-  <section v-else class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+  <section v-else class="p-4 sm:p-8 cyber-card">
     <header>
-      <h2 class="text-lg font-medium text-gray-900">No Team</h2>
-      <p class="mt-1 text-sm text-gray-600">You are not currently assigned to a team.</p>
+      <h2 class="text-lg font-medium text-base-content">No Team</h2>
+      <p class="mt-1 text-sm text-base-content/60">You are not currently assigned to a team.</p>
     </header>
-    <p class="mt-1 text-sm text-gray-500">
+    <p class="mt-1 text-sm text-base-content/50">
       <RouterLink
         :to="{ name: 'team.select' }"
-        class="font-medium text-indigo-600 hover:text-indigo-500"
+        class="font-medium text-primary hover:text-primary/80"
       >
         Select Team
       </RouterLink>

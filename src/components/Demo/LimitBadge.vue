@@ -10,12 +10,12 @@ const percentage = computed(() => (props.max > 0 ? (props.current / props.max) *
 
 const colorClass = computed(() => {
   if (percentage.value >= 100) {
-    return 'bg-red-100 text-red-800'
+    return 'bg-error/20 text-error'
   }
   if (percentage.value >= 80) {
-    return 'bg-amber-100 text-amber-800'
+    return 'bg-warning/20 text-warning'
   }
-  return 'bg-green-100 text-green-800'
+  return 'bg-success/20 text-success'
 })
 </script>
 

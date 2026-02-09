@@ -26,16 +26,16 @@ async function logout() {
 
 <template>
   <ToastProvider>
-    <div class="min-h-screen bg-gray-100 flex flex-col">
+    <div class="min-h-screen bg-base-100 cyber-grid flex flex-col">
       <DemoBanner />
-      <nav class="bg-white border-b border-gray-100 z-40">
+      <nav class="bg-base-200/90 backdrop-blur-md border-b border-base-300 z-40">
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex justify-between h-16">
             <div class="flex">
               <!-- Logo -->
               <div class="shrink-0 flex items-center">
-                <h1 class="text-2xl font-bold text-gray-900">Slide Form Demo</h1>
+                <h1 class="text-2xl font-bold text-base-content">Slide Form Demo</h1>
               </div>
 
               <!-- Navigation Links -->
@@ -63,7 +63,7 @@ async function logout() {
                   <template #trigger>
                     <span class="inline-flex rounded-md">
                       <button
-                        class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                        class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-base-content/60 bg-base-200 hover:text-base-content focus:outline-none transition ease-in-out duration-150"
                         type="button"
                       >
                         <svg
@@ -101,13 +101,13 @@ async function logout() {
                   </template>
                   <template #content>
                     <!-- Authentication -->
-                    <div class="flex flex-col px-4 py-2 text-md border-b">
+                    <div class="flex flex-col px-4 py-2 text-md border-b border-base-300">
                       <span class="font-bold">{{ user?.name }}</span>
-                      <small class="text-gray-600">{{ user?.email }}</small>
+                      <small class="text-base-content/60">{{ user?.email }}</small>
                     </div>
                     <DropdownLink :to="{ name: 'profile.edit' }"> Profile </DropdownLink>
                     <button
-                      class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
+                      class="block w-full px-4 py-2 text-left text-sm leading-5 text-base-content/70 hover:bg-base-300 focus:outline-none focus:bg-base-300 transition duration-150 ease-in-out"
                       @click="logout"
                     >
                       Log Out
@@ -119,7 +119,7 @@ async function logout() {
             <!-- Hamburger -->
             <div class="-mr-2 flex items-center sm:hidden">
               <button
-                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                class="inline-flex items-center justify-center p-2 rounded-md text-base-content/50 hover:text-base-content/70 hover:bg-base-300 focus:outline-none focus:bg-base-300 focus:text-base-content/70 transition duration-150 ease-in-out"
                 @click="showingNavigationDropdown = !showingNavigationDropdown"
               >
                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,17 +179,17 @@ async function logout() {
           </div>
 
           <!-- Responsive Settings Options -->
-          <div class="pt-4 pb-1 border-t border-gray-200">
+          <div class="pt-4 pb-1 border-t border-base-300">
             <div class="px-4">
-              <div class="font-medium text-base text-gray-800">
+              <div class="font-medium text-base text-base-content">
                 {{ user?.name }}
               </div>
-              <div class="font-medium text-sm text-gray-500">{{ user?.email }}</div>
+              <div class="font-medium text-sm text-base-content/60">{{ user?.email }}</div>
             </div>
             <div class="mt-3 space-y-1">
               <ResponsiveNavLink :to="{ name: 'profile.edit' }"> Profile </ResponsiveNavLink>
               <button
-                class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out"
+                class="block w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-left text-base font-medium text-base-content/60 hover:text-base-content hover:bg-base-300 hover:border-base-300 focus:outline-none focus:text-base-content focus:bg-base-300 focus:border-base-300 transition duration-150 ease-in-out"
                 @click="logout"
               >
                 Log Out
@@ -200,7 +200,7 @@ async function logout() {
       </nav>
 
       <!-- Page Heading -->
-      <header v-if="$slots.header" class="bg-white shadow z-30">
+      <header v-if="$slots.header" class="bg-base-200 shadow-lg shadow-primary/5 z-30">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <slot name="header" />
         </div>

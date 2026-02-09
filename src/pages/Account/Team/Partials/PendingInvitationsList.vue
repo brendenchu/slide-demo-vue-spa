@@ -28,22 +28,22 @@ async function cancelInvitation(invitationId: string) {
 <template>
   <section>
     <header>
-      <h2 class="text-lg font-medium text-gray-900">Pending Invitations</h2>
+      <h2 class="text-lg font-medium text-base-content">Pending Invitations</h2>
     </header>
 
     <div v-if="teamsStore.invitations.length === 0" class="mt-4">
-      <p class="text-sm text-gray-500">No pending invitations.</p>
+      <p class="text-sm text-base-content/50">No pending invitations.</p>
     </div>
 
     <div v-else class="mt-4 space-y-3">
       <div
         v-for="invitation in teamsStore.invitations"
         :key="invitation.id"
-        class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+        class="flex items-center justify-between p-3 bg-base-300/50 rounded-lg"
       >
         <div>
-          <p class="text-sm font-medium text-gray-900">{{ invitation.email }}</p>
-          <p class="text-xs text-gray-500">
+          <p class="text-sm font-medium text-base-content">{{ invitation.email }}</p>
+          <p class="text-xs text-base-content/50">
             Role: {{ invitation.role }} &middot; Expires:
             {{
               invitation.expires_at ? new Date(invitation.expires_at).toLocaleDateString() : 'Never'
