@@ -71,10 +71,17 @@ watch(
   }
 )
 
-// For async mode, update highlight when options change
+// When options change, resolve current modelValue and update highlight for async mode
 watch(
   () => props.options,
   (opts) => {
+    if (props.modelValue && !selectedLabel.value) {
+      const match = opts.find((o) => o.value === props.modelValue)
+      if (match) {
+        query.value = match.label
+        selectedLabel.value = match.label
+      }
+    }
     if (!props.filterLocally && isOpen.value) {
       highlightedIndex.value = opts.length > 0 ? 0 : -1
     }
