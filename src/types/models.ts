@@ -6,11 +6,8 @@ export interface User {
   name: string
   first_name?: string
   last_name?: string
-  roles: Role[]
-  permissions: string[]
   team_id: string | null
   team?: Team | null
-  email_verified_at: string | null
 }
 
 export interface Team {
@@ -22,16 +19,18 @@ export interface Team {
   is_personal?: boolean
   is_admin?: boolean
   is_owner?: boolean
-  owner_id?: string | null
   current?: boolean
   created_at?: string
   updated_at?: string
 }
 
+export type TeamMemberRole = 'owner' | 'admin' | 'member'
+
 export interface TeamMember {
   id: string
   name: string
   email: string
+  role: TeamMemberRole
   is_admin: boolean
   joined_at: string | null
 }
@@ -68,6 +67,22 @@ export interface FormResponse {
   saved_at: string
 }
 
-export type Role = 'client' | 'consultant' | 'admin' | 'super-admin' | 'guest'
+export interface UserSearchResult {
+  id: string
+  name: string
+  email: string
+}
+
+export interface AppNotification {
+  id: string
+  title: string
+  content: string | null
+  type: string | null
+  link: string | null
+  read_at: string | null
+  sender?: { id: string; name: string }
+  created_at: string
+}
+
 export type ProjectStatus = 'draft' | 'in_progress' | 'completed'
 export type ProjectStep = 'intro' | 'section_a' | 'section_b' | 'section_c' | 'complete'

@@ -3,6 +3,7 @@ import { nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useForm } from '@/composables/useForm'
 import { useAuthStore } from '@/stores/auth'
+import { useDemoStore } from '@/stores/demo'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 import Modal from '@/components/Common/UI/ModalComponent.vue'
@@ -12,6 +13,7 @@ import InputField from '@/components/Form/FormField.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const demoStore = useDemoStore()
 const confirmingUserDeletion = ref(false)
 const passwordInput = ref<HTMLInputElement | null>(null)
 
@@ -58,7 +60,10 @@ const closeModal = () => {
       </p>
     </header>
 
-    <DangerButton @click="confirmUserDeletion">Delete Account</DangerButton>
+    <template v-if="demoStore.isDemoMode && demoStore.isDemoAccount">
+      <p class="text-sm text-amber-700">Demo accounts cannot be deleted.</p>
+    </template>
+    <DangerButton v-else @click="confirmUserDeletion">Delete Account</DangerButton>
 
     <Modal :show="confirmingUserDeletion" @close="closeModal">
       <div class="p-6">

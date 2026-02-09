@@ -56,6 +56,7 @@ export async function migrateLocalDataToAPI(token: string): Promise<MigrationRes
       return result
     }
 
+    // eslint-disable-next-line no-console
     console.log(`Found ${projectKeys.length} local projects to migrate`)
 
     // Migrate each project
@@ -74,6 +75,7 @@ export async function migrateLocalDataToAPI(token: string): Promise<MigrationRes
           description: localProject.description || '',
         })
 
+        // eslint-disable-next-line no-console
         console.log(`Created project "${apiProject.title}" with ID: ${apiProject.id}`)
 
         // If project has responses, save them step by step
@@ -85,6 +87,7 @@ export async function migrateLocalDataToAPI(token: string): Promise<MigrationRes
               localProject.current_step,
               localProject.responses
             )
+            // eslint-disable-next-line no-console
             console.log(`Migrated ${Object.keys(localProject.responses).length} responses`)
           } catch (error) {
             result.errors.push(
@@ -97,6 +100,7 @@ export async function migrateLocalDataToAPI(token: string): Promise<MigrationRes
         if (localProject.status === 'completed') {
           try {
             await apiDataSource.completeProject(apiProject.id)
+            // eslint-disable-next-line no-console
             console.log(`Marked project "${apiProject.title}" as completed`)
           } catch (error) {
             result.errors.push(
@@ -116,6 +120,7 @@ export async function migrateLocalDataToAPI(token: string): Promise<MigrationRes
     // Migration successful if at least one project was migrated
     result.success = result.projectsMigrated > 0
 
+    // eslint-disable-next-line no-console
     console.log(
       `Migration complete: ${result.projectsMigrated}/${projectKeys.length} projects migrated`
     )
@@ -147,6 +152,7 @@ export async function clearLocalDataAfterMigration(): Promise<void> {
     // Clear auth token (will be replaced by API token)
     localStorage.removeItem('auth_token')
 
+    // eslint-disable-next-line no-console
     console.log('Local data cleared successfully')
   } catch (error) {
     console.error('Failed to clear local data:', error)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useTeamsStore } from '@/stores/teams'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 import type { TeamMember } from '@/types/models'
@@ -10,8 +10,6 @@ const props = defineProps<{
   teamId: string
   isAdmin: boolean
   isOwner: boolean
-  ownerUserId: string | null
-  currentUserId: string
 }>()
 
 const emit = defineEmits<{
@@ -19,21 +17,17 @@ const emit = defineEmits<{
 }>()
 
 const teamsStore = useTeamsStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 const processing = ref<string | null>(null)
-
-function isMemberOwner(member: TeamMember): boolean {
-  return props.ownerUserId !== null && member.id === props.ownerUserId
-}
 
 async function removeMember(member: TeamMember) {
   if (!window.confirm(`Remove ${member.name} from the team?`)) return
   processing.value = member.id
   try {
     await teamsStore.removeMember(props.teamId, member.id)
-    flashStore.success(`${member.name} has been removed from the team`)
+    toastStore.success(`${member.name} has been removed from the team`)
   } catch {
-    flashStore.error('Failed to remove member')
+    toastStore.error('Failed to remove member')
   } finally {
     processing.value = null
   }
@@ -44,9 +38,9 @@ async function toggleRole(member: TeamMember) {
   processing.value = member.id
   try {
     await teamsStore.updateMemberRole(props.teamId, member.id, newRole)
-    flashStore.success(`${member.name} is now a ${newRole}`)
+    toastStore.success(`${member.name} is now a ${newRole}`)
   } catch {
-    flashStore.error('Failed to update role')
+    toastStore.error('Failed to update role')
   } finally {
     processing.value = null
   }
@@ -57,13 +51,19 @@ async function transferOwnership(member: TeamMember) {
   processing.value = member.id
   try {
     await teamsStore.transferOwnership(props.teamId, member.id)
-    flashStore.success(`Ownership transferred to ${member.name}`)
+    toastStore.success(`Ownership transferred to ${member.name}`)
     emit('ownershipTransferred')
   } catch {
-    flashStore.error('Failed to transfer ownership')
+    toastStore.error('Failed to transfer ownership')
   } finally {
     processing.value = null
   }
+}
+
+const roleStyles: Record<string, string> = {
+  owner: 'bg-amber-100 text-amber-800',
+  admin: 'bg-indigo-100 text-indigo-800',
+  member: 'bg-gray-100 text-gray-800',
 }
 </script>
 
@@ -94,26 +94,17 @@ async function transferOwnership(member: TeamMember) {
             <td class="px-4 py-3 text-sm text-gray-500">{{ member.email }}</td>
             <td class="px-4 py-3 text-sm">
               <span
-                v-if="isMemberOwner(member)"
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800"
+                :class="roleStyles[member.role] ?? 'bg-gray-100 text-gray-800'"
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize"
               >
-                Owner
-              </span>
-              <span
-                v-else
-                :class="
-                  member.is_admin ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800'
-                "
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-              >
-                {{ member.is_admin ? 'Admin' : 'Member' }}
+                {{ member.role }}
               </span>
             </td>
             <td v-if="isAdmin" class="px-4 py-3 text-sm text-right space-x-2">
-              <template v-if="isMemberOwner(member)">
+              <template v-if="member.role === 'owner'">
                 <span class="text-gray-400 text-xs">Owner</span>
               </template>
-              <template v-else-if="member.id !== currentUserId">
+              <template v-else>
                 <SecondaryButton
                   v-if="isOwner"
                   :disabled="processing === member.id"
@@ -128,7 +119,6 @@ async function transferOwnership(member: TeamMember) {
                   Remove
                 </DangerButton>
               </template>
-              <span v-else class="text-gray-400 text-xs">You</span>
             </td>
           </tr>
         </tbody>

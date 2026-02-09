@@ -70,6 +70,7 @@ function createAxiosInstance(): AxiosInstance {
       }
 
       if (isDebug) {
+        // eslint-disable-next-line no-console
         console.log('[API Request]', config.method?.toUpperCase(), config.url, config.data)
       }
 
@@ -89,11 +90,12 @@ function createAxiosInstance(): AxiosInstance {
   instance.interceptors.response.use(
     (response) => {
       if (isDebug) {
+        // eslint-disable-next-line no-console
         console.log('[API Response]', response.config.url, response.data)
       }
       return response
     },
-    (error: AxiosError<ApiErrorResponse>) => {
+    async (error: AxiosError<ApiErrorResponse>) => {
       if (isDebug) {
         console.error('[API Response Error]', error.response?.status, error.response?.data)
       }
@@ -109,8 +111,16 @@ function createAxiosInstance(): AxiosInstance {
             break
 
           case 403:
-            // Forbidden - show error message
-            console.error('Access forbidden:', data.message)
+            // Forbidden - flash demo-related messages as warnings
+            if (
+              data.message?.startsWith('Demo limit reached') ||
+              data.message?.includes('Demo accounts')
+            ) {
+              const { useToastStore } = await import('@/stores/toast')
+              useToastStore().warning(data.message)
+            } else {
+              console.error('Access forbidden:', data.message)
+            }
             break
 
           case 422:

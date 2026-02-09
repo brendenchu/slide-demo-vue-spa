@@ -1,6 +1,6 @@
 import { reactive, ref } from 'vue'
 import { useProjectsStore } from '@/stores/projects'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import type { Project } from '@/types/models'
 import type { ZodSchema } from 'zod'
 
@@ -46,7 +46,7 @@ export function useStoryForm<T extends Record<string, unknown>>(
   validationOptions?: ValidationOptions
 ): StoryForm<T> {
   const projectsStore = useProjectsStore()
-  const flashStore = useFlashStore()
+  const toastStore = useToastStore()
 
   const errors = reactive<Record<string, string>>({})
   const processingRef = ref(false)
@@ -107,7 +107,7 @@ export function useStoryForm<T extends Record<string, unknown>>(
               errors[fieldName] = issue.message
             })
 
-            flashStore.error('Please fix the validation errors.')
+            toastStore.error('Please fix the validation errors.')
             formOptions?.onError?.()
             processingRef.value = false
             return
@@ -134,7 +134,7 @@ export function useStoryForm<T extends Record<string, unknown>>(
         }, 2000)
       } catch (error: unknown) {
         const err = error as Error
-        flashStore.error(err.message || 'Failed to save form')
+        toastStore.error(err.message || 'Failed to save form')
         formOptions?.onError?.()
       } finally {
         processingRef.value = false
@@ -147,11 +147,11 @@ export function useStoryForm<T extends Record<string, unknown>>(
     value: (...fields: (keyof T)[]) => {
       if (fields.length === 0) {
         Object.keys(initialData).forEach((key) => {
-          ;(form as any)[key] = initialData[key as keyof T]
+          ;(form as Record<string, unknown>)[key] = initialData[key as keyof T]
         })
       } else {
         fields.forEach((field) => {
-          ;(form as any)[field] = initialData[field]
+          ;(form as Record<string, unknown>)[field as string] = initialData[field]
         })
       }
     },

@@ -1,6 +1,6 @@
 // Storage layer type definitions
 
-import type { User, Team, Project } from '@/types/models'
+import type { User, Team, Project, AppNotification } from '@/types/models'
 
 export interface StorageAdapter {
   get<T>(key: string): Promise<T | null>
@@ -16,23 +16,13 @@ export interface StorageOptions {
 
 // Data transfer objects for create operations
 export interface RegisterData {
-  name: string
-  email: string
-  password: string
-  password_confirmation: string
+  first_name: string
+  last_name: string
 }
 
 export interface CreateProjectData {
   title: string
   description?: string
-}
-
-export interface CreateUserData {
-  name: string
-  email: string
-  password: string
-  role?: string
-  team_id?: string | null
 }
 
 export interface CreateTeamData {
@@ -63,16 +53,14 @@ export interface DataSource {
   ): Promise<Project>
   completeProject(projectId: string): Promise<Project>
 
-  // User management methods (admin)
-  getUsers(): Promise<User[]>
-  getUserById(id: string): Promise<User | null>
-  createUser(data: CreateUserData): Promise<User>
-  updateUserById(id: string, data: Partial<User>): Promise<User>
-  deleteUser(id: string): Promise<void>
-
   // Team methods
   getTeams(): Promise<Team[]>
   getTeam(id: string): Promise<Team | null>
   createTeam(data: CreateTeamData): Promise<Team>
   updateTeam(id: string, data: Partial<Team>): Promise<Team>
+
+  // Notification methods
+  getNotifications(): Promise<{ notifications: AppNotification[]; unread_count: number }>
+  markNotificationAsRead(id: string): Promise<void>
+  markAllNotificationsAsRead(): Promise<void>
 }

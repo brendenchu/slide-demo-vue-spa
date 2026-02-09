@@ -1,24 +1,30 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
+import { useDemoStore } from '@/stores/demo'
+import { useNameOptions } from '@/composables/useNameOptions'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
-import InputField from '@/components/Form/FormField.vue'
+import FormCombobox from '@/components/Form/FormCombobox.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
+const demoStore = useDemoStore()
+const { firstNames, lastNames, loaded } = useNameOptions()
 
 const form = ref({
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
+  first_name: '',
+  last_name: '',
 })
+
+const firstNameOptions = computed(() => firstNames.value.map((n) => ({ value: n, label: n })))
+
+const lastNameOptions = computed(() => lastNames.value.map((n) => ({ value: n, label: n })))
 
 const errors = ref<Record<string, string>>({})
 const processing = ref(false)
@@ -27,37 +33,15 @@ async function submit() {
   processing.value = true
   errors.value = {}
 
-  // Client-side validation
-  if (form.value.password !== form.value.password_confirmation) {
-    errors.value.password_confirmation = 'Passwords do not match'
-    processing.value = false
-    return
-  }
-
-  if (form.value.password.length < 8) {
-    errors.value.password = 'Password must be at least 8 characters'
-    processing.value = false
-    return
-  }
-
   try {
-    await authStore.register(
-      form.value.name,
-      form.value.email,
-      form.value.password,
-      form.value.password_confirmation
-    )
-    flashStore.success('Registration successful! Welcome to Vue Slide Demo.')
+    await authStore.register(form.value.first_name, form.value.last_name)
+    toastStore.success('Registration successful! Welcome to Vue Slide Demo.')
 
     // Navigate to dashboard
     router.push({ name: 'dashboard' })
-  } catch (error: any) {
-    if (error.message.includes('already registered')) {
-      errors.value.email = 'This email is already registered'
-    } else {
-      errors.value.email = 'Registration failed. Please try again.'
-    }
-    flashStore.error('Registration failed. Please check your information.')
+  } catch (_error) {
+    errors.value.general = 'Registration failed. Please try again.'
+    toastStore.error('Registration failed. Please check your information.')
   } finally {
     processing.value = false
   }
@@ -72,71 +56,46 @@ async function submit() {
     </div>
 
     <div
+      v-if="demoStore.isDemoMode"
       class="mb-4 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800"
     >
       <p class="text-sm text-yellow-800 dark:text-yellow-300">
-        <strong>Demo Mode:</strong> This is a demo application. Your data is stored locally in your
-        browser.
+        <strong>Demo Mode:</strong> Registration is limited in the demo environment. Some features
+        may be restricted.
       </p>
     </div>
 
     <form class="space-y-4" @submit.prevent="submit">
       <div>
-        <InputLabel for="name" value="Name" />
-        <InputField
-          id="name"
-          v-model="form.name"
-          type="text"
-          autocomplete="name"
+        <InputLabel for="first_name" value="First Name" />
+        <FormCombobox
+          id="first_name"
+          v-model="form.first_name"
+          :options="firstNameOptions"
+          placeholder="Select a first name"
+          class="mt-1 block w-full"
+          required
           autofocus
-          class="mt-1 block w-full"
-          required
-          placeholder="Your full name"
+          :disabled="!loaded"
         />
-        <InputError :message="errors.name" class="mt-1" />
+        <InputError :message="errors.first_name" class="mt-1" />
       </div>
 
       <div>
-        <InputLabel for="email" value="Email" />
-        <InputField
-          id="email"
-          v-model="form.email"
-          type="email"
-          autocomplete="username"
+        <InputLabel for="last_name" value="Last Name" />
+        <FormCombobox
+          id="last_name"
+          v-model="form.last_name"
+          :options="lastNameOptions"
+          placeholder="Select a last name"
           class="mt-1 block w-full"
           required
-          placeholder="you@example.com"
+          :disabled="!loaded"
         />
-        <InputError :message="errors.email" class="mt-1" />
+        <InputError :message="errors.last_name" class="mt-1" />
       </div>
 
-      <div>
-        <InputLabel for="password" value="Password" />
-        <InputField
-          id="password"
-          v-model="form.password"
-          type="password"
-          autocomplete="new-password"
-          class="mt-1 block w-full"
-          required
-          placeholder="At least 8 characters"
-        />
-        <InputError :message="errors.password" class="mt-1" />
-      </div>
-
-      <div>
-        <InputLabel for="password_confirmation" value="Confirm Password" />
-        <InputField
-          id="password_confirmation"
-          v-model="form.password_confirmation"
-          type="password"
-          autocomplete="new-password"
-          class="mt-1 block w-full"
-          required
-          placeholder="Re-enter your password"
-        />
-        <InputError :message="errors.password_confirmation" class="mt-1" />
-      </div>
+      <InputError :message="errors.general" class="mt-1" />
 
       <div class="pt-2">
         <PrimaryButton

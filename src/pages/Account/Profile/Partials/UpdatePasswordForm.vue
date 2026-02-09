@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useForm } from '@/composables/useForm'
+import { useDemoStore } from '@/stores/demo'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import InputError from '@/components/Form/FormError.vue'
 import InputLabel from '@/components/Form/FormLabel.vue'
 import InputField from '@/components/Form/FormField.vue'
+
+const demoStore = useDemoStore()
+const isProtected = computed(() => demoStore.isDemoMode && demoStore.isDemoAccount)
 
 const passwordInput = ref<HTMLInputElement | null>(null)
 const currentPasswordInput = ref<HTMLInputElement | null>(null)
@@ -45,6 +49,10 @@ const updatePassword = () => {
       </p>
     </header>
 
+    <div v-if="isProtected" class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+      <p class="text-sm text-amber-800">Demo account passwords cannot be changed.</p>
+    </div>
+
     <form class="mt-4 space-y-6" @submit.prevent="updatePassword">
       <div>
         <InputLabel for="current_password" value="Current Password" />
@@ -56,6 +64,7 @@ const updatePassword = () => {
           type="password"
           class="mt-1 block w-full"
           autocomplete="current-password"
+          :disabled="isProtected"
         />
 
         <InputError :message="form.errors.current_password" class="mt-1" />
@@ -71,6 +80,7 @@ const updatePassword = () => {
           type="password"
           class="mt-1 block w-full"
           autocomplete="new-password"
+          :disabled="isProtected"
         />
 
         <InputError :message="form.errors.password" class="mt-1" />
@@ -85,13 +95,14 @@ const updatePassword = () => {
           type="password"
           class="mt-1 block w-full"
           autocomplete="new-password"
+          :disabled="isProtected"
         />
 
         <InputError :message="form.errors.password_confirmation" class="mt-1" />
       </div>
 
       <div class="flex items-center gap-3">
-        <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+        <PrimaryButton :disabled="form.processing || isProtected">Save</PrimaryButton>
 
         <Transition
           enter-active-class="transition ease-in-out"

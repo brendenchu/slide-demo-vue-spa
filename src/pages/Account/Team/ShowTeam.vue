@@ -3,7 +3,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useTeamsStore } from '@/stores/teams'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
+import { useDemoStore } from '@/stores/demo'
 import { getApiClient } from '@/lib/axios'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
@@ -17,7 +18,8 @@ const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const teamsStore = useTeamsStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
+const demoStore = useDemoStore()
 const api = getApiClient()
 
 const team = ref<Team | null>(null)
@@ -26,8 +28,6 @@ const loading = ref(true)
 const teamId = computed(() => route.params.id as string)
 const isAdmin = computed(() => team.value?.is_admin ?? false)
 const isOwner = computed(() => team.value?.is_owner ?? false)
-const ownerUserId = computed(() => team.value?.owner_id ?? null)
-const currentUserId = computed(() => authStore.user?.id ?? '')
 const isCurrentTeam = computed(() => authStore.user?.team?.id === teamId.value)
 const deleting = ref(false)
 
@@ -37,20 +37,13 @@ async function loadTeam() {
     const response = await api.get<{ data: Team }>(`/teams/${teamId.value}`)
     team.value = response.data.data
 
-    // Check admin via members list
     await teamsStore.fetchMembers(teamId.value)
-
-    // Determine if current user is admin from members data
-    const currentMember = teamsStore.members.find((m) => m.id === currentUserId.value)
-    if (currentMember && team.value) {
-      team.value.is_admin = currentMember.is_admin
-    }
 
     if (isAdmin.value) {
       await teamsStore.fetchInvitations(teamId.value)
     }
   } catch {
-    flashStore.error('Failed to load team')
+    toastStore.error('Failed to load team')
     router.push({ name: 'team.select' })
   } finally {
     loading.value = false
@@ -64,11 +57,11 @@ async function deleteTeam() {
   deleting.value = true
   try {
     await api.delete(`/teams/${teamId.value}`)
-    flashStore.success('Team deleted successfully')
+    toastStore.success('Team deleted successfully')
     router.push({ name: 'team.select' })
   } catch (error: unknown) {
     const axiosError = error as { response?: { data?: { message?: string } } }
-    flashStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
+    toastStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
   } finally {
     deleting.value = false
   }
@@ -114,7 +107,7 @@ onMounted(() => {
                   Back to Teams
                 </SecondaryButton>
                 <DangerButton
-                  v-if="isAdmin && !isCurrentTeam && !team?.is_personal"
+                  v-if="isOwner && !isCurrentTeam && !team?.is_personal"
                   :disabled="deleting"
                   @click="deleteTeam"
                 >
@@ -127,13 +120,13 @@ onMounted(() => {
 
         <!-- Undeletable Team Warning -->
         <div
-          v-if="!loading && isAdmin && team?.is_personal"
+          v-if="!loading && isOwner && team?.is_personal"
           class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
         >
           <p class="text-sm text-amber-800">This is your default team and cannot be deleted.</p>
         </div>
         <div
-          v-else-if="!loading && isAdmin && isCurrentTeam"
+          v-else-if="!loading && isOwner && isCurrentTeam"
           class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
         >
           <p class="text-sm text-amber-800">
@@ -148,15 +141,18 @@ onMounted(() => {
             :team-id="teamId"
             :is-admin="isAdmin"
             :is-owner="isOwner"
-            :owner-user-id="ownerUserId"
-            :current-user-id="currentUserId"
             @ownership-transferred="loadTeam"
           />
         </div>
 
         <!-- Invite Form (admin only) -->
         <div v-if="!loading && isAdmin" class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-          <InviteMemberForm :team-id="teamId" />
+          <InviteMemberForm
+            :team-id="teamId"
+            :is-owner="isOwner"
+            :demo-mode="demoStore.isDemoMode"
+            :invitation-limit="demoStore.maxInvitationsPerTeam"
+          />
         </div>
 
         <!-- Pending Invitations (admin only) -->

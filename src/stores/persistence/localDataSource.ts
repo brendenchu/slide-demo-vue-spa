@@ -1,12 +1,6 @@
 import { storage } from './storage'
-import type {
-  DataSource,
-  RegisterData,
-  CreateProjectData,
-  CreateUserData,
-  CreateTeamData,
-} from './types'
-import type { User, Team, Project, Role } from '@/types/models'
+import type { DataSource, RegisterData, CreateProjectData, CreateTeamData } from './types'
+import type { User, Team, Project, AppNotification } from '@/types/models'
 
 /**
  * Local data source implementation using browser storage
@@ -19,10 +13,12 @@ export class LocalDataSource implements DataSource {
 
   async login(email: string, password: string): Promise<{ user: User; token: string }> {
     try {
-      // Demo: Check against seeded users
-      // Map email to user ID for demo purposes
-      const userId =
-        email === 'client@example.com' ? '1' : email === 'admin@example.com' ? '2' : '3'
+      // Demo: Check against seeded user
+      const userId = email === 'demo@example.com' ? '1' : null
+
+      if (!userId) {
+        throw new Error('Invalid credentials')
+      }
 
       const user = await storage.get<User>(`user:${userId}`)
 
@@ -48,26 +44,16 @@ export class LocalDataSource implements DataSource {
 
   async register(data: RegisterData): Promise<{ user: User; token: string }> {
     try {
-      // Check if email already exists
-      const allUsers = await this.getUsers()
-      const emailExists = allUsers.some((u) => u.email === data.email)
-
-      if (emailExists) {
-        throw new Error('Email already registered')
-      }
-
-      // Generate new user ID
+      // Generate new user ID and email from names
       const userId = `user-${Date.now()}`
+      const suffix = Math.random().toString(36).substring(2, 6)
+      const email = `${data.first_name.toLowerCase()}.${data.last_name.toLowerCase()}.${suffix}@example.com`
 
-      // Create new user with default client role and permissions
       const user: User = {
         id: userId,
-        email: data.email,
-        name: data.name,
-        roles: ['client'], // Default role for new registrations
-        permissions: ['view-project', 'create-project', 'update-project'],
+        email,
+        name: `${data.first_name} ${data.last_name}`,
         team_id: null,
-        email_verified_at: null,
       }
 
       // Save to storage
@@ -252,129 +238,6 @@ export class LocalDataSource implements DataSource {
   }
 
   // ===========================
-  // User Management Methods (Admin)
-  // ===========================
-
-  async getUsers(): Promise<User[]> {
-    try {
-      const usersData = await storage.getAllByPrefix<User>('user:')
-      // Filter out the auth:user entry
-      return Object.entries(usersData)
-        .filter(([key]) => key.startsWith('user:') && !key.startsWith('user:auth'))
-        .map(([, user]) => user)
-    } catch (error) {
-      console.error('Failed to get users:', error)
-      return []
-    }
-  }
-
-  async getUserById(id: string): Promise<User | null> {
-    try {
-      return await storage.get<User>(`user:${id}`)
-    } catch (error) {
-      console.error('Failed to get user by ID:', error)
-      return null
-    }
-  }
-
-  async createUser(data: CreateUserData): Promise<User> {
-    try {
-      // Check if email already exists
-      const allUsers = await this.getUsers()
-      const emailExists = allUsers.some((u) => u.email === data.email)
-
-      if (emailExists) {
-        throw new Error('Email already registered')
-      }
-
-      // Generate new user ID
-      const userId = `user-${Date.now()}`
-
-      // Determine role and permissions
-      const role = (data.role || 'client') as Role
-      const rolePermissionsMap: Record<Role, string[]> = {
-        'super-admin': [
-          'view-user',
-          'create-user',
-          'update-user',
-          'delete-user',
-          'view-project',
-          'create-project',
-          'update-project',
-          'delete-project',
-        ],
-        admin: ['view-user', 'create-user', 'update-user', 'view-project', 'create-project'],
-        consultant: ['view-project', 'create-project', 'update-project'],
-        client: ['view-project', 'create-project', 'update-project'],
-        guest: ['view-project'],
-      }
-
-      // Create new user
-      const user: User = {
-        id: userId,
-        email: data.email,
-        name: data.name,
-        roles: [role],
-        permissions: rolePermissionsMap[role],
-        team_id: data.team_id || null,
-        email_verified_at: null,
-      }
-
-      // Save to storage
-      await storage.set(`user:${userId}`, user)
-
-      return user
-    } catch (error) {
-      console.error('Failed to create user:', error)
-      throw error
-    }
-  }
-
-  async updateUserById(id: string, data: Partial<User>): Promise<User> {
-    try {
-      const user = await storage.get<User>(`user:${id}`)
-      if (!user) {
-        throw new Error('User not found')
-      }
-
-      const updated: User = {
-        ...user,
-        ...data,
-      }
-
-      await storage.set(`user:${id}`, updated)
-
-      // If updating current user, also update auth:user
-      const currentUser = await this.getUser()
-      if (currentUser && currentUser.id === id) {
-        await storage.set('auth:user', updated)
-      }
-
-      return updated
-    } catch (error) {
-      console.error('Failed to update user:', error)
-      throw error
-    }
-  }
-
-  async deleteUser(id: string): Promise<void> {
-    try {
-      await storage.remove(`user:${id}`)
-
-      // Also delete user's projects
-      const projects = await this.getProjects()
-      const userProjects = projects.filter((p) => p.user_id === id)
-
-      for (const project of userProjects) {
-        await this.deleteProject(project.id)
-      }
-    } catch (error) {
-      console.error('Failed to delete user:', error)
-      throw error
-    }
-  }
-
-  // ===========================
   // Team Methods
   // ===========================
 
@@ -438,5 +301,21 @@ export class LocalDataSource implements DataSource {
       console.error('Failed to update team:', error)
       throw error
     }
+  }
+
+  // ===========================
+  // Notification Methods
+  // ===========================
+
+  async getNotifications(): Promise<{ notifications: AppNotification[]; unread_count: number }> {
+    return { notifications: [], unread_count: 0 }
+  }
+
+  async markNotificationAsRead(_id: string): Promise<void> {
+    return Promise.resolve()
+  }
+
+  async markAllNotificationsAsRead(): Promise<void> {
+    return Promise.resolve()
   }
 }

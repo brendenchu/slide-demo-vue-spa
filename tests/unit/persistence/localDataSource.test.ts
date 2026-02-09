@@ -19,7 +19,7 @@ describe('LocalDataSource', () => {
 
   beforeEach(() => {
     dataSource = new LocalDataSource()
-    vi.clearAllMocks()
+    vi.resetAllMocks()
   })
 
   describe('Authentication Methods', () => {
@@ -27,17 +27,14 @@ describe('LocalDataSource', () => {
       it('successfully logs in with valid credentials', async () => {
         const mockUser: User = {
           id: '1',
-          email: 'client@example.com',
-          name: 'Test User',
-          roles: ['client'],
-          permissions: ['view-project'],
+          email: 'demo@example.com',
+          name: 'Demo User',
           team_id: null,
-          email_verified_at: new Date().toISOString(),
         }
 
         vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
 
-        const result = await dataSource.login('client@example.com', 'password')
+        const result = await dataSource.login('demo@example.com', 'password')
 
         expect(result.user).toEqual(mockUser)
         expect(result.token).toBeDefined()
@@ -53,17 +50,14 @@ describe('LocalDataSource', () => {
       it('throws error with wrong password', async () => {
         const mockUser: User = {
           id: '1',
-          email: 'client@example.com',
-          name: 'Test User',
-          roles: ['client'],
-          permissions: ['view-project'],
+          email: 'demo@example.com',
+          name: 'Demo User',
           team_id: null,
-          email_verified_at: new Date().toISOString(),
         }
 
         vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
 
-        await expect(dataSource.login('client@example.com', 'wrongpassword')).rejects.toThrow(
+        await expect(dataSource.login('demo@example.com', 'wrongpassword')).rejects.toThrow(
           'Invalid credentials'
         )
       })
@@ -71,45 +65,16 @@ describe('LocalDataSource', () => {
 
     describe('register', () => {
       it('successfully registers new user', async () => {
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce({})
-
         const result = await dataSource.register({
-          email: 'new@example.com',
-          name: 'New User',
-          password: 'password',
-          password_confirmation: 'password',
+          first_name: 'Jane',
+          last_name: 'Doe',
         })
 
-        expect(result.user.email).toBe('new@example.com')
-        expect(result.user.name).toBe('New User')
-        expect(result.user.roles).toEqual(['client'])
+        expect(result.user.name).toBe('Jane Doe')
+        expect(result.user.email).toContain('jane.doe.')
+        expect(result.user.email).toContain('@example.com')
         expect(result.token).toBeDefined()
         expect(storage.set).toHaveBeenCalled()
-      })
-
-      it('throws error when email already exists', async () => {
-        const existingUser: User = {
-          id: '1',
-          email: 'existing@example.com',
-          name: 'Existing User',
-          roles: ['client'],
-          permissions: ['view-project'],
-          team_id: null,
-          email_verified_at: null,
-        }
-
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce({
-          'user:1': existingUser,
-        })
-
-        await expect(
-          dataSource.register({
-            email: 'existing@example.com',
-            name: 'New User',
-            password: 'password',
-            password_confirmation: 'password',
-          })
-        ).rejects.toThrow('Email already registered')
       })
     })
 
@@ -125,10 +90,7 @@ describe('LocalDataSource', () => {
           id: '1',
           email: 'test@example.com',
           name: 'Test User',
-          roles: ['client'],
-          permissions: ['view-project'],
           team_id: null,
-          email_verified_at: new Date().toISOString(),
         }
 
         vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
@@ -162,10 +124,7 @@ describe('LocalDataSource', () => {
           id: '1',
           email: 'old@example.com',
           name: 'Old Name',
-          roles: ['client'],
-          permissions: ['view-project'],
           team_id: null,
-          email_verified_at: new Date().toISOString(),
         }
 
         vi.mocked(storage.get).mockResolvedValueOnce(currentUser)
@@ -262,10 +221,7 @@ describe('LocalDataSource', () => {
           id: '1',
           email: 'test@example.com',
           name: 'Test User',
-          roles: ['client'],
-          permissions: ['create-project'],
           team_id: '1',
-          email_verified_at: new Date().toISOString(),
         }
 
         vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
@@ -379,186 +335,6 @@ describe('LocalDataSource', () => {
 
         expect(updated.status).toBe('completed')
         expect(updated.current_step).toBe('complete')
-      })
-    })
-  })
-
-  describe('User Management Methods', () => {
-    describe('getUsers', () => {
-      it('returns all users', async () => {
-        const mockUsers: Record<string, User> = {
-          'user:1': {
-            id: '1',
-            email: 'user1@example.com',
-            name: 'User 1',
-            roles: ['client'],
-            permissions: ['view-project'],
-            team_id: null,
-            email_verified_at: null,
-          },
-          'user:2': {
-            id: '2',
-            email: 'user2@example.com',
-            name: 'User 2',
-            roles: ['admin'],
-            permissions: ['view-user'],
-            team_id: null,
-            email_verified_at: null,
-          },
-        }
-
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce(mockUsers)
-
-        const users = await dataSource.getUsers()
-
-        expect(users).toHaveLength(2)
-      })
-
-      it('returns empty array on error', async () => {
-        vi.mocked(storage.getAllByPrefix).mockRejectedValueOnce(new Error('Storage error'))
-
-        const users = await dataSource.getUsers()
-
-        expect(users).toEqual([])
-      })
-    })
-
-    describe('getUserById', () => {
-      it('returns user when exists', async () => {
-        const mockUser: User = {
-          id: '1',
-          email: 'test@example.com',
-          name: 'Test User',
-          roles: ['client'],
-          permissions: ['view-project'],
-          team_id: null,
-          email_verified_at: null,
-        }
-
-        vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
-
-        const user = await dataSource.getUserById('1')
-
-        expect(user).toEqual(mockUser)
-        expect(storage.get).toHaveBeenCalledWith('user:1')
-      })
-
-      it('returns null when user does not exist', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
-
-        const user = await dataSource.getUserById('999')
-
-        expect(user).toBeNull()
-      })
-    })
-
-    describe('createUser', () => {
-      it('successfully creates user with client role', async () => {
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce({})
-
-        const user = await dataSource.createUser({
-          email: 'newuser@example.com',
-          name: 'New User',
-          password: 'password',
-        })
-
-        expect(user.email).toBe('newuser@example.com')
-        expect(user.roles).toEqual(['client'])
-        expect(user.permissions).toContain('view-project')
-        expect(storage.set).toHaveBeenCalled()
-      })
-
-      it('successfully creates user with admin role', async () => {
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce({})
-
-        const user = await dataSource.createUser({
-          email: 'admin@example.com',
-          name: 'Admin User',
-          password: 'password',
-          role: 'admin',
-        })
-
-        expect(user.roles).toEqual(['admin'])
-        expect(user.permissions).toContain('view-user')
-      })
-
-      it('throws error when email already exists', async () => {
-        const existingUser: User = {
-          id: '1',
-          email: 'existing@example.com',
-          name: 'Existing',
-          roles: ['client'],
-          permissions: [],
-          team_id: null,
-          email_verified_at: null,
-        }
-
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce({
-          'user:1': existingUser,
-        })
-
-        await expect(
-          dataSource.createUser({
-            email: 'existing@example.com',
-            name: 'New User',
-            password: 'password',
-          })
-        ).rejects.toThrow('Email already registered')
-      })
-    })
-
-    describe('updateUserById', () => {
-      it('successfully updates user', async () => {
-        const mockUser: User = {
-          id: '1',
-          email: 'old@example.com',
-          name: 'Old Name',
-          roles: ['client'],
-          permissions: ['view-project'],
-          team_id: null,
-          email_verified_at: null,
-        }
-
-        vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
-        vi.mocked(storage.get).mockResolvedValueOnce(null) // getUser check
-
-        const updated = await dataSource.updateUserById('1', { name: 'New Name' })
-
-        expect(updated.name).toBe('New Name')
-        expect(storage.set).toHaveBeenCalledWith('user:1', expect.any(Object))
-      })
-
-      it('throws error when user not found', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
-
-        await expect(dataSource.updateUserById('999', { name: 'New Name' })).rejects.toThrow(
-          'User not found'
-        )
-      })
-    })
-
-    describe('deleteUser', () => {
-      it('successfully deletes user and their projects', async () => {
-        const mockProjects: Record<string, Project> = {
-          'project:1': {
-            id: '1',
-            user_id: '1',
-            team_id: null,
-            title: 'User Project',
-            status: 'draft',
-            current_step: 'intro',
-            responses: {},
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        }
-
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce(mockProjects)
-
-        await dataSource.deleteUser('1')
-
-        expect(storage.remove).toHaveBeenCalledWith('user:1')
-        expect(storage.remove).toHaveBeenCalledWith('project:1')
       })
     })
   })

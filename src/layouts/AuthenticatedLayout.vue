@@ -6,8 +6,10 @@ import NavLink from '@/components/Common/UI/Navigation/NavLink.vue'
 import Dropdown from '@/components/Common/UI/Navigation/DropdownMenu.vue'
 import DropdownLink from '@/components/Common/UI/Navigation/DropdownLink.vue'
 import ResponsiveNavLink from '@/components/Common/UI/Navigation/ResponsiveNavLink.vue'
-import FlashProvider from '@/components/Flash/FlashProvider.vue'
+import ToastProvider from '@/components/Toast/ToastProvider.vue'
 import PageFooter from '@/components/Common/Layout/PageFooter.vue'
+import DemoBanner from '@/components/Demo/DemoBanner.vue'
+import NotificationBell from '@/components/Notification/NotificationBell.vue'
 
 const router = useRouter()
 const currentRoute = useRoute()
@@ -15,7 +17,6 @@ const authStore = useAuthStore()
 const showingNavigationDropdown = ref(false)
 
 const user = computed(() => authStore.user)
-const isAdmin = computed(() => authStore.can('users.view'))
 
 async function logout() {
   await authStore.logout()
@@ -24,8 +25,9 @@ async function logout() {
 </script>
 
 <template>
-  <FlashProvider>
+  <ToastProvider>
     <div class="min-h-screen bg-gray-100 flex flex-col">
+      <DemoBanner />
       <nav class="bg-white border-b border-gray-100 z-40">
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,19 +52,11 @@ async function logout() {
                 >
                   Teams
                 </NavLink>
-                <NavLink href="/invitations" :active="currentRoute.name === 'invitations'">
-                  Invitations
-                </NavLink>
-                <NavLink
-                  v-if="isAdmin"
-                  href="/admin"
-                  :active="currentRoute.name?.toString().startsWith('admin')"
-                >
-                  Admin
-                </NavLink>
               </div>
             </div>
             <div class="hidden sm:flex sm:items-center sm:ml-6">
+              <!-- Notification Bell -->
+              <NotificationBell />
               <!-- Settings Dropdown -->
               <div class="ml-3 relative">
                 <Dropdown align="right" width="48">
@@ -179,19 +173,9 @@ async function logout() {
             >
               Teams
             </ResponsiveNavLink>
-            <ResponsiveNavLink
-              :to="{ name: 'invitations' }"
-              :active="currentRoute.name === 'invitations'"
-            >
-              Invitations
-            </ResponsiveNavLink>
-            <ResponsiveNavLink
-              v-if="isAdmin"
-              :to="{ name: 'admin.dashboard' }"
-              :active="currentRoute.name?.toString().startsWith('admin')"
-            >
-              Admin
-            </ResponsiveNavLink>
+          </div>
+          <div class="px-4 py-2">
+            <NotificationBell />
           </div>
 
           <!-- Responsive Settings Options -->
@@ -230,5 +214,5 @@ async function logout() {
       <!-- Page Footer -->
       <PageFooter />
     </div>
-  </FlashProvider>
+  </ToastProvider>
 </template>

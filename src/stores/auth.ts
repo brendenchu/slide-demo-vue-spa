@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { storage } from './persistence/storage'
 import { DataSourceFactory } from './persistence/dataSourceFactory'
-import type { User, Role } from '@/types/models'
+import type { User } from '@/types/models'
 
 export const useAuthStore = defineStore('auth', () => {
   // Create data source instance
@@ -51,15 +51,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(
-    name: string,
-    email: string,
-    password: string,
-    password_confirmation: string
-  ) {
+  async function register(first_name: string, last_name: string) {
     try {
       // Use data source for registration
-      const result = await dataSource.register({ name, email, password, password_confirmation })
+      const result = await dataSource.register({ first_name, last_name })
 
       // Store in state
       user.value = result.user
@@ -124,26 +119,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function can(permission: string): boolean {
-    if (!user.value) return false
-
-    // Use permissions from API
-    // Check if user has the permission
-    return user.value.permissions.includes(permission)
-  }
-
-  function hasRole(role: Role | Role[]): boolean {
-    if (!user.value) return false
-
-    if (Array.isArray(role)) {
-      // Check if user has any of the specified roles
-      return role.some((r) => user.value!.roles.includes(r))
-    }
-
-    // Check if user has the specified role
-    return user.value.roles.includes(role)
-  }
-
   return {
     // State
     user,
@@ -157,7 +132,5 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     updateProfile,
-    can,
-    hasRole,
   }
 })

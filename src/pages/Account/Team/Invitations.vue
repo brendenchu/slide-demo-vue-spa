@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import { useTeamsStore } from '@/stores/teams'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 import type { TeamInvitation } from '@/types/models'
 
-const route = useRoute()
 const teamsStore = useTeamsStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
 
 const loading = ref(true)
 const processing = ref<string | null>(null)
@@ -20,7 +18,7 @@ async function loadInvitations() {
   try {
     await teamsStore.fetchPendingInvitations()
   } catch {
-    flashStore.error('Failed to load invitations')
+    toastStore.error('Failed to load invitations')
   } finally {
     loading.value = false
   }
@@ -29,12 +27,10 @@ async function loadInvitations() {
 async function accept(invitation: TeamInvitation) {
   processing.value = invitation.id
   try {
-    // Get token from URL query or use the invitation id
-    const token = (route.query.token as string) || ''
-    await teamsStore.acceptInvitation(invitation.id, token)
-    flashStore.success(`You have joined ${invitation.team?.name ?? 'the team'}`)
+    await teamsStore.acceptInvitation(invitation.id)
+    toastStore.success(`You have joined ${invitation.team?.name ?? 'the team'}`)
   } catch {
-    flashStore.error('Failed to accept invitation. The token may be missing or invalid.')
+    toastStore.error('Failed to accept invitation. The token may be missing or invalid.')
   } finally {
     processing.value = null
   }
@@ -44,9 +40,9 @@ async function decline(invitation: TeamInvitation) {
   processing.value = invitation.id
   try {
     await teamsStore.declineInvitation(invitation.id)
-    flashStore.success('Invitation declined')
+    toastStore.success('Invitation declined')
   } catch {
-    flashStore.error('Failed to decline invitation')
+    toastStore.error('Failed to decline invitation')
   } finally {
     processing.value = null
   }

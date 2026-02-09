@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { getApiClient } from '@/lib/axios'
-import type { Team, TeamMember, TeamInvitation } from '@/types/models'
+import type { Team, TeamMember, TeamInvitation, UserSearchResult } from '@/types/models'
 
 export const useTeamsStore = defineStore('teams', () => {
   const api = getApiClient()
@@ -58,8 +58,8 @@ export const useTeamsStore = defineStore('teams', () => {
     }
   }
 
-  async function acceptInvitation(invitationId: string, token: string): Promise<void> {
-    await api.post(`/invitations/${invitationId}/accept`, { token })
+  async function acceptInvitation(invitationId: string): Promise<void> {
+    await api.post(`/invitations/${invitationId}/accept`)
     pendingInvitations.value = pendingInvitations.value.filter((i) => i.id !== invitationId)
   }
 
@@ -70,6 +70,13 @@ export const useTeamsStore = defineStore('teams', () => {
 
   async function transferOwnership(teamId: string, userId: string): Promise<void> {
     await api.post(`/teams/${teamId}/transfer-ownership`, { user_id: userId })
+  }
+
+  async function searchUsers(query: string, teamId: string): Promise<UserSearchResult[]> {
+    const response = await api.get<{ data: UserSearchResult[] }>('/users/search', {
+      params: { q: query, team_id: teamId },
+    })
+    return response.data.data
   }
 
   async function cancelInvitation(teamId: string, invitationId: string): Promise<void> {
@@ -93,6 +100,7 @@ export const useTeamsStore = defineStore('teams', () => {
     transferOwnership,
     acceptInvitation,
     declineInvitation,
+    searchUsers,
     cancelInvitation,
   }
 })

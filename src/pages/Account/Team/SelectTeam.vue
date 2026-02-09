@@ -2,17 +2,22 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useFlashStore } from '@/stores/flash'
+import { useToastStore } from '@/stores/toast'
+import { useDemoStore } from '@/stores/demo'
+import { useDemoLimits } from '@/composables/useDemoLimits'
 import { getApiClient } from '@/lib/axios'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
+import LimitBadge from '@/components/Demo/LimitBadge.vue'
 import type { Team } from '@/types/models'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const flashStore = useFlashStore()
+const toastStore = useToastStore()
+const demoStore = useDemoStore()
+const { isTeamLimitReached } = useDemoLimits()
 const api = getApiClient()
 
 const teams = ref<Team[]>([])
@@ -21,6 +26,10 @@ const selecting = ref(false)
 const deleting = ref<string | null>(null)
 
 const currentTeamId = computed(() => authStore.user?.team?.id ?? null)
+const ownedNonPersonalTeamCount = computed(
+  () => teams.value.filter((t) => t.is_owner && !t.is_personal).length
+)
+const teamLimitReached = computed(() => isTeamLimitReached(ownedNonPersonalTeamCount.value))
 
 async function loadTeams() {
   loading.value = true
@@ -29,7 +38,7 @@ async function loadTeams() {
     teams.value = response.data.data
   } catch (error) {
     console.error('Failed to load teams:', error)
-    flashStore.error('Failed to load teams')
+    toastStore.error('Failed to load teams')
   } finally {
     loading.value = false
   }
@@ -40,14 +49,14 @@ async function selectTeam(team: Team) {
   try {
     await api.post('/teams/current', { team: team.slug })
     await authStore.refreshUser()
-    flashStore.success(`Switched to team: ${team.name}`)
+    toastStore.success(`Switched to team: ${team.name}`)
 
     setTimeout(() => {
       router.push({ name: 'dashboard' })
     }, 1000)
   } catch (error) {
     console.error('Failed to select team:', error)
-    flashStore.error('Failed to select team')
+    toastStore.error('Failed to select team')
   } finally {
     selecting.value = false
   }
@@ -68,11 +77,11 @@ async function deleteTeam(team: Team) {
   deleting.value = team.id
   try {
     await api.delete(`/teams/${team.id}`)
-    flashStore.success(`Team "${team.name}" deleted`)
+    toastStore.success(`Team "${team.name}" deleted`)
     teams.value = teams.value.filter((t) => t.id !== team.id)
   } catch (error: unknown) {
     const axiosError = error as { response?: { data?: { message?: string } } }
-    flashStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
+    toastStore.error(axiosError.response?.data?.message ?? 'Failed to delete team')
   } finally {
     deleting.value = null
   }
@@ -91,10 +100,18 @@ onMounted(() => {
           <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg flex-1">
             <strong>Current Team:</strong> {{ authStore.user?.team?.name ?? 'None' }}
           </div>
-          <div class="ml-4">
-            <PrimaryButton @click="router.push({ name: 'team.create' })">
+          <div class="ml-4 flex items-center gap-2">
+            <PrimaryButton
+              :disabled="teamLimitReached"
+              @click="router.push({ name: 'team.create' })"
+            >
               Create Team
             </PrimaryButton>
+            <LimitBadge
+              v-if="demoStore.isDemoMode"
+              :current="ownedNonPersonalTeamCount"
+              :max="demoStore.maxTeamsPerUser"
+            />
           </div>
         </div>
 
@@ -117,7 +134,7 @@ onMounted(() => {
                 <h2 class="text-lg font-medium text-gray-900">
                   {{ team.name }}
                   <span
-                    v-if="team.is_personal"
+                    v-if="team.is_personal && team.is_owner"
                     class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
                   >
                     Default
@@ -133,6 +150,12 @@ onMounted(() => {
                     class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
                   >
                     Admin
+                  </span>
+                  <span
+                    v-else
+                    class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                  >
+                    Member
                   </span>
                 </h2>
                 <p class="mt-1 text-sm text-gray-500">Status: {{ team.status }}</p>
