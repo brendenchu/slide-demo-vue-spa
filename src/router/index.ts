@@ -131,6 +131,11 @@ router.beforeEach(async (to, _from, next) => {
     return next({ name: 'login', query: { redirect: to.fullPath } })
   }
 
+  // Terms acceptance check (redirect to terms page if not accepted)
+  if (authStore.isAuthenticated && authStore.mustAcceptTerms && to.name !== 'terms.accept') {
+    return next({ name: 'terms.accept' })
+  }
+
   // Update page title
   const title = to.meta.title as string | undefined
   if (title) {

@@ -225,6 +225,19 @@ export class ApiDataSource implements DataSource {
   }
 
   // ============================================================================
+  // Terms Methods
+  // ============================================================================
+
+  async acceptTerms(): Promise<void> {
+    try {
+      await this.api.post('/terms/accept', { accepted: true })
+    } catch (error) {
+      console.error('Accept terms failed:', getErrorMessage(error))
+      throw error
+    }
+  }
+
+  // ============================================================================
   // Notification Methods
   // ============================================================================
 

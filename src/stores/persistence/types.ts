@@ -59,6 +59,9 @@ export interface DataSource {
   createTeam(data: CreateTeamData): Promise<Team>
   updateTeam(id: string, data: Partial<Team>): Promise<Team>
 
+  // Terms methods
+  acceptTerms(): Promise<void>
+
   // Notification methods
   getNotifications(): Promise<{ notifications: AppNotification[]; unread_count: number }>
   markNotificationAsRead(id: string): Promise<void>

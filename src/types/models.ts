@@ -8,6 +8,7 @@ export interface User {
   last_name?: string
   team_id: string | null
   team?: Team | null
+  must_accept_terms?: boolean
 }
 
 export interface Team {

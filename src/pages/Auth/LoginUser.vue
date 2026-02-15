@@ -27,11 +27,15 @@ async function submit() {
   errors.value = {}
 
   try {
-    await authStore.login(form.value.email, form.value.password)
+    const user = await authStore.login(form.value.email, form.value.password)
     toastStore.success('Welcome back!')
 
-    // Navigate to dashboard
-    router.push({ name: 'dashboard' })
+    // Redirect to terms if needed, otherwise dashboard
+    if (user.must_accept_terms) {
+      router.push({ name: 'terms.accept' })
+    } else {
+      router.push({ name: 'dashboard' })
+    }
   } catch (_error) {
     errors.value.email = 'Invalid credentials. Please try again.'
     toastStore.error('Login failed. Please check your credentials.')
