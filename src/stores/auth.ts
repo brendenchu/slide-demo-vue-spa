@@ -14,6 +14,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Getters
   const isAuthenticated = computed(() => !!user.value)
+  const mustAcceptTerms = computed(() => user.value?.must_accept_terms === true)
 
   // Actions
   async function loadUser() {
@@ -101,6 +102,20 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function acceptTerms() {
+    try {
+      await dataSource.acceptTerms()
+
+      if (user.value) {
+        user.value = { ...user.value, must_accept_terms: false }
+        await storage.set('auth:user', user.value)
+      }
+    } catch (error) {
+      console.error('Failed to accept terms:', error)
+      throw error
+    }
+  }
+
   async function updateProfile(data: Partial<User>) {
     if (!user.value) return
 
@@ -125,12 +140,14 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     // Getters
     isAuthenticated,
+    mustAcceptTerms,
     // Actions
     loadUser,
     refreshUser,
     login,
     register,
     logout,
+    acceptTerms,
     updateProfile,
   }
 })

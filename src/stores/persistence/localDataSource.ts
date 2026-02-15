@@ -304,6 +304,14 @@ export class LocalDataSource implements DataSource {
   }
 
   // ===========================
+  // Terms Methods
+  // ===========================
+
+  async acceptTerms(): Promise<void> {
+    return Promise.resolve()
+  }
+
+  // ===========================
   // Notification Methods
   // ===========================
 

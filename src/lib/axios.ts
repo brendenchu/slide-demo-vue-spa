@@ -7,6 +7,7 @@ import type { Router } from 'vue-router'
 export interface ApiErrorResponse {
   message: string
   errors?: Record<string, string[]>
+  must_accept_terms?: boolean
   [key: string]: unknown
 }
 
@@ -111,11 +112,14 @@ function createAxiosInstance(): AxiosInstance {
             break
 
           case 403:
-            // Forbidden - flash demo-related messages as warnings
-            if (
+            // Terms acceptance required - redirect to terms page
+            if (data.must_accept_terms && router) {
+              router.push({ name: 'terms.accept' })
+            } else if (
               data.message?.startsWith('Demo limit reached') ||
               data.message?.includes('Demo accounts')
             ) {
+              // Forbidden - flash demo-related messages as warnings
               const { useToastStore } = await import('@/stores/toast')
               useToastStore().warning(data.message)
             } else {

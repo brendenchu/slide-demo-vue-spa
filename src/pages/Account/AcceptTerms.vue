@@ -1,38 +1,40 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { useForm } from '@/composables/useForm'
-import { route } from '@/utils/route'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import StoryLayout from '@/layouts/StoryLayout.vue'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 
-const props = defineProps<{
-  terms: {
-    id: number
-    version: string
-  }
-}>()
-
-const form = useForm({
-  confirmation: false,
-})
+const router = useRouter()
+const authStore = useAuthStore()
+const toastStore = useToastStore()
 
 const accepted = ref(false)
+const processing = ref(false)
 
-const submit = () => {
+async function submit() {
   if (!accepted.value) {
     return
   }
 
-  form.post(
-    route('terms.accept', {
-      terms: String(props.terms.id),
-    })
-  )
+  processing.value = true
+
+  try {
+    await authStore.acceptTerms()
+    toastStore.success('Terms accepted successfully.')
+    router.push({ name: 'dashboard' })
+  } catch (_error) {
+    toastStore.error('Failed to accept terms. Please try again.')
+  } finally {
+    processing.value = false
+  }
 }
 
-const logoutUser = () => {
-  form.post(route('logout'))
+async function logoutUser() {
+  await authStore.logout()
+  router.push({ name: 'login' })
 }
 </script>
 
@@ -54,7 +56,9 @@ const logoutUser = () => {
                 By checking this box, I agree to the latest terms of service.*
               </label>
               <div class="flex items-center gap-3">
-                <PrimaryButton :disabled="!accepted">Continue</PrimaryButton>
+                <PrimaryButton :disabled="!accepted || processing">
+                  {{ processing ? 'Accepting...' : 'Continue' }}
+                </PrimaryButton>
               </div>
             </form>
             <div class="mt-4 text-right">
