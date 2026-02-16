@@ -1,16 +1,9 @@
 <script lang="ts" setup>
 import { Slide } from '@/components/Slide'
-import { useStoryForm } from '@/composables/useStoryForm'
 import { Error, Fieldset, GroupWrapper, Label, Radio } from '@/components/Form'
-import { onMounted, ref } from 'vue'
 import { SectionCFormFields } from '@/types'
-import type { Project } from '@/types/models'
-import type { ProjectStep } from '@/types/story'
-import { Action, Direction, SlideOptions } from '@/components/Slide/types'
+import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'
 import { delay } from '@/utils/ui'
-import { delta, nullifyFields, saveForm } from '@/utils/story/form'
-import { prevNextSteps } from '@/utils/story/workflow'
-import { useRouter } from 'vue-router'
 import {
   sectionCPage1Schema,
   sectionCPage2Schema,
@@ -23,147 +16,38 @@ import {
   sectionCPage9Schema,
 } from '@/validation/sectionCFormSchema'
 
-// The component's props
-const props = defineProps<{
-  project: Project
-  step: ProjectStep
-  token: string
-  page: number
-  direction: Direction
-  story: SectionCFormFields
-}>()
+const props = defineProps<SectionFormProps<SectionCFormFields>>()
 
-const router = useRouter()
+const schemas = [
+  null, // page 0 doesn't exist
+  sectionCPage1Schema,
+  sectionCPage2Schema,
+  sectionCPage3Schema,
+  sectionCPage4Schema,
+  sectionCPage5Schema,
+  sectionCPage6Schema,
+  sectionCPage7Schema,
+  sectionCPage8Schema,
+  sectionCPage9Schema,
+]
 
-// The current page
-const current = ref<number>(0)
+const { form, current, formDirection, pages, actions } = useSectionForm<SectionCFormFields>({
+  props,
+  pages: 9,
+  schema: (page) => schemas[page] || sectionCPage1Schema,
+  previousStepPage: '3',
+  onComplete: async ({ router, props }) => {
+    await delay()
+    const { useProjectsStore } = await import('@/stores/projects')
+    const projectsStore = useProjectsStore()
+    await projectsStore.complete(props.project.id)
 
-// The form fields and their initial values with validation
-const form = useStoryForm<SectionCFormFields>(
-  props.story,
-  {
-    project: props.project,
-    step: props.step,
-    token: props.token,
+    router.push({
+      name: 'story.complete',
+      params: { id: props.project.id },
+      query: { token: props.token },
+    })
   },
-  {
-    // Pass a function that returns the schema based on current page
-    schema: () => {
-      const schemas = [
-        null, // page 0 doesn't exist
-        sectionCPage1Schema,
-        sectionCPage2Schema,
-        sectionCPage3Schema,
-        sectionCPage4Schema,
-        sectionCPage5Schema,
-        sectionCPage6Schema,
-        sectionCPage7Schema,
-        sectionCPage8Schema,
-        sectionCPage9Schema,
-      ]
-      return schemas[current.value] || sectionCPage1Schema
-    },
-    validateOnSave: true,
-  }
-)
-
-// The previous and next steps
-const steps = prevNextSteps(props.step)
-
-// The fields that are toggled by checkboxes, grouped by page
-const toggledFields: Record<number, Record<string, string>> = {}
-
-// The previous page
-const previous = ref<number>(0)
-
-// The direction of the slide
-const formDirection = ref<Direction>('next')
-
-// The total number of pages
-const pages = ref<number>(9)
-
-// The slide actions
-const actions = ref<SlideOptions<Action>>({
-  // The next action
-  next: {
-    label: 'Save & Continue »',
-    callback: () => {
-      // If any checkboxes are checked, set the fields that are toggled to null
-      nullifyFields(form, toggledFields, current.value)
-      // Save the form, then shift current page by the delta amount
-      saveForm(
-        form,
-        {
-          project: props.project,
-          step: props.step,
-          page: current.value,
-          token: props.token,
-        },
-        async () => {
-          current.value += delta(current.value, form, toggledFields)
-          previous.value = current.value - 1
-          formDirection.value = 'next'
-          // If the current page is greater than the total number of pages, redirect to the next step
-          if (current.value > pages.value) {
-            await delay()
-            // Mark project as complete
-            const { useProjectsStore } = await import('@/stores/projects')
-            const projectsStore = useProjectsStore()
-            await projectsStore.complete(props.project.id)
-
-            // Navigate to complete page
-            router.push({
-              name: 'story.complete',
-              params: { id: props.project.id },
-              query: { token: props.token },
-            })
-          }
-        }
-      )
-    },
-  },
-  // The previous action
-  previous: {
-    label: '« Go Back',
-    forced: true, // Always show the previous button
-    callback: async () => {
-      // Calculate where we'll be after going back
-      const nextPage = current.value - delta(current.value - 2, form, toggledFields)
-
-      // Set the page transition to trigger slide animation
-      formDirection.value = 'previous'
-
-      // If going back to previous section
-      if (nextPage < 1) {
-        current.value = 0
-        previous.value = 1
-
-        // Wait for slide animation, then navigate
-        await delay()
-        router.push({
-          name: 'story.form',
-          params: { id: props.project.id },
-          query: {
-            step: steps.previous,
-            token: props.token,
-            page: '3',
-            direction: 'previous',
-          },
-        })
-      } else {
-        // Going back within same section - just navigate, no save
-        current.value = nextPage
-        previous.value = current.value - 1
-      }
-    },
-  },
-})
-
-// When the component is mounted, set the current, previous, and direction values
-onMounted(() => {
-  current.value = props.page
-  previous.value = current.value - 1
-  formDirection.value = props.direction
 })
 </script>
 

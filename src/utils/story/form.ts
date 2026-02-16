@@ -1,4 +1,3 @@
-import { AnyFormFields } from '@/types'
 import type { Project } from '@/types/models'
 import type { ProjectStep } from '@/types/story'
 import type { StoryForm, StoryFormOptions } from '@/composables/useStoryForm'
@@ -6,8 +5,8 @@ import type { StoryForm, StoryFormOptions } from '@/composables/useStoryForm'
 /**
  * Save form data to the store
  */
-export function saveForm(
-  form: StoryForm<AnyFormFields>,
+export function saveForm<T extends Record<string, unknown>>(
+  form: StoryForm<T>,
   _options: {
     project: Project
     step: ProjectStep
@@ -57,8 +56,8 @@ export function delta(
 /**
  * Nullify form fields based on checkbox state
  */
-export function nullifyFields(
-  form: StoryForm<AnyFormFields> | Record<string, unknown>,
+export function nullifyFields<T extends Record<string, unknown>>(
+  form: StoryForm<T> | Record<string, unknown>,
   toggledFields: Record<number, Record<string, string>>,
   page: number
 ) {

@@ -1,144 +1,28 @@
 <script lang="ts" setup>
 import { Slide } from '@/components/Slide'
-import { useStoryForm } from '@/composables/useStoryForm'
 import { Checkbox, Error, Field, Fieldset, GroupWrapper, Label } from '@/components/Form'
-import { onMounted, ref, watch } from 'vue'
+import { watch } from 'vue'
 import { SectionAFormFields } from '@/types'
-import type { Project } from '@/types/models'
-import type { ProjectStep } from '@/types/story'
-import { Action, Direction, SlideOptions } from '@/components/Slide/types'
-import { delay } from '@/utils/ui'
-import { delta, nullifyFields, saveForm } from '@/utils/story/form'
-import { prevNextSteps } from '@/utils/story/workflow'
-import { useRouter } from 'vue-router'
+import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'
 import { sectionAPage1Schema, sectionAPage2Schema } from '@/validation/sectionAFormSchema'
 
-// The component's props
-const props = defineProps<{
-  project: Project
-  step: ProjectStep
-  token: string
-  page: number
-  direction: Direction
-  story: SectionAFormFields
-}>()
+const props = defineProps<SectionFormProps<SectionAFormFields>>()
 
-const router = useRouter()
-
-// The current page
-const current = ref<number>(0)
-
-// The form fields and their initial values with validation
-const form = useStoryForm<SectionAFormFields>(
-  props.story,
-  {
-    project: props.project,
-    step: props.step,
-    token: props.token,
-  },
-  {
-    // Pass a function that returns the schema based on current page
-    schema: () => (current.value === 1 ? sectionAPage1Schema : sectionAPage2Schema),
-    validateOnSave: true,
-  }
-)
-
-// The previous and next steps
-const steps = prevNextSteps(props.step)
-
-// The fields that are toggled by checkboxes, grouped by page
-const toggledFields: Record<number, Record<string, string>> = {
-  1: {
-    section_a_1: 'section_a_4',
-    section_a_2: 'section_a_5',
-    section_a_3: 'section_a_6',
-  },
-}
-
-// The previous page
-const previous = ref<number>(0)
-
-// The direction of the slide
-const formDirection = ref<Direction>('next')
-
-// The total number of pages
-const pages = ref<number>(2)
-
-// The slide actions
-const actions = ref<SlideOptions<Action>>({
-  // The next action
-  next: {
-    label: 'Save & Continue »',
-    callback: () => {
-      // If any checkboxes are checked, set the fields that are toggled to null
-      nullifyFields(form, toggledFields, current.value)
-      // Save the form, then shift current page by the delta amount
-      saveForm(
-        form,
-        {
-          project: props.project,
-          step: props.step,
-          page: current.value,
-          token: props.token,
-        },
-        async () => {
-          current.value += delta(current.value, form, toggledFields)
-          previous.value = current.value - 1
-          formDirection.value = 'next'
-          // If the current page is greater than the total number of pages, redirect to the next step
-          if (current.value > pages.value) {
-            await delay()
-            router.push({
-              name: 'story.form',
-              params: { id: props.project.id },
-              query: {
-                step: steps.next,
-                token: props.token,
-              },
-            })
-          }
-        }
-      )
+const { form, current, formDirection, pages, actions } = useSectionForm<SectionAFormFields>({
+  props,
+  pages: 2,
+  schema: (page) => (page === 1 ? sectionAPage1Schema : sectionAPage2Schema),
+  toggledFields: {
+    1: {
+      section_a_1: 'section_a_4',
+      section_a_2: 'section_a_5',
+      section_a_3: 'section_a_6',
     },
   },
-  // The previous action
-  previous: {
-    label: '« Go Back',
-    forced: true, // Always show the previous button
-    callback: async () => {
-      // Calculate where we'll be after going back
-      const nextPage = current.value - delta(current.value - 2, form, toggledFields)
-
-      // Set the page transition to trigger slide animation
-      formDirection.value = 'previous'
-
-      // If going back to previous section
-      if (nextPage < 1) {
-        current.value = 0
-        previous.value = 1
-
-        // Wait for slide animation, then navigate
-        await delay()
-        router.push({
-          name: 'story.form',
-          params: { id: props.project.id },
-          query: {
-            step: steps.previous,
-            token: props.token,
-            page: '1',
-            direction: 'previous',
-          },
-        })
-      } else {
-        // Going back within same section - just navigate, no save
-        current.value = nextPage
-        previous.value = current.value - 1
-      }
-    },
-  },
+  previousStepPage: '1',
 })
 
-// Function to initialize checkbox values based on field values
+// Initialize checkbox values based on whether their dependent fields have data
 function initializeCheckboxes() {
   if (form.section_a_4 !== null && form.section_a_4 !== undefined && form.section_a_4 !== '') {
     form.section_a_1 = true
@@ -151,24 +35,23 @@ function initializeCheckboxes() {
   }
 }
 
-// Watch for navigation to page 1 and reinitialize checkboxes
+// Reinitialize checkboxes when navigating back to page 1
 watch(
   () => current.value,
   (newPage) => {
     if (newPage === 1) {
       initializeCheckboxes()
     }
-  }
+  },
+  { immediate: true }
 )
 
-// Watch checkboxes and clear corresponding fields when unchecked
+// Clear corresponding fields when checkboxes are unchecked
 watch(
   () => form.section_a_1,
   (newValue, oldValue) => {
-    // If checkbox was checked and is now unchecked, clear the corresponding field
     if (oldValue === true && newValue === false) {
       form.section_a_4 = null
-      // Clear any validation errors for this field
       form.clearErrors('section_a_4')
     }
   }
@@ -193,18 +76,6 @@ watch(
     }
   }
 )
-
-// When the component is mounted, set the current, previous, and direction values
-onMounted(() => {
-  current.value = props.page
-  previous.value = current.value - 1
-  formDirection.value = props.direction
-
-  // Initialize checkboxes if we're on page 1
-  if (current.value === 1) {
-    initializeCheckboxes()
-  }
-})
 </script>
 
 <template>
