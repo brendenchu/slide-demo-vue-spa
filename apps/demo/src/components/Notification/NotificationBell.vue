@@ -109,11 +109,18 @@ async function handleMarkAllAsRead() {
                   class="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary"
                 ></span>
                 <div class="min-w-0 flex-1">
-                  <p class="text-sm font-medium text-base-content truncate">{{ notification.title }}</p>
-                  <p v-if="notification.content" class="text-xs text-base-content/60 mt-0.5 truncate">
+                  <p class="text-sm font-medium text-base-content truncate">
+                    {{ notification.title }}
+                  </p>
+                  <p
+                    v-if="notification.content"
+                    class="text-xs text-base-content/60 mt-0.5 truncate"
+                  >
                     {{ notification.content }}
                   </p>
-                  <p class="text-xs text-base-content/40 mt-1">{{ timeAgo(notification.created_at) }}</p>
+                  <p class="text-xs text-base-content/40 mt-1">
+                    {{ timeAgo(notification.created_at) }}
+                  </p>
                 </div>
               </div>
             </button>

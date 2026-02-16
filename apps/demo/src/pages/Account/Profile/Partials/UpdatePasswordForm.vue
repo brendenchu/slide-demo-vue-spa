@@ -2,7 +2,11 @@
 import { ref, computed } from 'vue'
 import { useForm } from '@/composables/useForm'
 import { useDemoStore } from '@/stores/demo'
-import { Error as InputError, Label as InputLabel, Field as InputField } from '@bchu/vue-form-primitives'
+import {
+  Error as InputError,
+  Label as InputLabel,
+  Field as InputField,
+} from '@bchu/vue-form-primitives'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 
 const demoStore = useDemoStore()

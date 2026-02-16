@@ -4,7 +4,11 @@ import { useForm } from '@/composables/useForm'
 import { useToastStore } from '@/stores/toast'
 import { useDemoStore } from '@/stores/demo'
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
-import { Error as InputError, Label as InputLabel, Field as InputField } from '@bchu/vue-form-primitives'
+import {
+  Error as InputError,
+  Label as InputLabel,
+  Field as InputField,
+} from '@bchu/vue-form-primitives'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 
@@ -36,9 +40,9 @@ const createTeam = () => {
             <header>
               <h2 class="text-lg font-medium text-base-content">Create a New Team</h2>
               <p class="mt-1 text-sm text-base-content/60">
-                This form demonstrates team creation as part of the team-based access control system.
-                Each team scopes its own projects and supports owner, admin, and member roles with
-                invitation management.
+                This form demonstrates team creation as part of the team-based access control
+                system. Each team scopes its own projects and supports owner, admin, and member
+                roles with invitation management.
               </p>
             </header>
 
@@ -46,9 +50,7 @@ const createTeam = () => {
               v-if="demoStore.isDemoMode"
               class="mt-4 p-3 bg-warning/10 border border-warning/30 rounded-lg"
             >
-              <p class="text-sm text-warning">
-                Team creation is limited in the demo environment.
-              </p>
+              <p class="text-sm text-warning">Team creation is limited in the demo environment.</p>
             </div>
 
             <form class="mt-6 space-y-6" @submit.prevent="createTeam">

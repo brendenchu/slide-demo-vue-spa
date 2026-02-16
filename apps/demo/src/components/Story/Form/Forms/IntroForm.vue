@@ -16,7 +16,9 @@ const { form, current, formDirection, pages, actions } = useSectionForm<IntroFor
   props,
   pages: 1,
   schema: introFormSchema,
-  save: async (projectId, stepId, data) => { await projectsStore.saveResponses(projectId, stepId, data) },
+  save: async (projectId, stepId, data) => {
+    await projectsStore.saveResponses(projectId, stepId, data)
+  },
   onError: (msg) => toastStore.error(msg),
 })
 </script>

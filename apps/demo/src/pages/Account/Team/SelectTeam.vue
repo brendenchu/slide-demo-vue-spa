@@ -124,11 +124,7 @@ onMounted(() => {
         </div>
 
         <div v-else class="grid lg:grid-cols-3 gap-4">
-          <div
-            v-for="team in teams"
-            :key="team.id"
-            class="p-4 sm:p-8 theme-card"
-          >
+          <div v-for="team in teams" :key="team.id" class="p-4 sm:p-8 theme-card">
             <section class="relative min-h-[160px]">
               <header>
                 <h2 class="text-lg font-medium text-base-content">

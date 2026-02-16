@@ -44,6 +44,7 @@ export default ts.config(
         HTMLTextAreaElement: 'readonly',
         HTMLButtonElement: 'readonly',
         HTMLDivElement: 'readonly',
+        HTMLSelectElement: 'readonly',
         Node: 'readonly',
         URL: 'readonly',
         Blob: 'readonly',

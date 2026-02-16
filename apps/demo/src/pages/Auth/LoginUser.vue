@@ -4,7 +4,11 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import GuestLayout from '@/layouts/GuestLayout.vue'
-import { Error as InputError, Label as InputLabel, Field as InputField } from '@bchu/vue-form-primitives'
+import {
+  Error as InputError,
+  Label as InputLabel,
+  Field as InputField,
+} from '@bchu/vue-form-primitives'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 
 const router = useRouter()
@@ -54,9 +58,7 @@ async function submit() {
       </p>
     </div>
 
-    <div
-      class="mb-4 p-4 bg-info/10 rounded-lg border border-info/30"
-    >
+    <div class="mb-4 p-4 bg-info/10 rounded-lg border border-info/30">
       <p class="text-sm text-info font-medium">Demo Credentials:</p>
       <p class="mt-2 text-sm text-info/80">
         <strong>Email:</strong> demo@example.com / <strong>Password:</strong> password

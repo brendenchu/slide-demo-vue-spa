@@ -40,7 +40,9 @@ const { form, current, formDirection, pages, actions } = useSectionForm<SectionC
   pages: 9,
   schema: (page) => schemas[page] || sectionCPage1Schema,
   previousStepPage: '3',
-  save: async (projectId, stepId, data) => { await projectsStore.saveResponses(projectId, stepId, data) },
+  save: async (projectId, stepId, data) => {
+    await projectsStore.saveResponses(projectId, stepId, data)
+  },
   onError: (msg) => toastStore.error(msg),
   onComplete: async ({ router, props }) => {
     await new Promise((resolve) => setTimeout(resolve, 500))

@@ -4,7 +4,12 @@ import { useForm } from '@/composables/useForm'
 import { useAuthStore } from '@/stores/auth'
 import { useDemoStore } from '@/stores/demo'
 import { useNameOptions } from '@/composables/useNameOptions'
-import { Error as InputError, Label as InputLabel, Field as InputField, Combobox as FormCombobox } from '@bchu/vue-form-primitives'
+import {
+  Error as InputError,
+  Label as InputLabel,
+  Field as InputField,
+  Combobox as FormCombobox,
+} from '@bchu/vue-form-primitives'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 
 defineProps<{

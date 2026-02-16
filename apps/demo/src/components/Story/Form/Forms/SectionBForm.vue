@@ -25,7 +25,9 @@ const { form, current, formDirection, pages, actions } = useSectionForm<SectionB
     return sectionBPage3Schema
   },
   previousStepPage: '2',
-  save: async (projectId, stepId, data) => { await projectsStore.saveResponses(projectId, stepId, data) },
+  save: async (projectId, stepId, data) => {
+    await projectsStore.saveResponses(projectId, stepId, data)
+  },
   onError: (msg) => toastStore.error(msg),
 })
 </script>

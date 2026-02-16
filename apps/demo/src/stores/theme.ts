@@ -10,7 +10,14 @@ export interface ThemeOption {
 
 const STORAGE_KEY = 'vsd:theme'
 const DEFAULT_THEME: ThemeId = 'cyberpunk'
-const VALID_THEMES: ThemeId[] = ['corporate', 'cyberpunk', 'vaporwave', 'terminal', 'brutalist', 'unicorn']
+const VALID_THEMES: ThemeId[] = [
+  'corporate',
+  'cyberpunk',
+  'vaporwave',
+  'terminal',
+  'brutalist',
+  'unicorn',
+]
 
 export const useThemeStore = defineStore('theme', () => {
   const currentTheme = ref<ThemeId>(DEFAULT_THEME)

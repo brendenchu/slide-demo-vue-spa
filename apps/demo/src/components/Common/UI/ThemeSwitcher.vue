@@ -17,11 +17,7 @@ function onThemeChange(event: Event): void {
       class="select select-bordered select-sm bg-base-200 text-base-content border-base-300 text-xs"
       @change="onThemeChange"
     >
-      <option
-        v-for="theme in themeStore.availableThemes"
-        :key="theme.id"
-        :value="theme.id"
-      >
+      <option v-for="theme in themeStore.availableThemes" :key="theme.id" :value="theme.id">
         {{ theme.label }}
       </option>
     </select>

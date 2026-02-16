@@ -129,28 +129,28 @@ tests/
 
 ### Public (guest-only)
 
-| Path | Component | Description |
-|------|-----------|-------------|
-| `/login` | LoginUser | User login |
+| Path        | Component    | Description       |
+| ----------- | ------------ | ----------------- |
+| `/login`    | LoginUser    | User login        |
 | `/register` | RegisterUser | User registration |
 
 ### Protected (auth required)
 
 > After login, users who have not accepted the current terms are automatically redirected to `/terms/accept`. All other protected routes are blocked by a router navigation guard until terms are accepted.
 
-| Path | Component | Description |
-|------|-----------|-------------|
-| `/dashboard` | ClientDashboard | Main dashboard |
-| `/profile` | EditProfile | Edit user profile |
-| `/terms/accept` | AcceptTerms | Accept terms of service (gate) |
-| `/team/select` | SelectTeam | Select active team |
-| `/team/create` | CreateTeam | Create new team |
-| `/team/:id` | ShowTeam | View team details, members, invitations |
-| `/invitations` | Invitations | View pending invitations |
-| `/story/new` | NewStory | Create new story/project |
-| `/story/:id/continue` | ContinueStory | Resume story |
-| `/story/:id/form` | StoryForm | Multi-step slide form |
-| `/story/:id/complete` | CompleteStory | Completion screen |
+| Path                  | Component       | Description                             |
+| --------------------- | --------------- | --------------------------------------- |
+| `/dashboard`          | ClientDashboard | Main dashboard                          |
+| `/profile`            | EditProfile     | Edit user profile                       |
+| `/terms/accept`       | AcceptTerms     | Accept terms of service (gate)          |
+| `/team/select`        | SelectTeam      | Select active team                      |
+| `/team/create`        | CreateTeam      | Create new team                         |
+| `/team/:id`           | ShowTeam        | View team details, members, invitations |
+| `/invitations`        | Invitations     | View pending invitations                |
+| `/story/new`          | NewStory        | Create new story/project                |
+| `/story/:id/continue` | ContinueStory   | Resume story                            |
+| `/story/:id/form`     | StoryForm       | Multi-step slide form                   |
+| `/story/:id/complete` | CompleteStory   | Completion screen                       |
 
 `/` redirects to `/dashboard`.
 
@@ -203,11 +203,13 @@ console.log(`Migrated ${result.projectsMigrated} projects`)
 ```
 
 Migrates:
+
 - Projects (title, description, status)
 - Project responses and form data
 - Completion status
 
 Does not migrate:
+
 - User accounts (register via API)
 - Teams (managed by admins)
 - Authentication tokens
@@ -224,13 +226,13 @@ Any credentials work. Suggested: `client@demo.com` / `password`
 
 Use backend database accounts:
 
-| Role        | Email                    |
-|-------------|--------------------------|
-| Super Admin | admin@demo.com           |
-| Admin       | admin@example.com        |
-| Consultant  | consultant@example.com   |
-| Client      | client@demo.com          |
-| Guest       | guest@demo.com           |
+| Role        | Email                  |
+| ----------- | ---------------------- |
+| Super Admin | admin@demo.com         |
+| Admin       | admin@example.com      |
+| Consultant  | consultant@example.com |
+| Client      | client@demo.com        |
+| Guest       | guest@demo.com         |
 
 ## Deployment
 
@@ -239,6 +241,7 @@ npm run build
 ```
 
 Deploy `dist/` folder to:
+
 - Netlify
 - Vercel
 - AWS S3 + CloudFront
@@ -258,32 +261,38 @@ Ensure backend CORS allows SPA domain.
 ## Troubleshooting
 
 **Cannot connect to API**
+
 - Check `VITE_API_URL` in `.env`
 - Verify backend is running
 - Test API: `curl https://api.local.test/api/v1/auth/user`
 - Check CORS configuration
 
 **401 Unauthorized**
+
 - Token may be expired (24-hour default)
 - Try logging in again
 - Clear browser cache and localStorage
 
 **Stuck on terms acceptance page**
+
 - The API returns `must_accept_terms: true` on the user resource until terms are accepted
 - The router guard redirects to `/terms/accept` while this flag is set
 - Accept terms or log out and back in after terms are accepted server-side
 
 **Data not persisting (local mode)**
+
 - Check browser allows LocalStorage/IndexedDB
 - Verify `VITE_STORAGE_PREFIX` is set
 - Check storage quota not exceeded
 
 **Module not found**
+
 - Delete node_modules: `rm -rf node_modules && npm install`
 - Clear Vite cache: `rm -rf node_modules/.vite`
 - Restart dev server
 
 **Type errors**
+
 - Run `npm run type-check`
 - Verify dependencies: `npm install`
 

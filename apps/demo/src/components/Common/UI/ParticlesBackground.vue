@@ -3,7 +3,9 @@ import { computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 
 const themeStore = useThemeStore()
-const showParticles = computed(() => ['cyberpunk', 'vaporwave', 'unicorn'].includes(themeStore.currentTheme))
+const showParticles = computed(() =>
+  ['cyberpunk', 'vaporwave', 'unicorn'].includes(themeStore.currentTheme)
+)
 
 const cyberpunkOptions = {
   fullScreen: {
@@ -242,8 +244,8 @@ const particleOptions = computed(() => {
 <template>
   <vue-particles
     v-if="showParticles"
-    :key="themeStore.currentTheme"
     id="tsparticles"
+    :key="themeStore.currentTheme"
     :options="particleOptions"
   />
 </template>

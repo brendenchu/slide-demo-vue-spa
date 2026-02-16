@@ -5,7 +5,9 @@ import DemoBanner from '@/components/Demo/DemoBanner.vue'
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-base-100 theme-grid">
+  <div
+    class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-base-100 theme-grid"
+  >
     <DemoBanner class="w-full fixed top-0 z-50" />
     <div class="w-full sm:max-w-md mt-4 px-6 py-4 theme-card overflow-hidden sm:rounded-lg">
       <div class="flex justify-center p-6 md:p-12">

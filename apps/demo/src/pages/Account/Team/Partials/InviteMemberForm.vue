@@ -4,7 +4,11 @@ import { useForm } from '@/composables/useForm'
 import { useTeamsStore } from '@/stores/teams'
 import { useToastStore } from '@/stores/toast'
 import { useDemoLimits } from '@/composables/useDemoLimits'
-import { Error as InputError, Label as InputLabel, Combobox as FormCombobox } from '@bchu/vue-form-primitives'
+import {
+  Error as InputError,
+  Label as InputLabel,
+  Combobox as FormCombobox,
+} from '@bchu/vue-form-primitives'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import LimitBadge from '@/components/Demo/LimitBadge.vue'
 

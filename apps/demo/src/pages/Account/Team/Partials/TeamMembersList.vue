@@ -77,9 +77,15 @@ const roleStyles: Record<string, string> = {
       <table class="min-w-full divide-y divide-base-300">
         <thead>
           <tr>
-            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">Name</th>
-            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">Email</th>
-            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">Role</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">
+              Name
+            </th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">
+              Email
+            </th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-base-content/50 uppercase">
+              Role
+            </th>
             <th
               v-if="isAdmin"
               class="px-4 py-2 text-right text-xs font-medium text-base-content/50 uppercase"

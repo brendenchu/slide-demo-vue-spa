@@ -125,8 +125,8 @@ onMounted(async () => {
                 <h3 class="text-2xl font-semibold mb-2">No forms yet</h3>
                 <p class="text-base-content/60 mb-6">
                   Start a new form to explore the multi-step slide system. Each form walks you
-                  through text inputs, checkboxes with conditional fields, grouped number fields, and
-                  multiple-choice radio buttons across four sections.
+                  through text inputs, checkboxes with conditional fields, grouped number fields,
+                  and multiple-choice radio buttons across four sections.
                 </p>
                 <PrimaryButton class="btn-lg" @click="startNewForm"> Start New Form </PrimaryButton>
               </div>

@@ -65,9 +65,7 @@ const createForm = async () => {
             demonstrating a different set of components and features:
           </p>
           <ul class="prose-lg">
-            <li>
-              <strong>Introduction</strong> &mdash; Text inputs with Zod schema validation
-            </li>
+            <li><strong>Introduction</strong> &mdash; Text inputs with Zod schema validation</li>
             <li>
               <strong>Section A</strong> &mdash; Checkboxes that conditionally reveal follow-up
               fields, with automatic page skipping when no fields are toggled
