@@ -134,18 +134,30 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.18(@types/node@22.19.11)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@1.21.7)
 
   packages/vue-form-primitives:
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.4
         version: 5.2.4(vite@6.4.1(@types/node@22.19.11)(jiti@1.21.7))(vue@3.5.28(typescript@5.9.3))
+      '@vue/test-utils':
+        specifier: ^2.4.6
+        version: 2.4.6
+      happy-dom:
+        specifier: ^20.1.0
+        version: 20.6.1
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
       vite:
         specifier: ^6.4.1
         version: 6.4.1(@types/node@22.19.11)(jiti@1.21.7)
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.18(@types/node@22.19.11)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@1.21.7)
       vue:
         specifier: ^3.5.26
         version: 3.5.28(typescript@5.9.3)
@@ -173,12 +185,21 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^5.2.4
         version: 5.2.4(vite@6.4.1(@types/node@22.19.11)(jiti@1.21.7))(vue@3.5.28(typescript@5.9.3))
+      '@vue/test-utils':
+        specifier: ^2.4.6
+        version: 2.4.6
+      happy-dom:
+        specifier: ^20.1.0
+        version: 20.6.1
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
       vite:
         specifier: ^6.4.1
         version: 6.4.1(@types/node@22.19.11)(jiti@1.21.7)
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.18(@types/node@22.19.11)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@1.21.7)
       vue:
         specifier: ^3.5.26
         version: 3.5.28(typescript@5.9.3)
@@ -200,6 +221,9 @@ importers:
       vite:
         specifier: ^6.4.1
         version: 6.4.1(@types/node@22.19.11)(jiti@1.21.7)
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.18(@types/node@22.19.11)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@1.21.7)
       vue:
         specifier: ^3.5.26
         version: 3.5.28(typescript@5.9.3)
