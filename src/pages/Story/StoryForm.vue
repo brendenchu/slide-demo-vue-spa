@@ -7,6 +7,7 @@ import {
   SectionCFormFields,
 } from '@/types'
 import type { Project } from '@/types/models'
+import type { ProjectStep } from '@/types/story'
 import { IntroForm, SectionAForm, SectionBForm, SectionCForm } from '@/components/Story/Form/Forms'
 import { Direction } from '@/components/Slide/types'
 import StoryLayout from '@/layouts/StoryLayout.vue'
@@ -34,13 +35,7 @@ const direction = computed(() => (route.query.direction as Direction) || 'next')
 const stepConfig = computed(() => getStepConfig(stepId.value))
 
 // Create step object that matches the interface expected by form components
-interface StepInfo {
-  id: string
-  slug: string
-  name: string
-}
-
-const step = computed<StepInfo>(() => ({
+const step = computed<ProjectStep>(() => ({
   id: stepConfig.value.id,
   slug: stepConfig.value.slug,
   name: stepConfig.value.name,

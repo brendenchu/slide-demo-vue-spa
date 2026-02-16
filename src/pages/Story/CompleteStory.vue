@@ -1,16 +1,11 @@
 <script lang="ts" setup>
 import StoryLayout from '@/layouts/StoryLayout.vue'
 import type { Project } from '@/types/models'
+import type { ProjectStep } from '@/types/story'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import { ProgressBar, ProgressTimeline } from '@/components/Story/Form/UI'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-
-interface ProjectStep {
-  id: string
-  slug?: string
-  name?: string
-}
 
 defineProps<{
   project: Project

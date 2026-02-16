@@ -16,5 +16,3 @@ const logout = async () => {
     <span>Log Out</span>
   </button>
 </template>
-
-<style scoped lang="postcss"></style>

@@ -5,6 +5,7 @@ import { Error, Field, Fieldset, Label } from '@/components/Form'
 import { onMounted, ref } from 'vue'
 import { SectionBFormFields } from '@/types'
 import type { Project } from '@/types/models'
+import type { ProjectStep } from '@/types/story'
 import { Action, Direction, SlideOptions } from '@/components/Slide/types'
 import { delay } from '@/utils/ui'
 import { delta, nullifyFields, saveForm } from '@/utils/story/form'
@@ -15,12 +16,6 @@ import {
   sectionBPage2Schema,
   sectionBPage3Schema,
 } from '@/validation/sectionBFormSchema'
-
-interface ProjectStep {
-  id: string
-  slug: string
-  name: string
-}
 
 // The component's props
 const props = defineProps<{
@@ -89,7 +84,7 @@ const actions = ref<SlideOptions<Action>>({
           token: props.token,
         },
         async () => {
-          current.value += delta(current.value, toggledFields)
+          current.value += delta(current.value, form, toggledFields)
           previous.value = current.value - 1
           formDirection.value = 'next'
           // If the current page is greater than the total number of pages, redirect to the next step
@@ -114,7 +109,7 @@ const actions = ref<SlideOptions<Action>>({
     forced: true, // Always show the previous button
     callback: async () => {
       // Calculate where we'll be after going back
-      const nextPage = current.value - delta(current.value - 2, toggledFields)
+      const nextPage = current.value - delta(current.value - 2, form, toggledFields)
 
       // Set the page transition to trigger slide animation
       formDirection.value = 'previous'
@@ -244,5 +239,3 @@ onMounted(() => {
     </Slide>
   </form>
 </template>
-
-<style lang="postcss" scoped></style>
