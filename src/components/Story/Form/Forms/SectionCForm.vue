@@ -206,8 +206,8 @@ onMounted(() => {
               </Label>
             </div>
             <div class="flex gap-3">
-              <Radio id="section_c_1_c" v-model:checked="form.section_c_1" value="Berlin" />
-              <Label for="section_c_1_c">
+              <Radio id="section_c_1_d" v-model:checked="form.section_c_1" value="Berlin" />
+              <Label for="section_c_1_d">
                 <span class="text-2xl">Berlin</span>
               </Label>
             </div>
