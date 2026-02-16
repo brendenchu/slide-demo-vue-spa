@@ -143,7 +143,7 @@ onMounted(() => {
             <Error :message="form.errors.intro_2" class="mt-1" />
           </div>
           <div>
-            <Label for="intro_1">
+            <Label for="intro_3">
               <strong>Your Location</strong>
             </Label>
             <Field id="intro_3" v-model="form.intro_3" class="form-field" />
