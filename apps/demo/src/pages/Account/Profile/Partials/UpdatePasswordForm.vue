@@ -2,10 +2,8 @@
 import { ref, computed } from 'vue'
 import { useForm } from '@/composables/useForm'
 import { useDemoStore } from '@/stores/demo'
+import { Error as InputError, Label as InputLabel, Field as InputField } from '@bchu/vue-form-primitives'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
-import InputError from '@/components/Form/FormError.vue'
-import InputLabel from '@/components/Form/FormLabel.vue'
-import InputField from '@/components/Form/FormField.vue'
 
 const demoStore = useDemoStore()
 const isProtected = computed(() => demoStore.isDemoMode && demoStore.isDemoAccount)

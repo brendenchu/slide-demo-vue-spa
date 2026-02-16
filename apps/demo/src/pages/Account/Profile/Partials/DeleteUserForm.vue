@@ -7,9 +7,7 @@ import { useDemoStore } from '@/stores/demo'
 import DangerButton from '@/components/Common/UI/Buttons/DangerButton.vue'
 import SecondaryButton from '@/components/Common/UI/Buttons/SecondaryButton.vue'
 import Modal from '@/components/Common/UI/ModalComponent.vue'
-import InputError from '@/components/Form/FormError.vue'
-import InputLabel from '@/components/Form/FormLabel.vue'
-import InputField from '@/components/Form/FormField.vue'
+import { Error as InputError, Label as InputLabel, Field as InputField } from '@bchu/vue-form-primitives'
 
 const router = useRouter()
 const authStore = useAuthStore()

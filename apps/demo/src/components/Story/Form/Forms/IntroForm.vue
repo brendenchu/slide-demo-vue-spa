@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Slide } from '@bchu/vue-slide'
-import { Error, Field, Fieldset, Label } from '@/components/Form'
+import { Error, Field, Fieldset, Label } from '@bchu/vue-form-primitives'
 import { IntroFormFields } from '@/types'
 import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'
 import { introFormSchema } from '@/validation/introFormSchema'

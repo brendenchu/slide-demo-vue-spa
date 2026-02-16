@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Slide } from '@bchu/vue-slide'
-import { Checkbox, Error, Field, Fieldset, GroupWrapper, Label } from '@/components/Form'
+import { Checkbox, Error, Field, Fieldset, GroupWrapper, Label } from '@bchu/vue-form-primitives'
 import { watch } from 'vue'
 import { SectionAFormFields } from '@/types'
 import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'

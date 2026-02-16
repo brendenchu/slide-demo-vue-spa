@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Slide } from '@bchu/vue-slide'
-import { Error, Fieldset, GroupWrapper, Label, Radio } from '@/components/Form'
+import { Error, Fieldset, GroupWrapper, Label, Radio } from '@bchu/vue-form-primitives'
 import { SectionCFormFields } from '@/types'
 import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'
 import { delay } from '@/utils/ui'

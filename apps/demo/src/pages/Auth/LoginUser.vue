@@ -4,10 +4,8 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import GuestLayout from '@/layouts/GuestLayout.vue'
-import InputError from '@/components/Form/FormError.vue'
-import InputLabel from '@/components/Form/FormLabel.vue'
+import { Error as InputError, Label as InputLabel, Field as InputField } from '@bchu/vue-form-primitives'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
-import InputField from '@/components/Form/FormField.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

@@ -6,10 +6,8 @@ import { useToastStore } from '@/stores/toast'
 import { useDemoStore } from '@/stores/demo'
 import { useNameOptions } from '@/composables/useNameOptions'
 import GuestLayout from '@/layouts/GuestLayout.vue'
-import InputError from '@/components/Form/FormError.vue'
-import InputLabel from '@/components/Form/FormLabel.vue'
+import { Error as InputError, Label as InputLabel, Combobox as FormCombobox } from '@bchu/vue-form-primitives'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
-import FormCombobox from '@/components/Form/FormCombobox.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
