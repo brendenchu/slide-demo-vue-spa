@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ProjectStep } from '@/types/story'
-import { getStepOrder } from '@/utils/story/steps'
+import type { ProjectStep } from '@bchu/vue-story-form'
+import { getStepOrder } from '@bchu/vue-story-form'
 import { computed } from 'vue'
 
 const props = defineProps<{

@@ -7,7 +7,7 @@ import {
   SectionCFormFields,
 } from '@/types'
 import type { Project } from '@/types/models'
-import type { ProjectStep } from '@/types/story'
+import type { ProjectStep } from '@bchu/vue-story-form'
 import { IntroForm, SectionAForm, SectionBForm, SectionCForm } from '@/components/Story/Form/Forms'
 import type { Direction } from '@bchu/vue-slide'
 import StoryLayout from '@/layouts/StoryLayout.vue'
@@ -15,7 +15,7 @@ import { ProgressBar, ProgressTimeline } from '@/components/Story/Form/UI'
 import { useRoute } from 'vue-router'
 import { useProjectsStore } from '@/stores/projects'
 import { ref, onMounted, computed, watch } from 'vue'
-import { getStepConfig } from '@/utils/story/steps'
+import { getStepConfig } from '@bchu/vue-story-form'
 
 const route = useRoute()
 const projectsStore = useProjectsStore()

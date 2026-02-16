@@ -1,4 +1,4 @@
-import type { ProjectStep } from '@/types/story'
+import type { ProjectStep } from '../types/story'
 
 /**
  * Get the previous and next steps for navigation

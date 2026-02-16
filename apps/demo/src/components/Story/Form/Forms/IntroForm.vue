@@ -2,15 +2,22 @@
 import { Slide } from '@bchu/vue-slide'
 import { Error, Field, Fieldset, Label } from '@bchu/vue-form-primitives'
 import { IntroFormFields } from '@/types'
-import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'
+import { useSectionForm, type SectionFormProps } from '@bchu/vue-story-form'
 import { introFormSchema } from '@/validation/introFormSchema'
+import { useProjectsStore } from '@/stores/projects'
+import { useToastStore } from '@/stores/toast'
 
 const props = defineProps<SectionFormProps<IntroFormFields>>()
+
+const projectsStore = useProjectsStore()
+const toastStore = useToastStore()
 
 const { form, current, formDirection, pages, actions } = useSectionForm<IntroFormFields>({
   props,
   pages: 1,
   schema: introFormSchema,
+  save: async (projectId, stepId, data) => { await projectsStore.saveResponses(projectId, stepId, data) },
+  onError: (msg) => toastStore.error(msg),
 })
 </script>
 

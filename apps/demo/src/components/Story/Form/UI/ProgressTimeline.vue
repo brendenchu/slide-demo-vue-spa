@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Project } from '@/types/models'
-import type { ProjectStep } from '@/types/story'
+import type { ProjectStep } from '@bchu/vue-story-form'
 import { RouterLink } from 'vue-router'
 import { computed } from 'vue'
 

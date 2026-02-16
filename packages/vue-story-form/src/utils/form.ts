@@ -1,6 +1,6 @@
-import type { Project } from '@/types/models'
-import type { ProjectStep } from '@/types/story'
-import type { StoryForm, StoryFormOptions } from '@/composables/useStoryForm'
+import type { StoryProject } from '../types/story'
+import type { ProjectStep } from '../types/story'
+import type { StoryForm, StoryFormOptions } from '../composables/useStoryForm'
 
 /**
  * Save form data to the store
@@ -8,7 +8,7 @@ import type { StoryForm, StoryFormOptions } from '@/composables/useStoryForm'
 export function saveForm<T extends Record<string, unknown>>(
   form: StoryForm<T>,
   _options: {
-    project: Project
+    project: StoryProject
     step: ProjectStep
     page: number
     token: string

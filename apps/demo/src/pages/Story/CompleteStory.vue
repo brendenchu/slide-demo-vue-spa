@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import StoryLayout from '@/layouts/StoryLayout.vue'
 import type { Project } from '@/types/models'
-import type { ProjectStep } from '@/types/story'
+import type { ProjectStep } from '@bchu/vue-story-form'
 import PrimaryButton from '@/components/Common/UI/Buttons/PrimaryButton.vue'
 import { ProgressBar, ProgressTimeline } from '@/components/Story/Form/UI'
 import { useRouter } from 'vue-router'

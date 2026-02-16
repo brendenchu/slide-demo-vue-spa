@@ -2,14 +2,19 @@
 import { Slide } from '@bchu/vue-slide'
 import { Error, Field, Fieldset, Label } from '@bchu/vue-form-primitives'
 import { SectionBFormFields } from '@/types'
-import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'
+import { useSectionForm, type SectionFormProps } from '@bchu/vue-story-form'
 import {
   sectionBPage1Schema,
   sectionBPage2Schema,
   sectionBPage3Schema,
 } from '@/validation/sectionBFormSchema'
+import { useProjectsStore } from '@/stores/projects'
+import { useToastStore } from '@/stores/toast'
 
 const props = defineProps<SectionFormProps<SectionBFormFields>>()
+
+const projectsStore = useProjectsStore()
+const toastStore = useToastStore()
 
 const { form, current, formDirection, pages, actions } = useSectionForm<SectionBFormFields>({
   props,
@@ -20,6 +25,8 @@ const { form, current, formDirection, pages, actions } = useSectionForm<SectionB
     return sectionBPage3Schema
   },
   previousStepPage: '2',
+  save: async (projectId, stepId, data) => { await projectsStore.saveResponses(projectId, stepId, data) },
+  onError: (msg) => toastStore.error(msg),
 })
 </script>
 

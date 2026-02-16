@@ -2,8 +2,9 @@
 import { Slide } from '@bchu/vue-slide'
 import { Error, Fieldset, GroupWrapper, Label, Radio } from '@bchu/vue-form-primitives'
 import { SectionCFormFields } from '@/types'
-import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'
-import { delay } from '@/utils/ui'
+import { useSectionForm, type SectionFormProps } from '@bchu/vue-story-form'
+import { useProjectsStore } from '@/stores/projects'
+import { useToastStore } from '@/stores/toast'
 import {
   sectionCPage1Schema,
   sectionCPage2Schema,
@@ -31,15 +32,18 @@ const schemas = [
   sectionCPage9Schema,
 ]
 
+const projectsStore = useProjectsStore()
+const toastStore = useToastStore()
+
 const { form, current, formDirection, pages, actions } = useSectionForm<SectionCFormFields>({
   props,
   pages: 9,
   schema: (page) => schemas[page] || sectionCPage1Schema,
   previousStepPage: '3',
+  save: async (projectId, stepId, data) => { await projectsStore.saveResponses(projectId, stepId, data) },
+  onError: (msg) => toastStore.error(msg),
   onComplete: async ({ router, props }) => {
-    await delay()
-    const { useProjectsStore } = await import('@/stores/projects')
-    const projectsStore = useProjectsStore()
+    await new Promise((resolve) => setTimeout(resolve, 500))
     await projectsStore.complete(props.project.id)
 
     router.push({

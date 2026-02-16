@@ -3,10 +3,15 @@ import { Slide } from '@bchu/vue-slide'
 import { Checkbox, Error, Field, Fieldset, GroupWrapper, Label } from '@bchu/vue-form-primitives'
 import { watch } from 'vue'
 import { SectionAFormFields } from '@/types'
-import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'
+import { useSectionForm, type SectionFormProps } from '@bchu/vue-story-form'
 import { sectionAPage1Schema, sectionAPage2Schema } from '@/validation/sectionAFormSchema'
+import { useProjectsStore } from '@/stores/projects'
+import { useToastStore } from '@/stores/toast'
 
 const props = defineProps<SectionFormProps<SectionAFormFields>>()
+
+const projectsStore = useProjectsStore()
+const toastStore = useToastStore()
 
 const { form, current, formDirection, pages, actions } = useSectionForm<SectionAFormFields>({
   props,
@@ -20,6 +25,8 @@ const { form, current, formDirection, pages, actions } = useSectionForm<SectionA
     },
   },
   previousStepPage: '1',
+  save: async (projectId, stepId, data) => { await projectsStore.saveResponses(projectId, stepId, data) },
+  onError: (msg) => toastStore.error(msg),
 })
 
 // Initialize checkbox values based on whether their dependent fields have data

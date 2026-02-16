@@ -1,4 +1,4 @@
-import type { Project } from '@/types/models'
+import type { StoryProject } from '../types/story'
 import { STEP_CONFIGS, getStepOrder } from './steps'
 
 export interface LastPosition {
@@ -9,7 +9,7 @@ export interface LastPosition {
 /**
  * Find the last position (step and page) with saved data in a project
  */
-export function findLastPosition(project: Project): LastPosition {
+export function findLastPosition(project: StoryProject): LastPosition {
   const stepOrder = getStepOrder()
   const responses = project.responses || {}
 
@@ -78,7 +78,7 @@ function findLastPageInStep(step: string, stepData: Record<string, unknown>): nu
 /**
  * Calculate the progress percentage for a project
  */
-export function calculateProgress(project: Project): number {
+export function calculateProgress(project: StoryProject): number {
   if (project.status === 'completed') return 100
 
   const stepOrder = getStepOrder()

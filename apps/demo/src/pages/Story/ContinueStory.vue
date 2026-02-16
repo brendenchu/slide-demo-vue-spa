@@ -2,7 +2,7 @@
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useProjectsStore } from '@/stores/projects'
-import { findLastPosition } from '@/utils/story/progress'
+import { findLastPosition } from '@bchu/vue-story-form'
 
 const route = useRoute()
 const router = useRouter()

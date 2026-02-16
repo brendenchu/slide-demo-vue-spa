@@ -1,16 +1,19 @@
 import { onMounted, ref, type Ref } from 'vue'
-import { useStoryForm, type StoryForm } from '@/composables/useStoryForm'
-import type { Project } from '@/types/models'
-import type { ProjectStep } from '@/types/story'
+import { useStoryForm, type StoryForm } from './useStoryForm'
+import type { StoryProject } from '../types/story'
+import type { ProjectStep } from '../types/story'
 import type { Action, Direction, SlideOptions } from '@bchu/vue-slide'
-import { delay } from '@/utils/ui'
-import { delta, nullifyFields, saveForm } from '@/utils/story/form'
-import { prevNextSteps } from '@/utils/story/workflow'
+import { delta, nullifyFields, saveForm } from '../utils/form'
+import { prevNextSteps } from '../utils/workflow'
 import { useRouter, type Router } from 'vue-router'
 import type { ZodSchema } from 'zod'
 
+function delay(ms: number = 500) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 export interface SectionFormProps<T extends Record<string, unknown>> {
-  project: Project
+  project: StoryProject
   step: ProjectStep
   token: string
   page: number
@@ -31,6 +34,9 @@ export interface UseSectionFormOptions<T extends Record<string, unknown>> {
   toggledFields?: Record<number, Record<string, string>>
   previousStepPage?: string
   onComplete?: (context: OnCompleteContext<T>) => Promise<void>
+  save: (projectId: string, stepId: string, data: Record<string, unknown>) => Promise<void>
+  onError?: (message: string) => void
+  routes?: { form: string; complete: string }
 }
 
 export interface UseSectionFormReturn<T extends Record<string, unknown>> {
@@ -48,6 +54,7 @@ export function useSectionForm<T extends Record<string, unknown>>(
 ): UseSectionFormReturn<T> {
   const { props, toggledFields = {} } = options
   const router = useRouter()
+  const formRouteName = options.routes?.form ?? 'story.form'
 
   const current = ref<number>(0)
   const previous = ref<number>(0)
@@ -66,6 +73,8 @@ export function useSectionForm<T extends Record<string, unknown>>(
       project: props.project,
       step: props.step,
       token: props.token,
+      save: options.save,
+      onError: options.onError,
     },
     {
       schema: validationSchema,
@@ -81,7 +90,7 @@ export function useSectionForm<T extends Record<string, unknown>>(
     (async ({ router, props, steps }: OnCompleteContext<T>) => {
       await delay()
       router.push({
-        name: 'story.form',
+        name: formRouteName,
         params: { id: props.project.id },
         query: {
           step: steps.next,
@@ -128,7 +137,7 @@ export function useSectionForm<T extends Record<string, unknown>>(
             previous.value = 1
             await delay()
             router.push({
-              name: 'story.form',
+              name: formRouteName,
               params: { id: props.project.id },
               query: {
                 step: steps.previous,

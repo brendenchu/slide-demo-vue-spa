@@ -1,8 +1,6 @@
 import { reactive, ref } from 'vue'
-import { useProjectsStore } from '@/stores/projects'
-import { useToastStore } from '@/stores/toast'
-import type { Project } from '@/types/models'
-import type { ProjectStep } from '@/types/story'
+import type { StoryProject } from '../types/story'
+import type { ProjectStep } from '../types/story'
 import type { ZodSchema } from 'zod'
 
 export interface StoryFormOptions {
@@ -31,21 +29,24 @@ export interface StoryFormMethods<T extends Record<string, unknown>> {
 
 export type StoryForm<T extends Record<string, unknown>> = T & StoryFormMethods<T>
 
+export interface StoryFormContext {
+  project?: StoryProject
+  step?: ProjectStep
+  token?: string
+  save: (projectId: string, stepId: string, data: Record<string, unknown>) => Promise<void>
+  onError?: (message: string) => void
+}
+
 export function useStoryForm<T extends Record<string, unknown>>(
   initialData: T,
-  context?: {
-    project?: Project
-    step?: ProjectStep
-    token?: string
-  },
+  context?: StoryFormContext,
   validationOptions?: ValidationOptions
 ): StoryForm<T> {
-  const projectsStore = useProjectsStore()
-  const toastStore = useToastStore()
-
   const errors = reactive<Record<string, string>>({})
   const processingRef = ref(false)
   const recentlySuccessfulRef = ref(false)
+
+  const reportError = context?.onError ?? ((msg: string) => console.error(msg))
 
   // Merge initialData and methods into a reactive object
   const form = reactive({ ...initialData }) as unknown as StoryForm<T>
@@ -102,7 +103,7 @@ export function useStoryForm<T extends Record<string, unknown>>(
               errors[fieldName] = issue.message
             })
 
-            toastStore.error('Please fix the validation errors.')
+            reportError('Please fix the validation errors.')
             formOptions?.onError?.()
             processingRef.value = false
             return
@@ -113,8 +114,8 @@ export function useStoryForm<T extends Record<string, unknown>>(
           throw new Error('Project context is required for story form')
         }
 
-        // Save responses to the project
-        await projectsStore.saveResponses(
+        // Save responses via the injected save callback
+        await context.save(
           context.project.id,
           context.step?.id || 'intro',
           dataToSave
@@ -129,7 +130,7 @@ export function useStoryForm<T extends Record<string, unknown>>(
         }, 2000)
       } catch (error: unknown) {
         const err = error as Error
-        toastStore.error(err.message || 'Failed to save form')
+        reportError(err.message || 'Failed to save form')
         formOptions?.onError?.()
       } finally {
         processingRef.value = false
