@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import type { Project } from '@/types/models'
+import type { ProjectStep } from '@/types/story'
 import { RouterLink } from 'vue-router'
 import { computed } from 'vue'
-
-interface ProjectStep {
-  id: string
-  slug?: string
-  name?: string
-}
 
 const props = defineProps<{
   project?: Project

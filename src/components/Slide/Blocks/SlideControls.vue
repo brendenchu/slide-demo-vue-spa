@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ActionButton, NavigationButton } from '../UI'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import type { Action, SlideOptions } from '../types'
 
 const props = withDefaults(
@@ -16,36 +16,12 @@ const props = withDefaults(
   }
 )
 
-const current = ref<number>(props.current)
-const actions = ref<SlideOptions<Action>>(
-  props.actions || {
-    next: {
-      callback: () => {
-        current.value++
-      },
-    },
-    previous: {
-      callback: () => {
-        current.value--
-      },
-    },
-  }
-)
-
-const page = computed(() => {
-  return props.current ?? current.value
+const hideNext = computed(() => {
+  if (!props.actions) return false
+  return Object.keys(props.actions).some(
+    (key) => key !== 'previous' && props.actions?.[key]?.forced
+  )
 })
-
-const hideNext: () => boolean = () => {
-  let result = false
-  Object.keys(actions.value).forEach((key) => {
-    if (key !== 'previous' && actions.value[key]?.forced) {
-      result = true
-      return false
-    }
-  })
-  return result
-}
 </script>
 
 <template>
@@ -53,19 +29,19 @@ const hideNext: () => boolean = () => {
     <div class="contained-sm">
       <div
         :class="{
-          'justify-between': page > 1 && page <= pages,
-          'justify-end': page === 1,
+          'justify-between': props.current > 1 && props.current <= pages,
+          'justify-end': props.current === 1,
         }"
         class="grid grid-cols-3 gap-3 max-w-4xl mx-auto"
       >
         <div class="flex items-center justify-start">
           <NavigationButton
-            v-show="actions?.previous?.forced || page > 1"
+            v-show="props.actions?.previous?.forced || props.current > 1"
             theme="neutral"
             outline
-            @click="actions?.previous?.callback()"
+            @click="props.actions?.previous?.callback()"
           >
-            {{ actions?.previous?.label || '&laquo; Previous' }}
+            {{ props.actions?.previous?.label || '&laquo; Previous' }}
           </NavigationButton>
         </div>
         <div class="flex items-center justify-center">
@@ -79,32 +55,30 @@ const hideNext: () => boolean = () => {
               leave-to-class="opacity-0"
             >
               <span
-                v-if="page > 0 && page <= pages"
+                v-if="props.current > 0 && props.current <= pages"
                 class="hidden sm:inline-block text-lg font-bold text-base-content"
               >
-                Page {{ page }} of {{ pages }}
+                Page {{ props.current }} of {{ pages }}
               </span>
             </Transition>
           </slot>
         </div>
         <div class="flex items-center justify-end">
           <NavigationButton
-            v-show="!hideNext() && (actions?.next?.forced || page <= pages + 1)"
-            :disabled="actions?.next?.blocked"
-            @click="actions?.next?.callback()"
+            v-show="!hideNext && (props.actions?.next?.forced || props.current <= pages + 1)"
+            :disabled="props.actions?.next?.blocked"
+            @click="props.actions?.next?.callback()"
           >
-            {{ actions?.next?.label || 'Next &raquo;' }}
+            {{ props.actions?.next?.label || 'Next &raquo;' }}
           </NavigationButton>
           <ActionButton
-            v-show="actions?.close?.forced || (page > pages + 1 && actions?.close)"
-            @click.prevent="actions?.close?.callback()"
+            v-show="props.actions?.close?.forced || (props.current > pages + 1 && props.actions?.close)"
+            @click.prevent="props.actions?.close?.callback()"
           >
-            {{ actions?.close?.label || 'Close' }}
+            {{ props.actions?.close?.label || 'Close' }}
           </ActionButton>
         </div>
       </div>
     </div>
   </section>
 </template>
-
-<style scoped></style>

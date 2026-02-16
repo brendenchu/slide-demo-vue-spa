@@ -1,48 +1,28 @@
 <script setup lang="ts">
 import type { Direction } from '../types'
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     direction?: Direction
+    active?: boolean
   }>(),
   {
     direction: 'next',
+    active: false,
   }
 )
 </script>
 
 <template>
-  <Transition :name="`slide-${props.direction}`">
-    <div v-if="true" class="absolute w-full h-full">
-      <div class="contained w-full h-full">
-        <slot />
-      </div>
+  <div class="absolute w-full h-full transition-transform duration-500 ease-in-out"
+    :class="{
+      'translate-x-0': active,
+      'translate-x-full': !active && direction === 'next',
+      '-translate-x-full': !active && direction === 'previous',
+    }"
+  >
+    <div class="contained w-full h-full">
+      <slot />
     </div>
-  </Transition>
+  </div>
 </template>
-
-<style scoped lang="postcss">
-.slide-next-enter-active,
-.slide-next-leave-active,
-.slide-previous-enter-active,
-.slide-previous-leave-active {
-  @apply transition-all duration-500 ease-in-out;
-}
-
-.slide-next-enter-from,
-.slide-previous-leave-to {
-  transform: translateX(100%);
-}
-
-.slide-next-leave-to,
-.slide-previous-enter-from {
-  transform: translateX(-100%);
-}
-
-.slide-next-enter-to,
-.slide-next-leave-from,
-.slide-previous-enter-to,
-.slide-previous-leave-from {
-  transform: translateX(0);
-}
-</style>

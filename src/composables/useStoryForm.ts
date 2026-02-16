@@ -2,6 +2,7 @@ import { reactive, ref } from 'vue'
 import { useProjectsStore } from '@/stores/projects'
 import { useToastStore } from '@/stores/toast'
 import type { Project } from '@/types/models'
+import type { ProjectStep } from '@/types/story'
 import type { ZodSchema } from 'zod'
 
 export interface StoryFormOptions {
@@ -29,12 +30,6 @@ export interface StoryFormMethods<T extends Record<string, unknown>> {
 }
 
 export type StoryForm<T extends Record<string, unknown>> = T & StoryFormMethods<T>
-
-interface ProjectStep {
-  id: string
-  slug?: string
-  name?: string
-}
 
 export function useStoryForm<T extends Record<string, unknown>>(
   initialData: T,

@@ -1,35 +1,21 @@
 <script setup lang="ts">
+import type { ProjectStep } from '@/types/story'
+import { getStepOrder } from '@/utils/story/steps'
 import { computed } from 'vue'
-
-interface ProjectStep {
-  id: string
-  slug?: string
-  name?: string
-}
 
 const props = defineProps<{
   step?: ProjectStep
   page?: number
 }>()
 
-// this progress bar increments by sections
+const stepOrder = getStepOrder()
+
 const progress = computed(() => {
   if (!props.step) return 0
-
-  switch (props.step.id) {
-    case 'intro':
-      return 0
-    case 'section-a':
-      return 25
-    case 'section-b':
-      return 50
-    case 'section-c':
-      return 75
-    case 'complete':
-      return 100
-    default:
-      return 0
-  }
+  if (props.step.id === 'complete') return 100
+  const index = stepOrder.indexOf(props.step.id)
+  if (index === -1) return 0
+  return Math.round((index / stepOrder.length) * 100)
 })
 </script>
 

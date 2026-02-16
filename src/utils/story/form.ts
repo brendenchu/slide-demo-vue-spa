@@ -1,18 +1,12 @@
-import { AnyFormFields } from '@/types'
 import type { Project } from '@/types/models'
+import type { ProjectStep } from '@/types/story'
 import type { StoryForm, StoryFormOptions } from '@/composables/useStoryForm'
-
-interface ProjectStep {
-  id: string
-  slug?: string
-  name?: string
-}
 
 /**
  * Save form data to the store
  */
-export function saveForm(
-  form: StoryForm<AnyFormFields>,
+export function saveForm<T extends Record<string, unknown>>(
+  form: StoryForm<T>,
   _options: {
     project: Project
     step: ProjectStep
@@ -33,41 +27,37 @@ export function saveForm(
 }
 
 /**
- * Count the number of checked checkboxes in a group
+ * Count the number of truthy fields in the form data
  */
-export function numChecked(group: string[]): number {
-  let result = 0
-  group.forEach((input) => {
-    if ((document.getElementById(input) as HTMLInputElement)?.checked) {
-      result++
-    }
-  })
-  return result
+export function numChecked(form: object, fields: string[]): number {
+  const data = form as Record<string, unknown>
+  return fields.filter((field) => !!data[field]).length
 }
 
 /**
  * Calculate the page delta based on toggled fields
  */
-export function delta(page: number, toggledFields?: Record<number, Record<string, string>>) {
-  // set delta to 1
-  let delta = 1
+export function delta(
+  page: number,
+  form: object,
+  toggledFields?: Record<number, Record<string, string>>
+): number {
+  let d = 1
 
-  // if current page is a key in the toggledFields object
-  if (toggledFields && Object.keys(toggledFields).includes(page.toString())) {
-    // If no checkboxes are checked, set delta to 2
+  if (toggledFields?.[page]) {
     const pageFields = toggledFields[page]
-    if (pageFields && numChecked(Object.keys(pageFields)) === 0) {
-      delta++
+    if (pageFields && numChecked(form, Object.keys(pageFields)) === 0) {
+      d++
     }
   }
-  return delta
+  return d
 }
 
 /**
  * Nullify form fields based on checkbox state
  */
-export function nullifyFields(
-  form: StoryForm<AnyFormFields> | Record<string, unknown>,
+export function nullifyFields<T extends Record<string, unknown>>(
+  form: StoryForm<T> | Record<string, unknown>,
   toggledFields: Record<number, Record<string, string>>,
   page: number
 ) {

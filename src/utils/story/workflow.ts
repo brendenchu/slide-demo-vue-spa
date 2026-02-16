@@ -1,12 +1,4 @@
-import type { Project } from '@/types/models'
-import axios from 'axios'
-import { delay } from '@/utils/ui'
-
-interface ProjectStep {
-  id: string
-  slug?: string
-  name?: string
-}
+import type { ProjectStep } from '@/types/story'
 
 /**
  * Get the previous and next steps for navigation
@@ -24,26 +16,4 @@ export function prevNextSteps(step: ProjectStep): { previous: string | null; nex
     default:
       return { previous: null, next: null }
   }
-}
-
-/**
- * Complete the story and redirect to the complete page
- */
-export function completeStory(project: Project, token: string) {
-  // set story to complete
-  axios
-    .post(
-      route('api.publish-story', {
-        project: project.id,
-        token,
-      })
-    )
-    .then((response) => {
-      // If the response is successful, redirect to the dashboard
-      if (response.status === 200) {
-        delay().then(
-          () => (window.location.href = route('story.complete', { project: project.id, token }))
-        )
-      }
-    })
 }
