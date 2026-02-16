@@ -45,7 +45,8 @@ const updatePassword = () => {
       <h2 class="text-lg font-medium text-base-content">Update Password</h2>
 
       <p class="mt-1 text-sm text-base-content/60">
-        Ensure your account is using a long, random password to stay secure.
+        This form demonstrates a password change flow with confirmation matching. Fields reset
+        automatically on error and focus returns to the relevant input.
       </p>
     </header>
 

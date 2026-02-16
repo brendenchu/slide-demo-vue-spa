@@ -20,7 +20,11 @@ const { form, current, formDirection, pages, actions } = useSectionForm<IntroFor
       <template #page-1>
         <Fieldset>
           <div class="prose prose-2xl pb-4">
-            <p>To start, let's get to know you a little better.</p>
+            <p>
+              This section demonstrates basic text inputs with client-side validation. All three
+              fields are required &mdash; try clicking "Save &amp; Continue" with an empty field to
+              see validation errors in action.
+            </p>
           </div>
           <div>
             <Label for="intro_1">

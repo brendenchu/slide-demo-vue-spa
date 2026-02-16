@@ -69,8 +69,10 @@ async function logoutUser() {
           </div>
           <p>
             <small>
-              * There are no terms of service at this time. This is a demonstration of using
-              back-end middleware to require user acceptance of terms before proceeding.
+              * There are no actual terms of service. This page demonstrates a terms acceptance gate
+              &mdash; a router guard intercepts navigation and redirects here until the user accepts.
+              This pattern is commonly used with back-end middleware to enforce policy acknowledgement
+              before granting access to the rest of the application.
             </small>
           </p>
         </div>

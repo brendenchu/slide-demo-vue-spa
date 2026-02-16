@@ -58,8 +58,9 @@ const { form, current, formDirection, pages, actions } = useSectionForm<SectionC
         <Fieldset>
           <div class="prose prose-2xl pb-4">
             <p>
-              🎉Wow! 🎉 You've made it to the last section. Capital C! Let's do capital cities!
-              These questions will be multiple choice.
+              The final section demonstrates a single-question-per-page layout using radio button
+              groups. With nine pages and one question each, this shows how the slide system handles
+              longer flows. Let's do capital cities!
             </p>
             <div>
               <p><strong>What is the capital city of France?</strong></p>

@@ -38,7 +38,9 @@ const createTeam = () => {
             <header>
               <h2 class="text-lg font-medium text-base-content">Create a New Team</h2>
               <p class="mt-1 text-sm text-base-content/60">
-                Create a new team to collaborate with others.
+                This form demonstrates team creation as part of the team-based access control system.
+                Each team scopes its own projects and supports owner, admin, and member roles with
+                invitation management.
               </p>
             </header>
 

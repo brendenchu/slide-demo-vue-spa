@@ -61,10 +61,30 @@ const createForm = async () => {
         <div class="prose prose-2xl pb-4">
           <h2>Start New Form</h2>
           <p>
-            Welcome to the Slide Form Demo. You will be guided through a multi-step form divided
-            into sections.
+            Welcome to the Slide Form Demo. This form walks you through four sections, each
+            demonstrating a different set of components and features:
           </p>
-          <p>To get started, click the button below.</p>
+          <ul class="prose-lg">
+            <li>
+              <strong>Introduction</strong> &mdash; Text inputs with Zod schema validation
+            </li>
+            <li>
+              <strong>Section A</strong> &mdash; Checkboxes that conditionally reveal follow-up
+              fields, with automatic page skipping when no fields are toggled
+            </li>
+            <li>
+              <strong>Section B</strong> &mdash; Multi-page form with grouped number inputs and
+              per-page validation schemas
+            </li>
+            <li>
+              <strong>Section C</strong> &mdash; Single-question-per-page layout with radio button
+              groups for multiple choice
+            </li>
+          </ul>
+          <p>
+            Your responses are saved after each section, and progress is tracked automatically. Use
+            the Previous and Next controls to navigate between pages within each section.
+          </p>
           <PrimaryButton
             class="lg:btn-lg xl:btn-xl btn-outline"
             :disabled="loading || projectLimitReached"

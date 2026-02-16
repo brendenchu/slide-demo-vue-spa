@@ -54,9 +54,9 @@ const closeModal = () => {
       <h2 class="text-lg font-medium text-base-content">Delete Account</h2>
 
       <p class="mt-1 text-sm text-base-content/60">
-        Once your account is deleted, all of its resources and data will be permanently deleted.
-        Before deleting your account, please download any data or information that you wish to
-        retain.
+        This demonstrates a destructive action with a confirmation modal. Clicking the button below
+        opens a dialog that requires password entry before proceeding, a common pattern for
+        irreversible operations.
       </p>
     </header>
 

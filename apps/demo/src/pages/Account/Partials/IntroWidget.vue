@@ -10,11 +10,13 @@ const user = computed(() => authStore.user)
   <section class="p-4 sm:p-8 theme-card">
     <header>
       <h2 class="text-lg font-medium text-base-content">
-        Welcome to your dashboard, {{ user?.name }}.
+        Welcome to the demo, {{ user?.name }}.
       </h2>
 
       <p class="mt-1 text-sm text-base-content/60">
-        This provides a quick overview of your account and the projects you have created.
+        This dashboard demonstrates project listing with status tracking and progress bars. Use the
+        navigation above to explore profile editing, team management, and theme switching. Start a
+        new form to walk through the multi-step slide form system.
       </p>
     </header>
   </section>

@@ -56,7 +56,10 @@ async function submit() {
   <GuestLayout>
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-base-content">Create Account</h1>
-      <p class="mt-2 text-sm text-base-content/60">Sign up to start creating stories</p>
+      <p class="mt-2 text-sm text-base-content/60">
+        This registration form demonstrates a searchable combobox component for name selection.
+        Choose a first and last name to create a demo account and explore the application.
+      </p>
     </div>
 
     <div

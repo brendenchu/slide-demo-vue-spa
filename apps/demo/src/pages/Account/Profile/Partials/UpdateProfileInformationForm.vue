@@ -45,7 +45,9 @@ const saveProfile = () => {
       <h2 class="text-lg font-medium text-base-content">Profile Information</h2>
 
       <p class="mt-1 text-sm text-base-content/60">
-        Update your account's profile information and email address.
+        This form demonstrates profile editing with searchable combobox inputs and standard fields.
+        Changes are sent via the useForm composable which handles submission state, error mapping,
+        and success feedback.
       </p>
     </header>
 

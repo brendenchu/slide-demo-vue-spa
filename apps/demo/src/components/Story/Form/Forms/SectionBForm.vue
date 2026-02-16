@@ -29,7 +29,11 @@ const { form, current, formDirection, pages, actions } = useSectionForm<SectionB
       <template #page-1>
         <Fieldset>
           <div class="prose prose-2xl pb-4">
-            <p>Okay, let's do some quick maths.</p>
+            <p>
+              This section demonstrates a multi-page form with three fields per page. Each page uses
+              its own validation schema, so errors are scoped to the current page. Let's start with
+              some quick maths.
+            </p>
           </div>
           <div>
             <Label for="section_b_1">

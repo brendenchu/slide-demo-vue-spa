@@ -85,8 +85,9 @@ watch(
         <Fieldset>
           <div class="prose prose-2xl pb-4">
             <p>
-              Now, let's try a little experiment. Select one or more checkboxes below. You may also
-              select none, if you prefer.
+              This section demonstrates conditional fields. Select one or more checkboxes below to
+              reveal follow-up questions on the next page. If you select none, the form will
+              automatically skip ahead to Section B.
             </p>
           </div>
           <GroupWrapper>
@@ -115,8 +116,9 @@ watch(
         <Fieldset>
           <div class="prose prose-2xl pb-4">
             <p>
-              Depending on the checkboxes you selected, you will see one or more questions below. If
-              you didn't select any checkboxes, you would have skipped to the next section.
+              The fields below are conditionally rendered based on your checkbox selections. Each
+              checkbox maps to a specific follow-up question. Unchecking a box clears its
+              corresponding field and removes any validation errors for it.
             </p>
           </div>
           <GroupWrapper>

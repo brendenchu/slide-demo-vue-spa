@@ -49,9 +49,10 @@ async function submit() {
 <template>
   <GuestLayout>
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-base-content">Welcome Back</h1>
+      <h1 class="text-2xl font-bold text-base-content">Slide Form Demo</h1>
       <p class="mt-2 text-sm text-base-content/60">
-        Sign in to your account to continue
+        This demo application showcases a multi-step slide form system built with Vue 3, Pinia, and
+        Tailwind CSS. Sign in to explore the form builder, team management, and account features.
       </p>
     </div>
 

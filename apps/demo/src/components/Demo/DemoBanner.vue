@@ -22,7 +22,7 @@ function dismiss() {
     v-if="demoStore.isDemoMode && !dismissed"
     class="bg-warning/15 border-b border-warning/40 px-4 py-2 text-sm text-warning/90 flex items-center justify-between"
   >
-    <span>This is a demo environment with limited resources.</span>
+    <span>You are viewing a demo application. Some actions are limited to protect shared data.</span>
     <button
       type="button"
       class="ml-4 text-base-content/60 hover:text-warning font-medium transition"

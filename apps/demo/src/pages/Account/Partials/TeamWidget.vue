@@ -11,7 +11,10 @@ const team = computed(() => authStore.user?.team ?? null)
   <section v-if="team" class="p-4 sm:p-8 theme-card">
     <header>
       <h2 class="text-lg font-medium text-base-content">{{ team.name }}</h2>
-      <p class="mt-1 text-sm text-base-content/60">This is the current team you are working in.</p>
+      <p class="mt-1 text-sm text-base-content/60">
+        This is your active team. Teams demonstrate role-based access control with owner, admin, and
+        member roles. Switch teams to see how projects are scoped per team.
+      </p>
     </header>
     <p class="mt-1 text-sm text-base-content/50">
       <RouterLink
