@@ -26,6 +26,15 @@
 }
 
 @layer components {
+  /* Disabled form fields — boost contrast against card backgrounds */
+  .input:disabled,
+  .select:disabled,
+  textarea:disabled,
+  .checkbox:disabled,
+  .radio:disabled {
+    @apply opacity-60 bg-base-300/50 border-base-300;
+  }
+
   /* Shared card base — themed per data-theme */
   .theme-card {
     @apply bg-base-200/80 backdrop-blur-sm border border-base-300 rounded-lg shadow-lg;
@@ -518,6 +527,13 @@
 [data-theme='brutalist'] .btn-error:hover {
   background: #000000;
   color: #ff0000;
+}
+
+/* Visible black border on all fields */
+[data-theme='brutalist'] .input,
+[data-theme='brutalist'] .select,
+[data-theme='brutalist'] textarea {
+  border: 1px solid #000000 !important;
 }
 
 /* Thick black border focus */
