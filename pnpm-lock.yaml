@@ -10,6 +10,9 @@ importers:
 
   apps/demo:
     dependencies:
+      '@bchu/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@bchu/vue-form-primitives':
         specifier: workspace:*
         version: link:../../packages/vue-form-primitives
@@ -122,6 +125,12 @@ importers:
       vue-tsc:
         specifier: ^2.2.12
         version: 2.2.12(typescript@5.9.3)
+
+  packages/utils:
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/vue-form-primitives:
     devDependencies:

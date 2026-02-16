@@ -30,6 +30,7 @@
     "@bchu/vue-form-primitives": "workspace:*",
     "@bchu/vue-slide": "workspace:*",
     "@bchu/vue-story-form": "workspace:*",
+    "@bchu/utils": "workspace:*",
     "@tsparticles/slim": "^3.9.1",
     "@tsparticles/vue3": "^3.0.1",
     "@vueuse/core": "^11.3.0",
