@@ -34,11 +34,15 @@ async function submit() {
   errors.value = {}
 
   try {
-    await authStore.register(form.value.first_name, form.value.last_name)
+    const user = await authStore.register(form.value.first_name, form.value.last_name)
     toastStore.success('Registration successful! Welcome to Vue Slide Demo.')
 
-    // Navigate to dashboard
-    router.push({ name: 'dashboard' })
+    // Redirect to terms if needed, otherwise dashboard
+    if (user.must_accept_terms) {
+      router.push({ name: 'terms.accept' })
+    } else {
+      router.push({ name: 'dashboard' })
+    }
   } catch (_error) {
     errors.value.general = 'Registration failed. Please try again.'
     toastStore.error('Registration failed. Please check your information.')

@@ -7,6 +7,7 @@ Vue 3 + TypeScript SPA with flexible data source abstraction supporting local br
 - Multi-step slide form system
 - Adapter pattern for data sources (local/API/hybrid)
 - Token-based authentication
+- Terms of service acceptance gate (enforced via router guard)
 - Team-based access control (owner, admin, member roles)
 - Team management with invitations and ownership transfer
 - In-app notification system
@@ -96,8 +97,11 @@ src/
 │   ├── Form/            # Form inputs
 │   └── Common/          # Shared UI
 ├── router/              # Vue Router configuration
+├── pages/               # Full-page views
+│   └── Account/
+│       └── AcceptTerms.vue
 ├── stores/              # Pinia stores
-│   ├── auth.ts          # Authentication
+│   ├── auth.ts          # Authentication & terms acceptance
 │   ├── projects.ts      # Projects
 │   ├── teams.ts         # Teams & ownership
 │   ├── flash.ts         # Flash messages
@@ -132,11 +136,13 @@ tests/
 
 ### Protected (auth required)
 
+> After login, users who have not accepted the current terms are automatically redirected to `/terms/accept`. All other protected routes are blocked by a router navigation guard until terms are accepted.
+
 | Path | Component | Description |
 |------|-----------|-------------|
 | `/dashboard` | ClientDashboard | Main dashboard |
 | `/profile` | EditProfile | Edit user profile |
-| `/terms/accept` | AcceptTerms | Accept terms of service |
+| `/terms/accept` | AcceptTerms | Accept terms of service (gate) |
 | `/team/select` | SelectTeam | Select active team |
 | `/team/create` | CreateTeam | Create new team |
 | `/team/:id` | ShowTeam | View team details, members, invitations |
@@ -261,6 +267,11 @@ Ensure backend CORS allows SPA domain.
 - Token may be expired (24-hour default)
 - Try logging in again
 - Clear browser cache and localStorage
+
+**Stuck on terms acceptance page**
+- The API returns `must_accept_terms: true` on the user resource until terms are accepted
+- The router guard redirects to `/terms/accept` while this flag is set
+- Accept terms or log out and back in after terms are accepted server-side
 
 **Data not persisting (local mode)**
 - Check browser allows LocalStorage/IndexedDB
