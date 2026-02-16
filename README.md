@@ -7,23 +7,28 @@ Vue 3 + TypeScript SPA with flexible data source abstraction supporting local br
 - Multi-step slide form system
 - Adapter pattern for data sources (local/API/hybrid)
 - Token-based authentication
-- Role-based access control
+- Team-based access control (owner, admin, member roles)
+- Team management with invitations and ownership transfer
+- In-app notification system
 - TypeScript with strict mode
 - Pinia state management
-- Team ownership and transfer
-- 128 tests
+- Zod schema validation
+- 100 tests
 
 ## Tech Stack
 
-- Vue 3 (Composition API)
-- TypeScript 5+
-- Vite 6+
-- Pinia
-- Vue Router 4+
-- Tailwind CSS 3+
-- DaisyUI
+- Vue 3.5 (Composition API)
+- TypeScript 5.9
+- Vite 6.4
+- Pinia 2.3
+- Vue Router 4.6
+- Tailwind CSS 3.4 + DaisyUI 4
 - Axios
-- Vitest
+- Zod
+- VueUse
+- Localforage
+- tsParticles
+- Vitest 4.0
 
 ## Installation
 
@@ -45,7 +50,7 @@ Configure via `VITE_DATA_SOURCE` environment variable.
 VITE_DATA_SOURCE=local
 ```
 
-Data stored in browser (LocalStorage + IndexedDB). Works offline, no backend required.
+Data stored in browser (LocalStorage + IndexedDB via Localforage). Works offline, no backend required.
 
 ### API Mode
 
@@ -67,10 +72,18 @@ Not yet implemented. Planned offline-first with background sync.
 ## Environment Variables
 
 ```bash
+# Application
 VITE_APP_NAME="Vue Slide Demo"
+VITE_APP_URL=http://localhost:5173
+
+# Storage
 VITE_STORAGE_PREFIX=vsd
+
+# Data Source Mode (local, api, hybrid)
 VITE_DATA_SOURCE=local
-VITE_API_URL=
+VITE_API_URL=  # Required for api/hybrid modes
+
+# Debug Mode
 VITE_DEBUG=false
 ```
 
@@ -82,6 +95,7 @@ src/
 │   ├── Slide/           # Slide form system
 │   ├── Form/            # Form inputs
 │   └── Common/          # Shared UI
+├── router/              # Vue Router configuration
 ├── stores/              # Pinia stores
 │   ├── auth.ts          # Authentication
 │   ├── projects.ts      # Projects
@@ -96,16 +110,43 @@ src/
 ├── lib/                 # Libraries
 │   └── axios.ts
 ├── types/               # TypeScript types
-├── utils/               # Utilities
+├── utils/               # Utilities (migration, helpers)
 ├── App.vue
 └── main.ts
 
 tests/
 ├── unit/
-│   └── persistence/
+│   └── persistence/     # Data source unit tests
 └── integration/
-    └── stores/
+    └── stores/          # Store integration tests
 ```
+
+## Routes
+
+### Public (guest-only)
+
+| Path | Component | Description |
+|------|-----------|-------------|
+| `/login` | LoginUser | User login |
+| `/register` | RegisterUser | User registration |
+
+### Protected (auth required)
+
+| Path | Component | Description |
+|------|-----------|-------------|
+| `/dashboard` | ClientDashboard | Main dashboard |
+| `/profile` | EditProfile | Edit user profile |
+| `/terms/accept` | AcceptTerms | Accept terms of service |
+| `/team/select` | SelectTeam | Select active team |
+| `/team/create` | CreateTeam | Create new team |
+| `/team/:id` | ShowTeam | View team details, members, invitations |
+| `/invitations` | Invitations | View pending invitations |
+| `/story/new` | NewStory | Create new story/project |
+| `/story/:id/continue` | ContinueStory | Resume story |
+| `/story/:id/form` | StoryForm | Multi-step slide form |
+| `/story/:id/complete` | CompleteStory | Completion screen |
+
+`/` redirects to `/dashboard`.
 
 ## Development
 
@@ -121,7 +162,7 @@ npm run preview
 
 # Tests
 npm run test
-npm run test:coverage
+npm run test:e2e
 
 # Code quality
 npm run type-check
@@ -135,10 +176,10 @@ npm run format
 npm run test
 ```
 
-128 tests passing:
+100 tests passing across 4 test files:
 
-- Unit: 86 tests (localDataSource: 41, apiDataSource: 45)
-- Integration: 42 tests (auth: 20, projects: 22)
+- Unit: localDataSource, apiDataSource
+- Integration: auth store, projects store
 
 ## Data Migration
 
@@ -156,34 +197,34 @@ console.log(`Migrated ${result.projectsMigrated} projects`)
 ```
 
 Migrates:
-
 - Projects (title, description, status)
 - Project responses and form data
 - Completion status
 
 Does not migrate:
-
 - User accounts (register via API)
 - Teams (managed by admins)
 - Authentication tokens
 
 ## Demo Credentials
 
+All demo accounts use the password `password`.
+
 ### Local Mode
 
-Any credentials work. Suggested:
-
-- client@demo.com / password
-- admin@demo.com / password
+Any credentials work. Suggested: `client@demo.com` / `password`
 
 ### API Mode
 
 Use backend database accounts:
 
-- client@demo.com / password (Client role)
-- admin@demo.com / password (Super Admin role)
-- consultant@example.com / password (Consultant role)
-- guest@demo.com / password (Guest role)
+| Role        | Email                    |
+|-------------|--------------------------|
+| Super Admin | admin@demo.com           |
+| Admin       | admin@example.com        |
+| Consultant  | consultant@example.com   |
+| Client      | client@demo.com          |
+| Guest       | guest@demo.com           |
 
 ## Deployment
 
@@ -192,7 +233,6 @@ npm run build
 ```
 
 Deploy `dist/` folder to:
-
 - Netlify
 - Vercel
 - AWS S3 + CloudFront
@@ -212,35 +252,29 @@ Ensure backend CORS allows SPA domain.
 ## Troubleshooting
 
 **Cannot connect to API**
-
 - Check `VITE_API_URL` in `.env`
 - Verify backend is running
 - Test API: `curl https://api.local.test/api/v1/auth/user`
 - Check CORS configuration
 
 **401 Unauthorized**
-
-- Token may be expired
+- Token may be expired (24-hour default)
 - Try logging in again
 - Clear browser cache and localStorage
 
 **Data not persisting (local mode)**
-
 - Check browser allows LocalStorage/IndexedDB
 - Verify `VITE_STORAGE_PREFIX` is set
 - Check storage quota not exceeded
 
 **Module not found**
-
 - Delete node_modules: `rm -rf node_modules && npm install`
 - Clear Vite cache: `rm -rf node_modules/.vite`
 - Restart dev server
 
 **Type errors**
-
 - Run `npm run type-check`
 - Verify dependencies: `npm install`
-- Update TypeScript: `npm install -D typescript@latest`
 
 Enable debug logging:
 
