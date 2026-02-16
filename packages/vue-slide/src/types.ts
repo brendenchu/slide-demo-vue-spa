@@ -17,11 +17,6 @@ export type Action = {
 export type State = 'idle' | 'transitioning' | 'animating' | 'disabled'
 
 /**
- * Defines the direction of a slide
- */
-export type Direction = 'next' | 'previous'
-
-/**
  * Defines the options for a slide
  */
 export type SlideOptions<T> = Record<string, T>

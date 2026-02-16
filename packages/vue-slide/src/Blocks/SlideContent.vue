@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import type { Direction } from '../types'
-
 withDefaults(
   defineProps<{
-    direction?: Direction
-    active?: boolean
+    index?: number
+    current?: number
   }>(),
   {
-    direction: 'next',
-    active: false,
+    index: 1,
+    current: 1,
   }
 )
 </script>
 
 <template>
-  <div class="absolute w-full h-full transition-transform duration-500 ease-in-out"
+  <div
+    class="absolute w-full h-full transition-transform duration-500 ease-in-out"
     :class="{
-      'translate-x-0': active,
-      'translate-x-full': !active && direction === 'next',
-      '-translate-x-full': !active && direction === 'previous',
+      'translate-x-0': index === current,
+      '-translate-x-full': index < current,
+      'translate-x-full': index > current,
     }"
   >
     <div class="contained w-full h-full">

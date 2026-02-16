@@ -3,6 +3,7 @@ export { useSectionForm } from './composables/useSectionForm'
 export { useStoryForm } from './composables/useStoryForm'
 
 // Types
+export type { Direction } from './types/direction'
 export type { ProjectStep, StoryProject } from './types/story'
 export type {
   SectionFormProps,

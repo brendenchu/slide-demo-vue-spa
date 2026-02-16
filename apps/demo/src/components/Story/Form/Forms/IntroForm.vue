@@ -12,7 +12,7 @@ const props = defineProps<SectionFormProps<IntroFormFields>>()
 const projectsStore = useProjectsStore()
 const toastStore = useToastStore()
 
-const { form, current, formDirection, pages, actions } = useSectionForm<IntroFormFields>({
+const { form, current, pages, actions } = useSectionForm<IntroFormFields>({
   props,
   pages: 1,
   schema: introFormSchema,
@@ -25,7 +25,7 @@ const { form, current, formDirection, pages, actions } = useSectionForm<IntroFor
 
 <template>
   <form class="stretched prose">
-    <Slide :actions="actions" :current="current" :direction="formDirection" :pages="pages">
+    <Slide :actions="actions" :current="current" :pages="pages">
       <template #page-1>
         <Fieldset>
           <div class="prose prose-2xl pb-4">

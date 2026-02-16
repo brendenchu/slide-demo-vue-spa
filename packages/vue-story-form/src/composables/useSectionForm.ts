@@ -2,7 +2,7 @@ import { onMounted, ref, type Ref } from 'vue'
 import { useStoryForm, type StoryForm } from './useStoryForm'
 import type { StoryProject } from '../types/story'
 import type { ProjectStep } from '../types/story'
-import type { Action, Direction, SlideOptions } from '@bchu/vue-slide'
+import type { Action, SlideOptions } from '@bchu/vue-slide'
 import { delta, nullifyFields, saveForm } from '../utils/form'
 import { prevNextSteps } from '../utils/workflow'
 import { useRouter, type Router } from 'vue-router'
@@ -17,7 +17,6 @@ export interface SectionFormProps<T extends Record<string, unknown>> {
   step: ProjectStep
   token: string
   page: number
-  direction: Direction
   story: T
 }
 
@@ -43,7 +42,6 @@ export interface UseSectionFormReturn<T extends Record<string, unknown>> {
   form: StoryForm<T>
   current: Ref<number>
   previous: Ref<number>
-  formDirection: Ref<Direction>
   pages: Ref<number>
   actions: Ref<SlideOptions<Action>>
   steps: { previous: string | null; next: string | null }
@@ -58,7 +56,6 @@ export function useSectionForm<T extends Record<string, unknown>>(
 
   const current = ref<number>(0)
   const previous = ref<number>(0)
-  const formDirection = ref<Direction>('next')
   const pages = ref<number>(options.pages)
 
   // Wrap page-dependent schema functions into the () => ZodSchema format that useStoryForm expects
@@ -115,7 +112,6 @@ export function useSectionForm<T extends Record<string, unknown>>(
           async () => {
             current.value += delta(current.value, form, toggledFields)
             previous.value = current.value - 1
-            formDirection.value = 'next'
             if (current.value > pages.value) {
               await onComplete({ router, props, steps })
             }
@@ -130,7 +126,6 @@ export function useSectionForm<T extends Record<string, unknown>>(
         if (options.previousStepPage !== undefined) {
           // Cross-step back navigation
           const nextPage = current.value - delta(current.value - 2, form, toggledFields)
-          formDirection.value = 'previous'
 
           if (nextPage < 1) {
             current.value = 0
@@ -154,7 +149,6 @@ export function useSectionForm<T extends Record<string, unknown>>(
           // Simple within-section back navigation
           current.value -= delta(current.value, form, toggledFields)
           previous.value = current.value - 1
-          formDirection.value = 'previous'
         }
       },
     },
@@ -163,14 +157,12 @@ export function useSectionForm<T extends Record<string, unknown>>(
   onMounted(() => {
     current.value = props.page
     previous.value = current.value - 1
-    formDirection.value = props.direction
   })
 
   return {
     form,
     current: current as Ref<number>,
     previous: previous as Ref<number>,
-    formDirection: formDirection as Ref<Direction>,
     pages: pages as Ref<number>,
     actions: actions as Ref<SlideOptions<Action>>,
     steps,

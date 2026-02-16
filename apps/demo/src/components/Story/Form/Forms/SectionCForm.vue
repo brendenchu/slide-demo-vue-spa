@@ -35,7 +35,7 @@ const schemas = [
 const projectsStore = useProjectsStore()
 const toastStore = useToastStore()
 
-const { form, current, formDirection, pages, actions } = useSectionForm<SectionCFormFields>({
+const { form, current, pages, actions } = useSectionForm<SectionCFormFields>({
   props,
   pages: 9,
   schema: (page) => schemas[page] || sectionCPage1Schema,
@@ -59,7 +59,7 @@ const { form, current, formDirection, pages, actions } = useSectionForm<SectionC
 
 <template>
   <form class="stretched prose">
-    <Slide :actions="actions" :current="current" :direction="formDirection" :pages="pages">
+    <Slide :actions="actions" :current="current" :pages="pages">
       <template #page-1>
         <Fieldset>
           <div class="prose prose-2xl pb-4">

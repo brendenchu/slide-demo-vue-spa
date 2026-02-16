@@ -16,7 +16,7 @@ const props = defineProps<SectionFormProps<SectionBFormFields>>()
 const projectsStore = useProjectsStore()
 const toastStore = useToastStore()
 
-const { form, current, formDirection, pages, actions } = useSectionForm<SectionBFormFields>({
+const { form, current, pages, actions } = useSectionForm<SectionBFormFields>({
   props,
   pages: 3,
   schema: (page) => {
@@ -34,7 +34,7 @@ const { form, current, formDirection, pages, actions } = useSectionForm<SectionB
 
 <template>
   <form class="stretched prose">
-    <Slide :actions="actions" :current="current" :direction="formDirection" :pages="pages">
+    <Slide :actions="actions" :current="current" :pages="pages">
       <template #page-1>
         <Fieldset>
           <div class="prose prose-2xl pb-4">

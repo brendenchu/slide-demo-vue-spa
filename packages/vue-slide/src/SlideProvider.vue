@@ -1,19 +1,17 @@
 <script setup lang="ts">
 import { Content, Controls, Frame } from './Blocks'
-import type { Action, Direction, SlideOptions } from './types'
+import type { Action, SlideOptions } from './types'
 
 const props = withDefaults(
   defineProps<{
     current?: number
     pages?: number
     actions?: SlideOptions<Action>
-    direction?: Direction
   }>(),
   {
     current: 1,
     pages: 5,
     actions: undefined,
-    direction: 'next',
   }
 )
 </script>
@@ -23,8 +21,8 @@ const props = withDefaults(
     <Content
       v-for="i in pages"
       :key="`slide-content-${i}`"
-      :active="props.current === i"
-      :direction="props.direction"
+      :index="i"
+      :current="props.current"
     >
       <slot :name="`page-${i}`" />
     </Content>

@@ -9,7 +9,7 @@ import {
 import type { Project } from '@/types/models'
 import type { ProjectStep } from '@bchu/vue-story-form'
 import { IntroForm, SectionAForm, SectionBForm, SectionCForm } from '@/components/Story/Form/Forms'
-import type { Direction } from '@bchu/vue-slide'
+import type { Direction } from '@bchu/vue-story-form'
 import StoryLayout from '@/layouts/StoryLayout.vue'
 import { ProgressBar, ProgressTimeline } from '@/components/Story/Form/UI'
 import { useRoute } from 'vue-router'
@@ -117,11 +117,10 @@ watch(
       </div>
     </template>
     <ProgressBar :step="step" class="lg:hidden" />
-    <Transition name="step-fade" mode="out-in">
+    <Transition :name="direction === 'previous' ? 'step-slide-back' : 'step-slide'" mode="out-in">
       <IntroForm
         v-if="step.id === 'intro'"
         key="intro"
-        :direction="direction"
         :page="page"
         :project="project"
         :step="step"
@@ -131,7 +130,6 @@ watch(
       <SectionAForm
         v-else-if="step.id === 'section-a'"
         key="section-a"
-        :direction="direction"
         :page="page"
         :project="project"
         :step="step"
@@ -141,7 +139,6 @@ watch(
       <SectionBForm
         v-else-if="step.id === 'section-b'"
         key="section-b"
-        :direction="direction"
         :page="page"
         :project="project"
         :step="step"
@@ -151,7 +148,6 @@ watch(
       <SectionCForm
         v-else-if="step.id === 'section-c'"
         key="section-c"
-        :direction="direction"
         :page="page"
         :project="project"
         :step="step"
@@ -168,13 +164,35 @@ watch(
 </template>
 
 <style scoped>
-.step-fade-enter-active,
-.step-fade-leave-active {
-  transition: opacity 0.15s ease;
+/* Section transitions: only the Frame content slides; Controls stay static */
+.step-slide-enter-active :deep(> section:first-child),
+.step-slide-leave-active :deep(> section:first-child),
+.step-slide-back-enter-active :deep(> section:first-child),
+.step-slide-back-leave-active :deep(> section:first-child) {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
-.step-fade-enter-from,
-.step-fade-leave-to {
+/* Forward: content slides left */
+.step-slide-enter-from :deep(> section:first-child) {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.step-slide-leave-to :deep(> section:first-child) {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Backward: content slides right */
+.step-slide-back-enter-from :deep(> section:first-child) {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.step-slide-back-leave-to :deep(> section:first-child) {
+  transform: translateX(100%);
   opacity: 0;
 }
 </style>

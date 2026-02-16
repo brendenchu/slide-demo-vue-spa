@@ -9,6 +9,9 @@ export default {
   content: [
     './index.html',
     './src/**/*.{vue,js,ts,jsx,tsx}',
+    '../../packages/vue-slide/src/**/*.{vue,ts}',
+    '../../packages/vue-form-primitives/src/**/*.{vue,ts}',
+    '../../packages/vue-story-form/src/**/*.{vue,ts}',
   ],
 
   theme: {
