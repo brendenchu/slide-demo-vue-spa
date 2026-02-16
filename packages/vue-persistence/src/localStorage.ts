@@ -1,11 +1,15 @@
-import type { StorageAdapter } from './types'
+import type { ExtendedStorageAdapter } from './types'
 
-const PREFIX = 'vsd:'
+export class LocalStorageAdapter implements ExtendedStorageAdapter {
+  private prefix: string
 
-export class LocalStorageAdapter implements StorageAdapter {
+  constructor(prefix = 'vsd:') {
+    this.prefix = prefix
+  }
+
   async get<T>(key: string): Promise<T | null> {
     try {
-      const item = localStorage.getItem(PREFIX + key)
+      const item = localStorage.getItem(this.prefix + key)
       if (!item) return null
       return JSON.parse(item) as T
     } catch (error) {
@@ -16,7 +20,7 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   async set<T>(key: string, value: T): Promise<void> {
     try {
-      localStorage.setItem(PREFIX + key, JSON.stringify(value))
+      localStorage.setItem(this.prefix + key, JSON.stringify(value))
     } catch (error) {
       console.error('LocalStorage set error:', error)
       throw error
@@ -25,7 +29,7 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   async remove(key: string): Promise<void> {
     try {
-      localStorage.removeItem(PREFIX + key)
+      localStorage.removeItem(this.prefix + key)
     } catch (error) {
       console.error('LocalStorage remove error:', error)
     }
@@ -35,7 +39,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     try {
       const keys = Object.keys(localStorage)
       keys.forEach((key) => {
-        if (key.startsWith(PREFIX)) {
+        if (key.startsWith(this.prefix)) {
           localStorage.removeItem(key)
         }
       })
@@ -47,8 +51,8 @@ export class LocalStorageAdapter implements StorageAdapter {
   async keys(): Promise<string[]> {
     try {
       return Object.keys(localStorage)
-        .filter((key) => key.startsWith(PREFIX))
-        .map((key) => key.replace(PREFIX, ''))
+        .filter((key) => key.startsWith(this.prefix))
+        .map((key) => key.replace(this.prefix, ''))
     } catch (error) {
       console.error('LocalStorage keys error:', error)
       return []
@@ -70,5 +74,3 @@ export class LocalStorageAdapter implements StorageAdapter {
     return result
   }
 }
-
-export const localStorageAdapter = new LocalStorageAdapter()

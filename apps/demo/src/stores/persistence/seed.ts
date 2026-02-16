@@ -1,4 +1,4 @@
-import { storage } from './storage'
+import { storage } from './'
 import type { User, Team, Project } from '@/types/models'
 
 export async function seedDemoData() {

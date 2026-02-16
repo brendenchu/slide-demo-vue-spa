@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { DataSourceFactory } from './persistence/dataSourceFactory'
+import { createDataSource } from './persistence'
 import type { AppNotification } from '@/types/models'
 
 export const useNotificationStore = defineStore('notifications', () => {
-  const dataSource = DataSourceFactory.create()
+  const dataSource = createDataSource()
 
   // State
   const notifications = ref<AppNotification[]>([])

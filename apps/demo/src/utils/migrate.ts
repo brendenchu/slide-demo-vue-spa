@@ -1,5 +1,7 @@
-import { storage } from '@/stores/persistence/storage'
-import { ApiDataSource } from '@/stores/persistence/apiDataSource'
+import { storage } from '@/stores/persistence'
+import type { AppModelMap } from '@/stores/persistence'
+import { ApiDataSource } from '@bchu/vue-persistence'
+import { getApiClient } from '@/lib/axios'
 import type { Project } from '@/types/models'
 
 export interface MigrationResult {
@@ -41,7 +43,7 @@ export async function migrateLocalDataToAPI(token: string): Promise<MigrationRes
 
   try {
     // Initialize API data source
-    const apiDataSource = new ApiDataSource()
+    const apiDataSource = new ApiDataSource<AppModelMap>(getApiClient())
 
     // Set the authentication token
     localStorage.setItem('auth_token', token)

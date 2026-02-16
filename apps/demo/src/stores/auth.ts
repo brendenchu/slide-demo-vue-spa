@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { storage } from './persistence/storage'
-import { DataSourceFactory } from './persistence/dataSourceFactory'
+import { storage, createDataSource } from './persistence'
 import type { User } from '@/types/models'
 
 export const useAuthStore = defineStore('auth', () => {
   // Create data source instance
-  const dataSource = DataSourceFactory.create()
+  const dataSource = createDataSource()
 
   // State
   const user = ref<User | null>(null)

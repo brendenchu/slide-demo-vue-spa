@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { DataSourceFactory } from './persistence/dataSourceFactory'
+import { createDataSource } from './persistence'
 import type { Project } from '@/types/models'
 
 export const useProjectsStore = defineStore('projects', () => {
   // Create data source instance
-  const dataSource = DataSourceFactory.create()
+  const dataSource = createDataSource()
 
   // State
   const projects = ref<Project[]>([])

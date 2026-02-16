@@ -1,38 +1,163 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { LocalDataSource } from '@/stores/persistence/localDataSource'
-import { storage } from '@/stores/persistence/storage'
-import type { User, Project, Team } from '@/types/models'
+import { LocalDataSource } from '../src/localDataSource'
+import type { ExtendedStorageAdapter, LocalDataSourceConfig, ModelMap } from '../src/types'
 
-// Mock the storage module
-vi.mock('@/stores/persistence/storage', () => ({
-  storage: {
+// Test model types
+interface TestUser {
+  id: string
+  email: string
+  name: string
+  team_id: string | null
+}
+
+interface TestTeam {
+  id: string
+  name: string
+  status: string
+  created_at?: string
+  updated_at?: string
+}
+
+interface TestProject {
+  id: string
+  user_id: string
+  team_id: string | null
+  title: string
+  status: string
+  current_step: string
+  responses: Record<string, unknown>
+  created_at: string
+  updated_at: string
+}
+
+interface TestNotification {
+  id: string
+  title: string
+  read_at: string | null
+  created_at: string
+}
+
+interface TestModelMap extends ModelMap {
+  User: TestUser
+  Team: TestTeam
+  Project: TestProject
+  Notification: TestNotification
+}
+
+function createMockStorage(): ExtendedStorageAdapter & {
+  get: ReturnType<typeof vi.fn>
+  set: ReturnType<typeof vi.fn>
+  remove: ReturnType<typeof vi.fn>
+  clear: ReturnType<typeof vi.fn>
+  keys: ReturnType<typeof vi.fn>
+  getAllByPrefix: ReturnType<typeof vi.fn>
+} {
+  return {
     get: vi.fn(),
     set: vi.fn(),
     remove: vi.fn(),
     clear: vi.fn(),
+    keys: vi.fn().mockResolvedValue([]),
     getAllByPrefix: vi.fn(),
-  },
-}))
+  }
+}
+
+function createTestConfig(
+  storage: ExtendedStorageAdapter
+): LocalDataSourceConfig<TestModelMap> {
+  return {
+    storage,
+
+    async validateCredentials(email, password, store) {
+      if (password !== 'password') return null
+
+      const keys = await store.keys()
+      for (const key of keys) {
+        if (key.startsWith('user:')) {
+          const user = await store.get<TestUser>(key)
+          if (user && user.email === email) return user
+        }
+      }
+      return null
+    },
+
+    createUser(data) {
+      const userId = `user-test-${Math.random().toString(36).substring(7)}`
+      const suffix = Math.random().toString(36).substring(7)
+      const email = `${data.first_name.toLowerCase()}.${data.last_name.toLowerCase()}.${suffix}@example.com`
+      return {
+        id: userId,
+        email,
+        name: `${data.first_name} ${data.last_name}`,
+        team_id: null,
+      }
+    },
+
+    createProject(data, user) {
+      return {
+        id: `project-${Math.random().toString(36).substring(7)}`,
+        user_id: user.id,
+        team_id: user.team_id,
+        title: data.title || 'Untitled Story',
+        status: 'draft',
+        current_step: 'intro',
+        responses: {},
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+    },
+
+    createTeam(data) {
+      return {
+        id: `team-${Date.now()}`,
+        name: data.name,
+        status: data.status || 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+    },
+
+    mergeResponses(project, step, responses) {
+      return {
+        ...project,
+        responses: { ...project.responses, [step]: responses },
+        current_step: step,
+        status: 'in_progress',
+        updated_at: new Date().toISOString(),
+      }
+    },
+
+    markCompleted() {
+      return { status: 'completed', current_step: 'complete' } as Partial<TestProject>
+    },
+  }
+}
 
 describe('LocalDataSource', () => {
-  let dataSource: LocalDataSource
+  let dataSource: LocalDataSource<TestModelMap>
+  let mockStorage: ReturnType<typeof createMockStorage>
 
   beforeEach(() => {
-    dataSource = new LocalDataSource()
+    mockStorage = createMockStorage()
+    const config = createTestConfig(mockStorage)
+    dataSource = new LocalDataSource<TestModelMap>(config)
     vi.resetAllMocks()
+    // Re-establish default for keys() after resetAllMocks
+    mockStorage.keys.mockResolvedValue([])
   })
 
   describe('Authentication Methods', () => {
     describe('login', () => {
       it('successfully logs in with valid credentials', async () => {
-        const mockUser: User = {
+        const mockUser: TestUser = {
           id: '1',
           email: 'demo@example.com',
           name: 'Demo User',
           team_id: null,
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
+        mockStorage.keys.mockResolvedValueOnce(['user:1'])
+        mockStorage.get.mockResolvedValueOnce(mockUser)
 
         const result = await dataSource.login('demo@example.com', 'password')
 
@@ -42,24 +167,15 @@ describe('LocalDataSource', () => {
       })
 
       it('throws error with invalid credentials', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.keys.mockResolvedValueOnce([])
 
         await expect(dataSource.login('invalid@example.com', 'wrong')).rejects.toThrow()
       })
 
       it('throws error with wrong password', async () => {
-        const mockUser: User = {
-          id: '1',
-          email: 'demo@example.com',
-          name: 'Demo User',
-          team_id: null,
-        }
-
-        vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
-
-        await expect(dataSource.login('demo@example.com', 'wrongpassword')).rejects.toThrow(
-          'Invalid credentials'
-        )
+        await expect(
+          dataSource.login('demo@example.com', 'wrongpassword')
+        ).rejects.toThrow('Invalid credentials')
       })
     })
 
@@ -74,7 +190,7 @@ describe('LocalDataSource', () => {
         expect(result.user.email).toContain('jane.doe.')
         expect(result.user.email).toContain('@example.com')
         expect(result.token).toBeDefined()
-        expect(storage.set).toHaveBeenCalled()
+        expect(mockStorage.set).toHaveBeenCalled()
       })
     })
 
@@ -86,23 +202,23 @@ describe('LocalDataSource', () => {
 
     describe('getUser', () => {
       it('returns user when exists', async () => {
-        const mockUser: User = {
+        const mockUser: TestUser = {
           id: '1',
           email: 'test@example.com',
           name: 'Test User',
           team_id: null,
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
+        mockStorage.get.mockResolvedValueOnce(mockUser)
 
         const user = await dataSource.getUser()
 
         expect(user).toEqual(mockUser)
-        expect(storage.get).toHaveBeenCalledWith('auth:user')
+        expect(mockStorage.get).toHaveBeenCalledWith('auth:user')
       })
 
       it('returns null when user does not exist', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.get.mockResolvedValueOnce(null)
 
         const user = await dataSource.getUser()
 
@@ -110,7 +226,7 @@ describe('LocalDataSource', () => {
       })
 
       it('returns null on error', async () => {
-        vi.mocked(storage.get).mockRejectedValueOnce(new Error('Storage error'))
+        mockStorage.get.mockRejectedValueOnce(new Error('Storage error'))
 
         const user = await dataSource.getUser()
 
@@ -120,14 +236,14 @@ describe('LocalDataSource', () => {
 
     describe('updateUser', () => {
       it('successfully updates user', async () => {
-        const currentUser: User = {
+        const currentUser: TestUser = {
           id: '1',
           email: 'old@example.com',
           name: 'Old Name',
           team_id: null,
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(currentUser)
+        mockStorage.get.mockResolvedValueOnce(currentUser)
 
         const updated = await dataSource.updateUser({
           name: 'New Name',
@@ -136,12 +252,12 @@ describe('LocalDataSource', () => {
 
         expect(updated.name).toBe('New Name')
         expect(updated.email).toBe('new@example.com')
-        expect(storage.set).toHaveBeenCalledWith('auth:user', expect.any(Object))
-        expect(storage.set).toHaveBeenCalledWith('user:1', expect.any(Object))
+        expect(mockStorage.set).toHaveBeenCalledWith('auth:user', expect.any(Object))
+        expect(mockStorage.set).toHaveBeenCalledWith('user:1', expect.any(Object))
       })
 
       it('throws error when no user logged in', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.get.mockResolvedValueOnce(null)
 
         await expect(dataSource.updateUser({ name: 'New Name' })).rejects.toThrow(
           'No user logged in'
@@ -153,7 +269,7 @@ describe('LocalDataSource', () => {
   describe('Project Methods', () => {
     describe('getProjects', () => {
       it('returns all projects', async () => {
-        const mockProjects: Record<string, Project> = {
+        const mockProjects: Record<string, TestProject> = {
           'project:1': {
             id: '1',
             user_id: '1',
@@ -167,7 +283,7 @@ describe('LocalDataSource', () => {
           },
         }
 
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce(mockProjects)
+        mockStorage.getAllByPrefix.mockResolvedValueOnce(mockProjects)
 
         const projects = await dataSource.getProjects()
 
@@ -176,7 +292,7 @@ describe('LocalDataSource', () => {
       })
 
       it('returns empty array on error', async () => {
-        vi.mocked(storage.getAllByPrefix).mockRejectedValueOnce(new Error('Storage error'))
+        mockStorage.getAllByPrefix.mockRejectedValueOnce(new Error('Storage error'))
 
         const projects = await dataSource.getProjects()
 
@@ -186,7 +302,7 @@ describe('LocalDataSource', () => {
 
     describe('getProject', () => {
       it('returns project when exists', async () => {
-        const mockProject: Project = {
+        const mockProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -198,16 +314,16 @@ describe('LocalDataSource', () => {
           updated_at: new Date().toISOString(),
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockProject)
+        mockStorage.get.mockResolvedValueOnce(mockProject)
 
         const project = await dataSource.getProject('1')
 
         expect(project).toEqual(mockProject)
-        expect(storage.get).toHaveBeenCalledWith('project:1')
+        expect(mockStorage.get).toHaveBeenCalledWith('project:1')
       })
 
       it('returns null when project does not exist', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.get.mockResolvedValueOnce(null)
 
         const project = await dataSource.getProject('999')
 
@@ -217,14 +333,14 @@ describe('LocalDataSource', () => {
 
     describe('createProject', () => {
       it('successfully creates project', async () => {
-        const mockUser: User = {
+        const mockUser: TestUser = {
           id: '1',
           email: 'test@example.com',
           name: 'Test User',
           team_id: '1',
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockUser)
+        mockStorage.get.mockResolvedValueOnce(mockUser)
 
         const project = await dataSource.createProject({ title: 'New Project' })
 
@@ -232,11 +348,11 @@ describe('LocalDataSource', () => {
         expect(project.user_id).toBe('1')
         expect(project.team_id).toBe('1')
         expect(project.status).toBe('draft')
-        expect(storage.set).toHaveBeenCalled()
+        expect(mockStorage.set).toHaveBeenCalled()
       })
 
       it('throws error when not authenticated', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.get.mockResolvedValueOnce(null)
 
         await expect(dataSource.createProject({ title: 'New Project' })).rejects.toThrow(
           'Not authenticated'
@@ -246,7 +362,7 @@ describe('LocalDataSource', () => {
 
     describe('updateProject', () => {
       it('successfully updates project', async () => {
-        const mockProject: Project = {
+        const mockProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -258,20 +374,20 @@ describe('LocalDataSource', () => {
           updated_at: new Date().toISOString(),
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockProject)
+        mockStorage.get.mockResolvedValueOnce(mockProject)
 
         const updated = await dataSource.updateProject('1', { title: 'New Title' })
 
         expect(updated.title).toBe('New Title')
-        expect(storage.set).toHaveBeenCalledWith('project:1', expect.any(Object))
+        expect(mockStorage.set).toHaveBeenCalledWith('project:1', expect.any(Object))
       })
 
       it('throws error when project not found', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.get.mockResolvedValueOnce(null)
 
-        await expect(dataSource.updateProject('999', { title: 'New Title' })).rejects.toThrow(
-          'Project not found'
-        )
+        await expect(
+          dataSource.updateProject('999', { title: 'New Title' })
+        ).rejects.toThrow('Project not found')
       })
     })
 
@@ -279,13 +395,13 @@ describe('LocalDataSource', () => {
       it('successfully deletes project', async () => {
         await dataSource.deleteProject('1')
 
-        expect(storage.remove).toHaveBeenCalledWith('project:1')
+        expect(mockStorage.remove).toHaveBeenCalledWith('project:1')
       })
     })
 
     describe('saveResponses', () => {
       it('successfully saves responses', async () => {
-        const mockProject: Project = {
+        const mockProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -297,7 +413,7 @@ describe('LocalDataSource', () => {
           updated_at: new Date().toISOString(),
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockProject)
+        mockStorage.get.mockResolvedValueOnce(mockProject)
 
         const updated = await dataSource.saveResponses('1', 'section_a', { answer: 'test' })
 
@@ -307,7 +423,7 @@ describe('LocalDataSource', () => {
       })
 
       it('throws error when project not found', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.get.mockResolvedValueOnce(null)
 
         await expect(
           dataSource.saveResponses('999', 'section_a', { answer: 'test' })
@@ -317,7 +433,7 @@ describe('LocalDataSource', () => {
 
     describe('completeProject', () => {
       it('successfully completes project', async () => {
-        const mockProject: Project = {
+        const mockProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -329,7 +445,9 @@ describe('LocalDataSource', () => {
           updated_at: new Date().toISOString(),
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockProject)
+        // First get for markCompleted, second get for updateProject
+        mockStorage.get.mockResolvedValueOnce(mockProject)
+        mockStorage.get.mockResolvedValueOnce(mockProject)
 
         const updated = await dataSource.completeProject('1')
 
@@ -342,7 +460,7 @@ describe('LocalDataSource', () => {
   describe('Team Methods', () => {
     describe('getTeams', () => {
       it('returns all teams', async () => {
-        const mockTeams: Record<string, Team> = {
+        const mockTeams: Record<string, TestTeam> = {
           'team:1': {
             id: '1',
             name: 'Team 1',
@@ -352,7 +470,7 @@ describe('LocalDataSource', () => {
           },
         }
 
-        vi.mocked(storage.getAllByPrefix).mockResolvedValueOnce(mockTeams)
+        mockStorage.getAllByPrefix.mockResolvedValueOnce(mockTeams)
 
         const teams = await dataSource.getTeams()
 
@@ -361,7 +479,7 @@ describe('LocalDataSource', () => {
       })
 
       it('returns empty array on error', async () => {
-        vi.mocked(storage.getAllByPrefix).mockRejectedValueOnce(new Error('Storage error'))
+        mockStorage.getAllByPrefix.mockRejectedValueOnce(new Error('Storage error'))
 
         const teams = await dataSource.getTeams()
 
@@ -371,7 +489,7 @@ describe('LocalDataSource', () => {
 
     describe('getTeam', () => {
       it('returns team when exists', async () => {
-        const mockTeam: Team = {
+        const mockTeam: TestTeam = {
           id: '1',
           name: 'Test Team',
           status: 'active',
@@ -379,16 +497,16 @@ describe('LocalDataSource', () => {
           updated_at: new Date().toISOString(),
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockTeam)
+        mockStorage.get.mockResolvedValueOnce(mockTeam)
 
         const team = await dataSource.getTeam('1')
 
         expect(team).toEqual(mockTeam)
-        expect(storage.get).toHaveBeenCalledWith('team:1')
+        expect(mockStorage.get).toHaveBeenCalledWith('team:1')
       })
 
       it('returns null when team does not exist', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.get.mockResolvedValueOnce(null)
 
         const team = await dataSource.getTeam('999')
 
@@ -405,7 +523,7 @@ describe('LocalDataSource', () => {
 
         expect(team.name).toBe('New Team')
         expect(team.status).toBe('active')
-        expect(storage.set).toHaveBeenCalled()
+        expect(mockStorage.set).toHaveBeenCalled()
       })
 
       it('defaults to active status', async () => {
@@ -419,7 +537,7 @@ describe('LocalDataSource', () => {
 
     describe('updateTeam', () => {
       it('successfully updates team', async () => {
-        const mockTeam: Team = {
+        const mockTeam: TestTeam = {
           id: '1',
           name: 'Old Name',
           status: 'active',
@@ -427,20 +545,20 @@ describe('LocalDataSource', () => {
           updated_at: new Date().toISOString(),
         }
 
-        vi.mocked(storage.get).mockResolvedValueOnce(mockTeam)
+        mockStorage.get.mockResolvedValueOnce(mockTeam)
 
         const updated = await dataSource.updateTeam('1', { name: 'New Name' })
 
         expect(updated.name).toBe('New Name')
-        expect(storage.set).toHaveBeenCalledWith('team:1', expect.any(Object))
+        expect(mockStorage.set).toHaveBeenCalledWith('team:1', expect.any(Object))
       })
 
       it('throws error when team not found', async () => {
-        vi.mocked(storage.get).mockResolvedValueOnce(null)
+        mockStorage.get.mockResolvedValueOnce(null)
 
-        await expect(dataSource.updateTeam('999', { name: 'New Name' })).rejects.toThrow(
-          'Team not found'
-        )
+        await expect(
+          dataSource.updateTeam('999', { name: 'New Name' })
+        ).rejects.toThrow('Team not found')
       })
     })
   })

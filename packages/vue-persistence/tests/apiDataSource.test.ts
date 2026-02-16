@@ -1,16 +1,51 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { ApiDataSource } from '@/stores/persistence/apiDataSource'
-import { getApiClient } from '@/lib/axios'
-import type { User, Project, Team } from '@/types/models'
+import { ApiDataSource } from '../src/apiDataSource'
+import type { HttpClient, ModelMap } from '../src/types'
 
-// Mock the axios module
-vi.mock('@/lib/axios', () => ({
-  getApiClient: vi.fn(),
-  getErrorMessage: vi.fn((error: unknown) => (error as Error)?.message || 'Unknown error'),
-}))
+// Test model types matching mock data
+interface TestUser {
+  id: string
+  email: string
+  name: string
+  team_id: string | null
+}
+
+interface TestTeam {
+  id: string
+  name: string
+  status: string
+  created_at: string
+  updated_at: string
+}
+
+interface TestProject {
+  id: string
+  user_id: string
+  team_id: string | null
+  title: string
+  status: string
+  current_step: string
+  responses: Record<string, unknown>
+  created_at: string
+  updated_at: string
+}
+
+interface TestNotification {
+  id: string
+  title: string
+  read_at: string | null
+  created_at: string
+}
+
+interface TestModelMap extends ModelMap {
+  User: TestUser
+  Team: TestTeam
+  Project: TestProject
+  Notification: TestNotification
+}
 
 describe('ApiDataSource', () => {
-  let dataSource: ApiDataSource
+  let dataSource: ApiDataSource<TestModelMap>
   let mockApi: {
     get: ReturnType<typeof vi.fn>
     post: ReturnType<typeof vi.fn>
@@ -26,15 +61,17 @@ describe('ApiDataSource', () => {
       delete: vi.fn(),
     }
 
-    vi.mocked(getApiClient).mockReturnValue(mockApi as ReturnType<typeof getApiClient>)
-    dataSource = new ApiDataSource()
+    dataSource = new ApiDataSource<TestModelMap>(
+      mockApi as unknown as HttpClient,
+      (error: unknown) => (error as Error)?.message || 'Unknown error'
+    )
     vi.clearAllMocks()
   })
 
   describe('Authentication Methods', () => {
     describe('login', () => {
       it('successfully logs in with valid credentials', async () => {
-        const mockUser: User = {
+        const mockUser: TestUser = {
           id: '1',
           email: 'test@example.com',
           name: 'Test User',
@@ -70,7 +107,7 @@ describe('ApiDataSource', () => {
 
     describe('register', () => {
       it('successfully registers new user', async () => {
-        const mockUser: User = {
+        const mockUser: TestUser = {
           id: '1',
           email: 'jane.doe.abc1@example.com',
           name: 'Jane Doe',
@@ -130,7 +167,7 @@ describe('ApiDataSource', () => {
 
     describe('getUser', () => {
       it('returns user when API call succeeds', async () => {
-        const mockUser: User = {
+        const mockUser: TestUser = {
           id: '1',
           email: 'test@example.com',
           name: 'Test User',
@@ -158,7 +195,7 @@ describe('ApiDataSource', () => {
 
     describe('updateUser', () => {
       it('successfully updates user', async () => {
-        const updatedUser: User = {
+        const updatedUser: TestUser = {
           id: '1',
           email: 'updated@example.com',
           name: 'Updated Name',
@@ -192,7 +229,7 @@ describe('ApiDataSource', () => {
   describe('Project Methods', () => {
     describe('getProjects', () => {
       it('returns all projects', async () => {
-        const mockProjects: Project[] = [
+        const mockProjects: TestProject[] = [
           {
             id: '1',
             user_id: '1',
@@ -225,7 +262,7 @@ describe('ApiDataSource', () => {
 
     describe('getProject', () => {
       it('returns project when exists', async () => {
-        const mockProject: Project = {
+        const mockProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -268,7 +305,7 @@ describe('ApiDataSource', () => {
 
     describe('createProject', () => {
       it('successfully creates project', async () => {
-        const mockProject: Project = {
+        const mockProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -299,7 +336,7 @@ describe('ApiDataSource', () => {
 
     describe('updateProject', () => {
       it('successfully updates project', async () => {
-        const updatedProject: Project = {
+        const updatedProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -345,7 +382,7 @@ describe('ApiDataSource', () => {
 
     describe('saveResponses', () => {
       it('successfully saves responses', async () => {
-        const updatedProject: Project = {
+        const updatedProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -381,7 +418,7 @@ describe('ApiDataSource', () => {
 
     describe('completeProject', () => {
       it('successfully completes project', async () => {
-        const completedProject: Project = {
+        const completedProject: TestProject = {
           id: '1',
           user_id: '1',
           team_id: null,
@@ -414,7 +451,7 @@ describe('ApiDataSource', () => {
   describe('Team Methods', () => {
     describe('getTeams', () => {
       it('returns all teams', async () => {
-        const mockTeams: Team[] = [
+        const mockTeams: TestTeam[] = [
           {
             id: '1',
             name: 'Team 1',
@@ -443,7 +480,7 @@ describe('ApiDataSource', () => {
 
     describe('getTeam', () => {
       it('returns team when exists', async () => {
-        const mockTeam: Team = {
+        const mockTeam: TestTeam = {
           id: '1',
           name: 'Test Team',
           status: 'active',
@@ -482,7 +519,7 @@ describe('ApiDataSource', () => {
 
     describe('createTeam', () => {
       it('successfully creates team', async () => {
-        const mockTeam: Team = {
+        const mockTeam: TestTeam = {
           id: '1',
           name: 'New Team',
           status: 'active',
@@ -497,7 +534,10 @@ describe('ApiDataSource', () => {
         const team = await dataSource.createTeam({ name: 'New Team', status: 'active' })
 
         expect(team).toEqual(mockTeam)
-        expect(mockApi.post).toHaveBeenCalledWith('/teams', { name: 'New Team', status: 'active' })
+        expect(mockApi.post).toHaveBeenCalledWith('/teams', {
+          name: 'New Team',
+          status: 'active',
+        })
       })
 
       it('throws error on API failure', async () => {
@@ -509,7 +549,7 @@ describe('ApiDataSource', () => {
 
     describe('updateTeam', () => {
       it('successfully updates team', async () => {
-        const updatedTeam: Team = {
+        const updatedTeam: TestTeam = {
           id: '1',
           name: 'Updated Team',
           status: 'inactive',
@@ -521,7 +561,10 @@ describe('ApiDataSource', () => {
           data: { data: updatedTeam },
         })
 
-        const team = await dataSource.updateTeam('1', { name: 'Updated Team', status: 'inactive' })
+        const team = await dataSource.updateTeam('1', {
+          name: 'Updated Team',
+          status: 'inactive',
+        })
 
         expect(team).toEqual(updatedTeam)
         expect(mockApi.put).toHaveBeenCalledWith('/teams/1', {

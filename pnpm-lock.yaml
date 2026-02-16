@@ -16,6 +16,9 @@ importers:
       '@bchu/vue-form-primitives':
         specifier: workspace:*
         version: link:../../packages/vue-form-primitives
+      '@bchu/vue-persistence':
+        specifier: workspace:*
+        version: link:../../packages/vue-persistence
       '@bchu/vue-slide':
         specifier: workspace:*
         version: link:../../packages/vue-slide
@@ -149,6 +152,21 @@ importers:
       vue-tsc:
         specifier: ^2.2.12
         version: 2.2.12(typescript@5.9.3)
+
+  packages/vue-persistence:
+    devDependencies:
+      happy-dom:
+        specifier: ^20.1.0
+        version: 20.6.1
+      localforage:
+        specifier: ^1.10.0
+        version: 1.10.0
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.16
+        version: 4.0.18(@types/node@22.19.11)(@vitest/ui@4.0.18)(happy-dom@20.6.1)(jiti@1.21.7)
 
   packages/vue-slide:
     devDependencies:

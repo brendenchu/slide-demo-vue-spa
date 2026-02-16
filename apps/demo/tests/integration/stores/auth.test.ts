@@ -1,31 +1,24 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
-import { storage } from '@/stores/persistence/storage'
-import { DataSourceFactory } from '@/stores/persistence/dataSourceFactory'
+import { storage, createDataSource } from '@/stores/persistence'
 import type { User } from '@/types/models'
 
-// Mock the storage module
-vi.mock('@/stores/persistence/storage', () => ({
+// Mock the persistence module
+vi.mock('@/stores/persistence', () => ({
   storage: {
     get: vi.fn(),
     set: vi.fn(),
     remove: vi.fn(),
     clear: vi.fn(),
   },
-}))
-
-// Mock the data source factory
-vi.mock('@/stores/persistence/dataSourceFactory', () => ({
-  DataSourceFactory: {
-    create: vi.fn(() => ({
-      login: vi.fn(),
-      register: vi.fn(),
-      logout: vi.fn(),
-      updateUser: vi.fn(),
-      getUser: vi.fn(),
-    })),
-  },
+  createDataSource: vi.fn(() => ({
+    login: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn(),
+    updateUser: vi.fn(),
+    getUser: vi.fn(),
+  })),
 }))
 
 describe('Auth Store Integration', () => {
@@ -49,8 +42,8 @@ describe('Auth Store Integration', () => {
       getUser: vi.fn(),
     }
 
-    vi.mocked(DataSourceFactory.create).mockReturnValue(
-      mockDataSource as unknown as ReturnType<typeof DataSourceFactory.create>
+    vi.mocked(createDataSource).mockReturnValue(
+      mockDataSource as unknown as ReturnType<typeof createDataSource>
     )
   })
 
