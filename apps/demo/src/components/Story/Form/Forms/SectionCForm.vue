@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Slide } from '@/components/Slide'
+import { Slide } from '@bchu/vue-slide'
 import { Error, Fieldset, GroupWrapper, Label, Radio } from '@/components/Form'
 import { SectionCFormFields } from '@/types'
 import { useSectionForm, type SectionFormProps } from '@/composables/useSectionForm'

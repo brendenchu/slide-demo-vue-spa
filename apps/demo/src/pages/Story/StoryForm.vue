@@ -9,7 +9,7 @@ import {
 import type { Project } from '@/types/models'
 import type { ProjectStep } from '@/types/story'
 import { IntroForm, SectionAForm, SectionBForm, SectionCForm } from '@/components/Story/Form/Forms'
-import { Direction } from '@/components/Slide/types'
+import type { Direction } from '@bchu/vue-slide'
 import StoryLayout from '@/layouts/StoryLayout.vue'
 import { ProgressBar, ProgressTimeline } from '@/components/Story/Form/UI'
 import { useRoute } from 'vue-router'

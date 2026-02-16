@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Slide } from '@/components/Slide'
+import { Slide } from '@bchu/vue-slide'
 import { Checkbox, Error, Field, Fieldset, GroupWrapper, Label } from '@/components/Form'
 import { watch } from 'vue'
 import { SectionAFormFields } from '@/types'

@@ -11,7 +11,6 @@ defineProps<{
   project: Project
   step: ProjectStep
   token: string
-  allSteps: Record<string, string>
 }>()
 
 const router = useRouter()
@@ -45,41 +44,28 @@ async function logoutUser() {
       <div class="stretched contained centered">
         <div class="prose prose-2xl">
           <h2>Form Complete!</h2>
-          <p>Congratulations! You have completed the Slide Form Demo.</p>
-          <p>From here, you have three options:</p>
-          <ol>
-            <li>
-              <p>You can revisit any of the sections.</p>
-              <ul class="prose-sm">
-                <li v-for="(name, slug) in allSteps" :key="slug">
-                  <RouterLink
-                    :to="{
-                      name: 'story.form',
-                      params: { id: project.id },
-                      query: { step: slug, token },
-                    }"
-                    class="hover:font-bold"
-                  >
-                    {{ name }}
-                  </RouterLink>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <p>
-                You can fill out the form again, though I don't know why you would want to do that.
-              </p>
-              <PrimaryButton class="lg:btn-lg xl:btn-xl btn-outline" @click="newForm">
-                Start New Form
-              </PrimaryButton>
-            </li>
-            <li>
-              <p>You can log out and have a great day!</p>
-              <PrimaryButton class="lg:btn-lg xl:btn-xl btn-outline" @click="logoutUser">
-                Log Out
-              </PrimaryButton>
-            </li>
-          </ol>
+          <p>
+            Congratulations! You've completed all four sections of the Slide Form Demo. Your
+            responses have been saved and this story is now marked as finished.
+          </p>
+          <p>
+            This demo showcases a multi-step form system built with reusable slide components:
+            page-by-page navigation, client-side validation, conditional fields that appear based on
+            your earlier answers, and automatic progress tracking across sections. Each section
+            saves independently, so nothing is lost between steps.
+          </p>
+          <p>
+            Once a story is complete, its sections are locked in. If you'd like to explore the form
+            again, you can start a fresh one from the dashboard.
+          </p>
+          <div class="flex flex-wrap gap-4 not-prose pt-2">
+            <PrimaryButton class="lg:btn-lg xl:btn-xl btn-outline" @click="newForm">
+              Start New Form
+            </PrimaryButton>
+            <PrimaryButton class="lg:btn-lg xl:btn-xl btn-outline" @click="logoutUser">
+              Log Out
+            </PrimaryButton>
+          </div>
         </div>
       </div>
     </section>
