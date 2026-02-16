@@ -11,7 +11,7 @@ import { z } from 'zod'
  * Page 5: India = New Delhi
  * Page 6: Brazil = Brasilia
  * Page 7: Denmark = Copenhagen
- * Page 8: Congo = Kinshasa
+ * Page 8: Kenya = Nairobi
  * Page 9: South Africa = Johannesburg
  *
  * Note: Fields can be null initially, so we preprocess to convert null to empty string
