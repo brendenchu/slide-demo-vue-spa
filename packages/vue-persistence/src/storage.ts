@@ -9,7 +9,7 @@ export class HybridStorage implements ExtendedStorageAdapter {
 
   constructor(config?: Partial<HybridStorageConfig>) {
     const prefix = config?.localStoragePrefix ?? 'vsd:'
-    const dbName = config?.dbName ?? 'vue_slide_demo'
+    const dbName = config?.dbName ?? 'slide_form_demo'
     const stores = config?.indexedDBStores ?? {
       projects: ['project:'],
       responses: ['response:'],

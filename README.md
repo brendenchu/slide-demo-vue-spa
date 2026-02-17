@@ -1,4 +1,4 @@
-# Vue Slide Demo
+# Slide Form Demo
 
 pnpm monorepo containing a Vue 3 + TypeScript SPA with a multi-step slide form system, team-based access control, and a pluggable data source layer (browser storage or REST API).
 
@@ -17,8 +17,8 @@ packages/
 
 ## Requirements
 
-- Node.js >= 20
-- pnpm >= 9
+- Node.js >= 24
+- pnpm >= 10
 
 ## Getting Started
 

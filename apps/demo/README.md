@@ -1,4 +1,4 @@
-# Vue Slide Demo SPA
+# Slide Form Demo
 
 Vue 3 + TypeScript SPA with a multi-step slide form system, team-based access control, and a pluggable data source layer supporting local browser storage and REST API backends.
 

@@ -139,9 +139,9 @@ router.beforeEach(async (to, _from, next) => {
   // Update page title
   const title = to.meta.title as string | undefined
   if (title) {
-    document.title = `${title} - Vue Slide Demo`
+    document.title = `${title} - Slide Form Demo`
   } else {
-    document.title = 'Vue Slide Demo'
+    document.title = 'Slide Form Demo'
   }
 
   next()
