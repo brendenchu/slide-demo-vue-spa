@@ -37,7 +37,7 @@ async function submit() {
 
   try {
     const user = await authStore.register(form.value.first_name, form.value.last_name)
-    toastStore.success('Registration successful! Welcome to Vue Slide Demo.')
+    toastStore.success('Registration successful! Welcome to Slide Form Demo.')
 
     // Redirect to terms if needed, otherwise dashboard
     if (user.must_accept_terms) {
