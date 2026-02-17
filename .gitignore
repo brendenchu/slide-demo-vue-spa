@@ -38,3 +38,6 @@ test-results
 .cache
 .parcel-cache
 *.tsbuildinfo
+
+# Turborepo
+.turbo
